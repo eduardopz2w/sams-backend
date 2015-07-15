@@ -23,6 +23,10 @@ class CreateEldersTable extends Migration {
 			$table->boolean('retired');
 			$table->boolean('pensioner');
 			$table->string('civil_status');
+			$table->string('disability_moto')->nullable();
+			$table->string('disability_visual')->nullable();
+			$table->string('disability_hearing')->nullable();
+			$table->boolean('self_validating');
 			$table->timestamps();
 		});
 	}
