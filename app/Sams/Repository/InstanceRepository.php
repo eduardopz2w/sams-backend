@@ -11,4 +11,11 @@ class InstanceRepository extends BaseRepository{
 	{
 			return new Instance;
 	}
+
+	public function getInstanceConfirmed($id)
+
+	{
+			return Instance::where('elder_id', $id)->where('state', 'confirmed');
+	}
+
 }

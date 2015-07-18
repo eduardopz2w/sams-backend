@@ -51,6 +51,16 @@ App::error(function(Exception $exception, $code)
 	Log::error($exception);
 });
 
+App::error(function(\Sams\Manager\ValidationException $exception) {
+
+	  return Response::json(['status'  => 'error',
+	  	                     'message' => $exception->getErrors()]);
+
+});
+
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Maintenance Mode Handler
@@ -67,6 +77,8 @@ App::down(function()
 	return Response::make("Be right back!", 503);
 });
 
+
+
 /*
 |--------------------------------------------------------------------------
 | Require The Filters File
@@ -79,3 +91,10 @@ App::down(function()
 */
 
 require app_path().'/filters.php';
+
+
+function current_date()
+
+{
+		return date('Y-m-d');
+}

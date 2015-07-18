@@ -17,16 +17,12 @@ class CreateEldersTable extends Migration {
 			$table->increments('id');
 			$table->string('identity_card')->unique();
 			$table->string('full_name');
-			$table->date('ingress');
 			$table->string('address',60);
 			$table->char('gender');
 			$table->boolean('retired');
 			$table->boolean('pensioner');
 			$table->string('civil_status');
-			$table->string('disability_moto')->nullable();
-			$table->string('disability_visual')->nullable();
-			$table->string('disability_hearing')->nullable();
-			$table->boolean('self_validating');
+			$table->boolean('activiti');
 			$table->timestamps();
 		});
 	}

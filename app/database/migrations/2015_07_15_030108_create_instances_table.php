@@ -18,10 +18,11 @@ class CreateInstancesTable extends Migration {
 			$table->integer('elder_id')->unsigned();
 			$table->enum('referred', ['presidency_inass', 'social_welfare', 'health', 'cssr', 'other']);
 			$table->string('address', 60);
-			$table->date('visit');
+			$table->date('visit_date');
+			$table->date('admission_date');
 			$table->string('description', 60);
 			$table->mediumText('observation');
-			$table->boolean('state');
+			$table->enum('state', ['waiting', 'rejected', 'confirmed']);
 
       $table->foreign('elder_id')->references('id')->on('elders')->onDelete('cascade');
 			$table->timestamps();

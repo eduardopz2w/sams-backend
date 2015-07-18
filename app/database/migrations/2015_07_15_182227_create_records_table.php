@@ -16,20 +16,25 @@ class CreateRecordsTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('elder_id')->unsigned();
-			$table->longText('image');
+			$table->string('image_url', 100);
 			$table->string('pathology_psychiatric')->nullable();
 			$table->string('pathology_chronic')->nullable();
+			$table->string('disability_moto')->nullable();
+			$table->string('disability_visual')->nullable();
+			$table->string('disability_hearing')->nullable();
+			$table->boolean('self_validating');
 			$table->string('allergies')->nullable();
 			$table->enum('index_katz', ['A', 'B', 'C', 'D', 'E', 'F', 'G']);
-			$table->string('index_lawtonbrody');
-			$table->string('disability_physical')->nullable();
-      $table->string('disability_psychic')->nullable();
-      $table->boolean('feeding_asistidad');
-			$table->enum('size_diaper', ['S', 'M', 'L']);
+			$table->integer('index_lawtonbrody');
+			$table->integer('disability_physical');//indice incapacidad fisica
+      $table->integer('disability_psychic');//indice incapacidad psiquica
+      $table->boolean('feeding_assisted');
+			$table->enum('size_diaper', ['S', 'M', 'L'])->nullable();
       $table->enum('baston', ['1 point', '2 point', '3 point'])->nullable();
       $table->string('muleta')->nullable();
-      $table->boolean('wheelchair')->nullable();
-      $table->boolean('walker')->nullable();
+      $table->boolean('wheelchair');
+      $table->boolean('walker');
+      $table->boolean('state');
 
       $table->foreign('elder_id')->references('id')->on('elders')->onDelete('cascade');
 			$table->timestamps();

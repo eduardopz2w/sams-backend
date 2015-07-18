@@ -11,4 +11,10 @@ class ElderRepository extends BaseRepository{
 	{
 			return new Elder;
 	}
+
+	public function findElderByIdentify($identify)
+
+	{
+			return Elder::where('identity_card', $identify);
+	}
 }
