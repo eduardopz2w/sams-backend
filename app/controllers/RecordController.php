@@ -33,7 +33,7 @@ class RecordController extends BaseController {
 			$this->recordTask->recordCurrentConfirmed($recordCurrent);
 			
 			$data    = Input::all();
-			$record  = $this->recordRepository->getModel();
+			$record  = $this->recordRepository->createRecord($elder->gender);
 			$manager = new RecordManager($record, array_add($data,'elder_id', $elder->id));
 			$manager->save();
 

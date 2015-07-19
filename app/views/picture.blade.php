@@ -83,7 +83,7 @@
 
         reader.onloadend = function (e) {
             console.log(formData);
-            formData.append('picture', file[0]);
+            formData.append('photo', file[0]);
             showUploadedImage(e.target.result);
 
         }
@@ -96,7 +96,7 @@
         e.preventDefault();
        
         $.ajax({
-                url: 'test',
+               url: 'register/img/record/1',
                type: 'POST',
                data: formData,
                processData : false, 
@@ -146,7 +146,7 @@
 
             dataUrl = photo[0].toDataURL('image/png');
             // $('#content').html(camera[0]);
-            formData.append('picture', dataUrl);
+            formData.append('photo', dataUrl);
     });
 
   })//jquery ready

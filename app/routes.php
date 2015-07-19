@@ -12,10 +12,12 @@ Route::post('register/record/{id}', ['as' => 'add-record', 'uses' => 'RecordCont
 
 
 
+Route::post('register/img/record/{id}', ['as' => 'record-img', 'uses' => 'ImgController@addRecordImg']);
+
+
 
 Route::get('/', function () {
 
 	return View::make('picture');
-	
-});
 
+});

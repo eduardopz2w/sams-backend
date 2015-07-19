@@ -17,6 +17,7 @@ class CreateRecordsTable extends Migration {
 			$table->increments('id');
 			$table->integer('elder_id')->unsigned();
 			$table->string('image_url', 100);
+			$table->string('mime');
 			$table->string('pathology_psychiatric')->nullable();
 			$table->string('pathology_chronic')->nullable();
 			$table->string('disability_moto')->nullable();
