@@ -35,7 +35,6 @@ class InstanceManager extends BaseManager {
 			
 			$this->data = array_only($this->data, ['elder_id', 'referred', 'address', 'visit_date', 'description']);
 			$this->entity->fill($this->prepareData($this->data));
-
 			$this->entity->save();
 	}
 
@@ -43,6 +42,7 @@ class InstanceManager extends BaseManager {
 
 	{
 		  $instanceWaiting = $elder->getInstanceWaiting();
+		  
 			if ($instanceWaiting->count() > 0)
 
 			{

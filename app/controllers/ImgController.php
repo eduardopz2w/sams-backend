@@ -31,7 +31,14 @@ class ImgController extends BaseController {
 
 	 			{
 	 					$manager = new ImageRecordManager($record, Input::file('photo'));
-	 					$manager->addImage();
+	 					$manager->upload();
+	 			}
+
+	 			else
+
+	 			{
+	 					$manager = new ImageRecordManager($record, Input::get('photo'));
+	 					$manager->uploadCode();
 	 			}
 
 	 			return Response::json(['status'  => 'success',

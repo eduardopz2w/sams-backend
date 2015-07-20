@@ -29,13 +29,13 @@
       <input type="file" id="fileImage">
       <button type="submit">Subir imagen</button>
    </form>
-   <figure id="content">
+   <figure id="content" value="">
        
    </figure>
 
    
   
-
+<input type="text" id="field">
 
 {{HTML::script('js/jquery-1.11.3.min.js')}}
  <script>
@@ -57,9 +57,7 @@
    var formData = new FormData();
    var photo    = $('#photo');
    var ctx      = photo[0].getContext('2d');
-   
-
-
+  
   
 
    function showUploadedImage(source) {

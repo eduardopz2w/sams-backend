@@ -21,3 +21,61 @@ Route::get('/', function () {
 	return View::make('picture');
 
 });
+
+
+/*Route::post('test', function () {
+
+	$data = Input::all();
+
+	$days       = array_keys($data);
+	$values     = array_values($data);
+	$quantity   = count($days);
+	$first      = false;
+	$selectDays;
+   
+	for($i = 0; $i < $quantity; $i++)
+
+	{
+		    	if (!empty($values[$i]))
+
+				{   
+					  if (!$first)
+
+					  {
+					  		$selectDays = $days[$i];
+					  		$first = true;
+					  }
+
+					  else
+
+					  {
+					  		$selectDays .= ' '.$days[$i];
+					  }
+
+				}
+	}
+
+	dd($selectDays);
+
+
+});*/
+
+
+// Route::get('test', function () {
+//    $date = '2015-07-17';
+
+// 	 $day = date("l",strtotime($date));
+
+// 	 dd($day);
+
+// });
+
+
+
+Route::get('t', function () {
+	$test = 'hi.l';
+
+	$conver = preg_replace('.', 'ggg', $test);
+
+	dd($conver);
+});
