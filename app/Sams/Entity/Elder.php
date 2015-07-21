@@ -23,4 +23,10 @@ class Elder extends \Eloquent {
 	{
 			return $this->instances()->where('state', 'waiting');
 	}
+
+	public function occurrences()
+
+	{
+			return $this->hasMany('Sams\Entity\Occurrence');
+	}
 }

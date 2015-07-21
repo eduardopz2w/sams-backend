@@ -1,23 +1,32 @@
 <?php
 
 use Sams\Manager\ImageRecordManager;
+use Sams\Manager\ImageEmployeeManager;
 use Sams\Repository\RecordRepository;
 use Sams\Repository\ElderRepository;
+use Sams\Repository\EmployeeRepository;
 use Sams\Task\ElderTask;
+use Sams\Task\EmployeeTask;
+//Empleado task
 
 class ImgController extends BaseController {
 	
 	 protected $recordRepository;
 	 protected $elderRepository;
+	 protected $employeeRepository;
+	 protected $employeeTask;
 	 protected $elderTask;
 
 	 public function __construct(RecordRepository $recordRepository, ElderRepository $elderRepository,
-	 	                           ElderTask $elderTask)
+	 	                           ElderTask $elderTask, EmployeeRepository $employeeRepository,
+	 	                           EmployeeTask $employeeTask)
 
 	 {
-	 			$this->recordRepository = $recordRepository;
-	 			$this->elderRepository  = $elderRepository;		
-	 			$this->elderTask        = $elderTask;
+	 			$this->recordRepository   = $recordRepository;
+	 			$this->elderRepository    = $elderRepository;		
+	 			$this->employeeRepository = $employeeRepository;
+	 			$this->elderTask          = $elderTask;
+	 			$this->employeeTask       = $employeeTask;
 	 }
 
 	 public function addRecordImg($id)
@@ -43,6 +52,30 @@ class ImgController extends BaseController {
 
 	 			return Response::json(['status'  => 'success',
 	 				                     'message' => 'se ha cambiado la imagen']);
+	 }
+
+	 public function addEmployeeImg($id)
+
+	 {
+	 		$employee = $this->employeeRepository->find($id);
+	 		$this->employeeTask->employeeActiviti($employee);
+
+	 		if (Input::hasFile('photo'))
+
+	 		{
+	 				$manager = new ImageEmployeeManager($employee, Input::file('photo'));
+	 				$manager->upload();
+	 		}
+
+	 		else
+
+	 		{
+	 				$manager = new ImageEmployeeManager($employee, Input::get('photo'));
+	 				$manager->uploadCode();
+	 		}
+
+	 		return Response::json(['status'  => 'success',
+	 			                     'message' => 'Se ha registrado nueva imagen del empleado']);
 	 }
 
 }

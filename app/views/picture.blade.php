@@ -17,7 +17,7 @@
     <button id="initialize">Iniciar</button>
     <button id="pick">Foto</button>
     <button id="stop">Detener</button>
-    
+    <input type="time">
   <div id="container">
     <video id="camera" autoplay></video>
   </div>
@@ -26,7 +26,9 @@
   </div>
 
    <form id="files">
-      <input type="file" id="fileImage">
+      <!-- <input type="text" id="location">
+      <input type="text" id="case_situation"> -->
+      <input type="time" id="time">
       <button type="submit">Subir imagen</button>
    </form>
    <figure id="content" value="">
@@ -53,7 +55,7 @@
     
     // Upload File
 
-   var fileImg  = document.getElementById('fileImage');
+   // var fileImg  = document.getElementById('fileImage');
    var formData = new FormData();
    var photo    = $('#photo');
    var ctx      = photo[0].getContext('2d');
@@ -75,7 +77,7 @@
 
    }
 
-   fileImg.addEventListener('change', function (e) {
+   /*fileImg.addEventListener('change', function (e) {
         var file   = e.target.files;
         var reader = new FileReader();
 
@@ -88,13 +90,22 @@
 
         reader.readAsDataURL(file[0]);
         
-   });
+   });*/
 
    $('#files').on("submit", function (e) {
         e.preventDefault();
-       
+
+        var time = $('#time').val();
+        formData.append('time', time);
+/*
+        var case_situation = $('#case_situation').val();
+        var location = $('#location').val();
+
+        formData.append('case_situation', case_situation);
+        formData.append('location', location);
+       */
         $.ajax({
-               url: 'register/img/record/1',
+               url: 'test',
                type: 'POST',
                data: formData,
                processData : false, 

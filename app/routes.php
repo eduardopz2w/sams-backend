@@ -11,8 +11,31 @@ Route::put('edit/elder/{id}', ['as' => 'update-elder', 'uses' => 'ElderControlle
 Route::post('register/record/{id}', ['as' => 'add-record', 'uses' => 'RecordController@createRecord']);
 
 
+// image
+Route::post('register/img/record/{id}', ['as'  => 'record-img', 'uses'   => 'ImgController@addRecordImg']);
+Route::post('register/img/employee/{id}', ['as' => 'employee-img', 'uses' => 'ImgController@addEmployeeImg']);
 
-Route::post('register/img/record/{id}', ['as' => 'record-img', 'uses' => 'ImgController@addRecordImg']);
+// employee
+Route::post('register/employee', ['as' => 'add-employee', 'uses' => 'EmployeeController@createEmployee']);
+
+// occurrence
+Route::post('register/occurrence/{id}', ['as' => 'occurrence', 'uses' => 'OccurrenceController@createOccurrence']);
+
+
+// configuration
+
+Route::put('configuration/edit', ['as' => 'config', 'uses' => 'ConfigurationController@config']);
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -21,6 +44,8 @@ Route::get('/', function () {
 	return View::make('picture');
 
 });
+
+
 
 
 /*Route::post('test', function () {
@@ -72,10 +97,10 @@ Route::get('/', function () {
 
 
 
-Route::get('t', function () {
-	$test = 'hi.l';
+// Route::get('t', function () {
+// 	$test = 'hi.l';
 
-	$conver = preg_replace('.', 'ggg', $test);
+// 	$conver = preg_replace('.', 'ggg', $test);
 
-	dd($conver);
-});
+// 	dd($conver);
+// });

@@ -98,3 +98,12 @@ function current_date()
 {
 		return date('Y-m-d');
 }
+
+
+use Sams\Entity\Configuration;
+
+function get_configuration()
+
+{
+		return Configuration::find(1);
+}
