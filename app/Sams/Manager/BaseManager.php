@@ -16,7 +16,14 @@ abstract class BaseManager {
 
   // abstract public function getRules();
 
- /* public function isValid()
+  public function getRules()
+
+  {
+     return 'test';
+  } // Se debe eliminar
+
+
+  public function isValid()
 
   {
   	 $rules = $this->getRules();
@@ -28,7 +35,7 @@ abstract class BaseManager {
   	 		throw new ValidationException("Error Processing Request", $validator->messages());
   	 			
   	 }
-  }*/
+  }
 
   public function save()
 

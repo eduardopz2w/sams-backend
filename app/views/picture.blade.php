@@ -29,6 +29,7 @@
       <!-- <input type="text" id="location">
       <input type="text" id="case_situation"> -->
       <input type="time" id="time">
+      <input type="time" id="timeH">
       <button type="submit">Subir imagen</button>
    </form>
    <figure id="content" value="">
@@ -73,11 +74,11 @@
         photo.attr({'width': 1200, 'height': 800});
         
         ctx.drawImage(imgShow, 0, 0, 1200, 800);
-        // $content.html(imgShow);
+        $content.html(imgShow);
 
    }
 
-   /*fileImg.addEventListener('change', function (e) {
+   fileImg.addEventListener('change', function (e) {
         var file   = e.target.files;
         var reader = new FileReader();
 
@@ -90,13 +91,16 @@
 
         reader.readAsDataURL(file[0]);
         
-   });*/
+   });
 
    $('#files').on("submit", function (e) {
         e.preventDefault();
 
-        var time = $('#time').val();
-        formData.append('time', time);
+        // var time = $('#time').val();
+        // var timeH = $('#timeH').val();
+
+        // formData.append('time', time);
+        // formData.append('timeH', timeH);
 /*
         var case_situation = $('#case_situation').val();
         var location = $('#location').val();
@@ -105,7 +109,7 @@
         formData.append('location', location);
        */
         $.ajax({
-               url: 'test',
+               url: 'register/img/record/1',
                type: 'POST',
                data: formData,
                processData : false, 
@@ -154,7 +158,7 @@
             ctx.drawImage(camera[0], 0, 0, width, height);
 
             dataUrl = photo[0].toDataURL('image/png');
-            // $('#content').html(camera[0]);
+            $('#content').html(camera[0]);
             formData.append('photo', dataUrl);
     });
 

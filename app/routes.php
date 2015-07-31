@@ -21,14 +21,16 @@ Route::post('register/employee', ['as' => 'add-employee', 'uses' => 'EmployeeCon
 // occurrence
 Route::post('register/occurrence/{id}', ['as' => 'occurrence', 'uses' => 'OccurrenceController@createOccurrence']);
 
-
 // configuration
-
 Route::put('configuration/edit', ['as' => 'config', 'uses' => 'ConfigurationController@config']);
 
+// Schedule
+Route::post('register/schedule/{id}', ['as' => 'schedule', 'uses' => 'ScheduleController@addSchedule']);
 
 
+// permits
 
+Route::post('register/permit/{id}', ['as' => 'add-permit', 'uses' => 'PermitController@createPermit']);
 
 
 
@@ -48,42 +50,151 @@ Route::get('/', function () {
 
 
 
+
+
+// Route::get('test', function () {
+//    $date = '2015-07-26';
+
+// 	 $day = date("l",strtotime($date));
+
+// 	 dd($day);
+
+// });
+
+
+
+
 /*Route::post('test', function () {
 
-	$data = Input::all();
+	$time      = Input::get('time');
+	$h         = Input::get('timeH');
+  
+  $test = strtotime($time);
+  $star = date('H:i', strtotime('-30 minutes' ,$test));
+  dd($star);
 
-	$days       = array_keys($data);
-	$values     = array_values($data);
-	$quantity   = count($days);
-	$first      = false;
-	$selectDays;
-   
-	for($i = 0; $i < $quantity; $i++)
+
+	if ($h > $time)
 
 	{
-		    	if (!empty($values[$i]))
-
-				{   
-					  if (!$first)
-
-					  {
-					  		$selectDays = $days[$i];
-					  		$first = true;
-					  }
-
-					  else
-
-					  {
-					  		$selectDays .= ' '.$days[$i];
-					  }
-
-				}
+		 dd('mayor');
 	}
 
-	dd($selectDays);
+	else
+
+	{
+			dd('no');
+	}
+
+	dd(date( $segmens[0].":".$segmens[1], strtotime('-1 hour')));
+	// $timeTotal = explode(':', $time);
+  
+  // $test = date($time, strtotime('-10 minute'));
+  // dd($test);
+   dd($time);
+  $test = strtotime('-10 minute' , $time);
+  dd($test);
+
+});
+*/
+
+// Route::post('test', function () {
+// 	$hrsOne = Input::get('time');
+// 	$hrsTwo = Input::get('timeH');
+
+// 	$timeOne = explode(':', $hrsOne);
+//   $timeTwo = explode(':', $hrsTwo);
+
+//   $elapsedOne = ($timeOne[0] * 60) + $timeOne[1];
+//   $elapsedTwo = ($timeTwo[0] * 60) + $timeTwo[1];
+
+//   $totalElapsed = $elapsedOne - $elapsedTwo;
+
+//   if ($totalElapsed <= 59) 
+//   {
+//   	dd('minutos '.$totalElapsed);
+//   } 
+
+//   else
+
+//   {
+//   		$hoursElapse = round($totalElapsed / 60);
+
+//   		if ($hoursElapse <= 9) $hoursElapse = '0'.$hoursElapse;
+
+//   		$minElpase = $totalElapsed % 60;
+
+//   		if($minElpase <= 9) $minElpase = '0'.$minElpase;
+
+//   		dd($hoursElapse.':'.$minElpase)
+ 
+
+//   }
 
 
-});*/
+// });
+
+// Route::post('test', function () {
+
+// 	$arr    = Input::all();
+// 	$always = array_only($arr, ['control_menu', 'max_hours', 'max_permits']);
+
+// 	foreach ($always as $key) 
+// 	{
+// 			if (empty($key))
+
+// 			{
+// 				 dd('vacio');
+// 			}
+
+// 			else
+
+// 			{
+// 					dd('lleno');
+// 			}
+// 	}
+
+
+// });
+
+
+
+// Route::post('test', function () {
+
+// 	$data = Input::all();
+
+// 	$days       = array_keys($data);
+// 	$values     = array_values($data);
+// 	$quantity   = count($days);
+// 	$first      = false;
+// 	$selectDays;
+   
+// 	for($i = 0; $i < $quantity; $i++)
+
+// 	{
+// 		    	if (!empty($values[$i]))
+
+// 				{   
+// 					  if (!$first)
+
+// 					  {
+// 					  		$selectDays = $days[$i];
+// 					  		$first = true;
+// 					  }
+
+// 					  else
+
+// 					  {
+// 					  		$selectDays .= ' '.$days[$i];
+// 					  }
+
+// 				}
+// 	}
+
+// 	dd($selectDays);
+
+
+// });
 
 
 // Route::get('test', function () {

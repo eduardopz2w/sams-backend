@@ -99,6 +99,25 @@ function current_date()
 		return date('Y-m-d');
 }
 
+function first_day_month($month, $year)
+
+{
+		return date('Y-m-d', mktime(0,0,0, $month, 1, $year));
+}
+
+function last_day_month($month, $year)
+
+{
+		return date('Y-m-d', (mktime(0, 0, 0, $month + 1, 1, $year) -1));
+}
+
+function date_day($date)
+
+{
+		$day = date('l', strtotime($date));
+		return $day;
+}
+
 
 use Sams\Entity\Configuration;
 
@@ -107,3 +126,5 @@ function get_configuration()
 {
 		return Configuration::find(1);
 }
+
+

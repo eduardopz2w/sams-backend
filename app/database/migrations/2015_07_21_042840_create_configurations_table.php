@@ -19,8 +19,9 @@ class CreateConfigurationsTable extends Migration {
 			$table->enum('maximum_delay', [0, 5, 10, 15]);
 			$table->boolean('control_menu');
 			$table->boolean('control_employee');
-			$table->integer('max_hours');
+			$table->time('max_hours');
 			$table->integer('max_permits');
+			$table->integer('max_impeachment');
 
 			$table->timestamps();
 		});

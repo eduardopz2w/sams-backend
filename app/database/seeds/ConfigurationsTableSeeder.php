@@ -15,8 +15,9 @@ class ConfigurationsTableSeeder extends Seeder {
 				 'maximum_delay'    =>  5,
 				 'control_menu'     =>  1,
 				 'control_employee' =>  1,
-				 'max_hours'        =>  8,
-				 'max_permits'      =>  4
+				 'max_hours'        =>  '08:00',
+				 'max_permits'      =>  4,
+				 'max_impeachment'  =>  20
 				]);
 	}
 
