@@ -29,12 +29,19 @@ class PermitsRepository extends BaseRepository {
 	 		            
 	 }
 
-	 public function getPermissionRegular($date, $idEmployee)
+	 public function getPermissionRegular($date, $idEmployee, $turn)
 
 	 {
 	 		 return Permit::where('employee_id', $idEmployee)
 	 		              ->where('state', 1)
-	 		 							->where('date_star', $date);
+	 		 							->where('date_star', $date)
+	 		 							->where('turn', $turn)
+	 		 							->orWhere(function ($q) use ($date, $idEmployee) {
+	 		 									$q->where('employee_id', $idEmployee)
+	 		 									  ->where('state', 1)
+	 		 									  ->where('date_star', $date)
+	 		 									  ->where('turn', 'complete');
+	 		 							});
 	 }
 
 	 public function permissionBetween($idEmployee, $starDay, $endDay)

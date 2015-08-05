@@ -11,6 +11,10 @@
 |
 */
 
+header("Access-Control-Allow-Origin: http://sams");
+header('Access-Control-Allow-Credentials: true');
+header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+
 ClassLoader::addDirectories(array(
 
 	app_path().'/commands',
@@ -91,6 +95,10 @@ App::down(function()
 */
 
 require app_path().'/filters.php';
+
+
+
+date_default_timezone_set("America/Caracas");
 
 
 function current_date()

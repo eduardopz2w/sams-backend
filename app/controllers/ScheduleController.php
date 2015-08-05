@@ -33,7 +33,7 @@ class ScheduleController extends BaseController {
 				$schedule = $this->scheduleRepository->getModel();
 				$data     = Input::all();
 				$manager  = new ScheduleManager($schedule, $data);
-				$manager->validateSchedule();
+				$manager->validateSchedule($employee->break_out);
 
 				$scheduleConfirmed = $this->scheduleTask->scheduleConfirmed($data['entry_time'], $data['departure_time'],
 					                                                          $manager->getDays(), $employee);

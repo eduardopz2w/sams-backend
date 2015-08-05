@@ -16,6 +16,7 @@ class EmployeeManager extends BaseManager {
 	{
 			$data['activiti'] = 1;
 			$this->assignUrl($data);
+			$this->checkBreakOut($data);
 			return $data;
 	}
 
@@ -37,6 +38,16 @@ class EmployeeManager extends BaseManager {
 			}
 
 			$data['mime'] = 'jpg';
+	}
+
+	public function checkBreakOut(&$data)
+
+	{
+			if (!isset($data['break_out']))
+
+			{
+					$data['break_out'] = 0;
+			}
 	}
 
 }

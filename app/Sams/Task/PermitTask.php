@@ -60,8 +60,10 @@ class PermitTask {
 			if ($permit->type == 'normal')
 
 			{
-					$this->confirmedDay($permit->date_star, $permit->employee_id);
+					$this->confirmedDay($permit->date_star, $permit->employee_id, $permit->turn);
+					
 					$schedules = $this->checkSchedule($permit->date_star, $permit->employee_id);
+
 					$this->confirmSchedule($schedules, $permit);
 			}
 
@@ -73,16 +75,16 @@ class PermitTask {
 
 	}
 
-	public function confirmedDay($date, $idEmployee)
+	public function confirmedDay($date, $idEmployee, $turn)
 
 	{
-			$permitDay = $this->permitRepository->getPermissionRegular($date, $idEmployee);
+			$permitDay = $this->permitRepository->getPermissionRegular($date, $idEmployee, $turn);
 
 			if ($permitDay->count() > 0)
 
 			{
 				  $permitDay = $permitDay->first();
-					$message   = 'Empleado ya tiene permiso para el dia '.$permitDay->date_star;
+					$message   = 'Empleado ya tiene permiso para este  dia  y turno';
 					$this->hasException($message);
 			}
 
@@ -110,6 +112,7 @@ class PermitTask {
 	{
 		 	$count     = 0;
 			$confirmed = false;
+			$breakOut  = $permit->employee->breka_out;
 
 			while ($count < count($schedules) && !$confirmed)
 
@@ -120,7 +123,7 @@ class PermitTask {
           if ($hasSchedule->count() > 0)
 
           {
-          		if ($permit->turn == 'complete')
+          		if ($permit->turn == 'complete' || !$breakOut && $permit->turn != 'night')
 
           		{
           				$confirmed = true;
@@ -129,7 +132,7 @@ class PermitTask {
           		else
 
           		{
-          				$turnHours = $this->confirmTurn($schedule);
+          				$turnHours = $this->confirmTurn($schedule->entry_time, $schedule->departure_time);
 
 									if ($turnHours == $permit->turn || $permit->turn != 'night' && $turnHours == 'double')
 
@@ -145,14 +148,12 @@ class PermitTask {
 			if (!$confirmed) $this->hasException($message);
 	}
 
-	public function confirmTurn($schedule)
+	public function confirmTurn($hourIn, $hourOut)
 
 	{
 			$hoursNoon      = '12:00';
 			$hoursAfternoon = '14:00';
 			$hoursNight     = '17:00';
-			$hourIn         = $schedule->entry_time;
-			$hourOut        = $schedule->departure_time;
 			
 			if ($hourIn >= $hoursNight)
 

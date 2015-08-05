@@ -20,6 +20,7 @@ class CreateConfigurationsTable extends Migration {
 			$table->boolean('control_menu');
 			$table->boolean('control_employee');
 			$table->time('max_hours');
+			$table->integer('min_time');
 			$table->integer('max_permits');
 			$table->integer('max_impeachment');
 

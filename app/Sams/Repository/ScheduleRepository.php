@@ -29,12 +29,12 @@ class ScheduleRepository extends BaseRepository {
 								->where('employee_id', $idEm);
 	}
 
-	/*public function scheduleInterval($star, $end)
+	public function scheduleBetweenDifferences($star, $end)
 
 	{
-			return Schedule::where('entry_time', '>=', $star)
-			                 ->where('entry_time', '<=', $end);
-	}*/
+			return Schedule::where('departure_time', '>=', $star)
+			                 ->where('departure_time', '<', $end);
+	}
 
 	public function timesToday($day)
 

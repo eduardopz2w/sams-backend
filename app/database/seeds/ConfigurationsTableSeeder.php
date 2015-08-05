@@ -17,7 +17,8 @@ class ConfigurationsTableSeeder extends Seeder {
 				 'control_employee' =>  1,
 				 'max_hours'        =>  '08:00',
 				 'max_permits'      =>  4,
-				 'max_impeachment'  =>  20
+				 'max_impeachment'  =>  20,
+				 'min_time'         =>  30
 				]);
 	}
 

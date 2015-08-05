@@ -27,6 +27,7 @@ class CreateEmployeesTable extends Migration {
 			$table->string('degree_instruction');
 			$table->string('civil_status');
 			$table->string('office');
+			$table->boolean('break_out');
 			$table->boolean('activiti');
 			$table->timestamps();
 		});

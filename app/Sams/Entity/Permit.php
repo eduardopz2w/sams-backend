@@ -11,4 +11,10 @@ class Permit extends \Eloquent {
 	{
 			return $this->belongsTo('Sams\Entity\Employee');
 	}
+
+	public function attendances()
+
+	{
+			return $this->morphMany('Sams\Entity\Attendance', 'notifying');
+	}
 }

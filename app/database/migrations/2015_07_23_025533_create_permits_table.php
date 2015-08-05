@@ -19,7 +19,7 @@ class CreatePermitsTable extends Migration {
 			$table->string('reason', 150);
 			$table->date('date_star');
 			$table->date('date_end')->nullable();
-			$table->enum('turn', ['morning', 'afternoon', 'night']);
+			$table->enum('turn', ['morning', 'afternoon', 'night', 'complete']);
 			$table->boolean('state');
 			$table->string('type');
 

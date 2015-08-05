@@ -10,7 +10,6 @@ Route::put('edit/elder/{id}', ['as' => 'update-elder', 'uses' => 'ElderControlle
 // record
 Route::post('register/record/{id}', ['as' => 'add-record', 'uses' => 'RecordController@createRecord']);
 
-
 // image
 Route::post('register/img/record/{id}', ['as'  => 'record-img', 'uses'   => 'ImgController@addRecordImg']);
 Route::post('register/img/employee/{id}', ['as' => 'employee-img', 'uses' => 'ImgController@addEmployeeImg']);
@@ -23,19 +22,22 @@ Route::post('register/occurrence/{id}', ['as' => 'occurrence', 'uses' => 'Occurr
 
 // configuration
 Route::put('configuration/edit', ['as' => 'config', 'uses' => 'ConfigurationController@config']);
+Route::get('configuration/{message?}', 'ConfigurationController@getConfiguration');
 
-// Schedule
+// schedule
 Route::post('register/schedule/{id}', ['as' => 'schedule', 'uses' => 'ScheduleController@addSchedule']);
 
 
 // permits
-
 Route::post('register/permit/{id}', ['as' => 'add-permit', 'uses' => 'PermitController@createPermit']);
 
+// attendance 
+Route::get('attendance/{date}/{sooner?}', ['as' => 'attendance', 'uses' => 'AttendanceController@attendance']);
 
-
-
-
+// Auth
+Route::post('login', ['as'  => 'login', 'uses'  => 'AuthController@login']);
+Route::get('user/authenticate', 'AuthController@getUserAutenticate');
+Route::get('logout' , ['as' => 'logout', 'uses' => 'AuthController@logout']);
 
 
 
@@ -46,7 +48,6 @@ Route::get('/', function () {
 	return View::make('picture');
 
 });
-
 
 
 

@@ -11,8 +11,17 @@ class ConfigurationController extends BaseController {
 			$manager = new ConfigurationManager($configuration, Input::all());
 			$manager->save();
 
+			return Redirect::to('configuration', ['message' => 'configuracion actualizada']);
+	}
+
+	public function getConfiguration($message = null)
+
+	{
+			$config = get_configuration();
+
 			return Response::json(['status'  => 'success',
-				                     'message' => 'configuracion actualizada']);
+				                     'message' => $message,
+				                     'config'  => $config]);
 	}
 
 }

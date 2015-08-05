@@ -19,6 +19,7 @@ class ScheduleTask {
 
 	{
 		  $this->scheduleIntervalDay($hourIn, $hourOut, $employee->id, $days);
+		  $this->schedulesBetweenDifferences($hourIn, $days);
 
 			$schedule = $this->scheduleRepository->getScheduleForData($hourIn, $hourOut, $days);
 
@@ -72,6 +73,20 @@ class ScheduleTask {
 		  }
 	}
 
+	public function schedulesBetweenDifferences($hour, $days)
+
+	{
+			$hourDiscount = $this->hourDiscount($hour);
+			$discount = $this->scheduleRepository->scheduleBetweenDifferences($hourDiscount, $hour);
+
+			if ($discount->count() > 0)
+
+			{
+					$discount = $discount->first();
+					$this->confirmDay($discount->days, $days);
+			}
+	}
+
 	public function confirmDay($daySchedule, $days)
 
 	{
@@ -87,6 +102,17 @@ class ScheduleTask {
 		  				$this->hasException($message);
 					}
 			}
+	}
+
+
+
+	public function hourDiscount($hour)
+
+	{
+			$hour = strtotime($hour);
+
+			$hourDiscount = date('H:i', strtotime('-30 minutes', $hour));
+			return $hourDiscount;
 	}
 
 	public function hasException($message)

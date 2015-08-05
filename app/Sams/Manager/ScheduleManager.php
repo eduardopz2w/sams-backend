@@ -5,12 +5,12 @@ namespace Sams\Manager;
 
 class ScheduleManager extends BaseManager {
 
-	public function validateSchedule()
+	public function validateSchedule($timeBreak)
 
 	{
 			$this->isValid();
 		  $data = $this->data;
-			$this->confirmHours($data);
+			$this->confirmHours($data, $timeBreak);
 			$this->confirmDays($data);
 	}
 
@@ -31,7 +31,7 @@ class ScheduleManager extends BaseManager {
 			return $this->entity->id;
 	}
 
-	public function confirmHours($data)
+	public function confirmHours($data, $timeBreak)
 
 	{
 		  $hourNoon      = '12:00';
@@ -46,7 +46,7 @@ class ScheduleManager extends BaseManager {
 					throw new ValidationException("Error Processing Request", 'Ingrese horarios correctamente');
 			}
 
-			if ($hourIntro < $hourNoon && $hourOutput > $hourAfternoon)
+			if ($hourIntro < $hourNoon && $hourOutput > $hourAfternoon && $timeBreak)
 
 			{
 					$this->differenceHoursTurn($hourIntro, $hourOutput);
@@ -112,12 +112,23 @@ class ScheduleManager extends BaseManager {
 	public function ourMin($hourTotal)
 
 	{
-			$hourOutMin = 30;
+		  $conf               = get_configuration();
+			$hourOutMin         = $conf->min_time;
+			$minDuration        = $hourOutMin. ' minutos';
+			$minutesComparation = 59;
+
+
+			if ($hourOutMin > $minutesComparation)
+
+			{
+					$minDuration = $hourOutMin / 60;
+					$minDuration = $minDuration.' horas';
+			}
 
 			if ($hourTotal < $hourOutMin) 
 
 			{
-					throw new ValidationException("Error Processing Request", 'Horarios deben tener duracion de almenos 30 minutos');		
+					throw new ValidationException("Error Processing Request", 'Horarios deben tener duracion de almenos '.$minDuration);		
 			}
 	}
 
@@ -230,7 +241,7 @@ class ScheduleManager extends BaseManager {
 	public function prepareData($data)
 
 	{
-			 $data['days'] = $this->getDays();
+			 $data['days'] = $this->getDays(); 
 			 return $data;
 	}
 

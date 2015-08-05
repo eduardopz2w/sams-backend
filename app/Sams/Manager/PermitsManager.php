@@ -49,7 +49,6 @@ class PermitsManager extends BaseManager {
 
 	 {
 	 	   $day = current_date();
-
 	 		 $rules = [
          'reason'    => 'required|regex:/^[\pL\s]+$/u',
          'turn'      => 'required_if:type,normal|in:morning,afternoon,night,complete',
@@ -57,6 +56,7 @@ class PermitsManager extends BaseManager {
          'date_star' => 'required|date|after:'.$day,
          'date_end' =>  'required_if:type,extend|date'
 	 		 ];
+	 		 
 	 		 return $rules;
 	 }
 
