@@ -18,4 +18,12 @@ class InstanceRepository extends BaseRepository{
 			return Instance::where('elder_id', $id)->where('state', 'confirmed');
 	}
 
+	public function getInstanceVisited()
+
+	{
+		  $date = current_date();
+			return Instance::where('visit_date', $date)
+			                ->where('state' ,'waiting');
+	}
+
 }

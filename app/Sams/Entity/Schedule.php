@@ -8,7 +8,13 @@ class Schedule extends \Eloquent {
 	public function employees()
 
 	{
-			return $this->belongsToMany('Sams\Entity\Employee');
+			return $this->belongsToMany('Sams\Entity\Employee')->withTimestamps();
+	}
+
+	public function actions()
+
+	{
+			return $this->belongsToMany('Sams\Entity\Action')->withTimestamps();
 	}
 
 }

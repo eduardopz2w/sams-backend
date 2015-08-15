@@ -27,17 +27,19 @@ class PermitController extends BaseController {
    public function createPermit($id)
 
    {
-   			$employee = $this->employeeRepository->find($id);
-   			$this->employeeTask->employeeActiviti($employee);
-   			$permit = $this->permitRepository->getModel();
+   		$employee = $this->employeeRepository->find($id);
 
-   			$manager = new PermitsManager($permit, array_add(Input::all(), 'employee_id', $employee->id));
-   			$permit  = $manager->validPermit();
+   		$this->employeeTask->employeeActiviti($employee);
 
-   			$this->permitTask->confirmedPermit($permit);
-   			$manager->save();
+   		$permit  = $this->permitRepository->getModel();
+   		$manager = new PermitsManager($permit, array_add(Input::all(), 'employee_id', $employee->id));
+   		$permit  = $manager->validPermit();
 
-   			return Response::json(['status'  => 'success',
+   		$this->permitTask->confirmedPermit($permit);
+         
+   		$manager->save();
+
+   		return Response::json(['status'  => 'success',
    				                     'message' => 'Permiso registrado']);
    }
 

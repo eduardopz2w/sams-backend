@@ -29,4 +29,16 @@ class Elder extends \Eloquent {
 	{
 			return $this->hasMany('Sams\Entity\Occurrence');
 	}
+
+	public function citations()
+
+	{
+			return $this->hasMany('Sams\Entity\Citation');
+	}
+
+	public function reference()
+
+	{
+			return $this->hasOne('Sams\Entity\Reference');
+	}
 }

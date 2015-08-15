@@ -123,9 +123,42 @@ function date_day($date)
 
 {
 		$day = date('l', strtotime($date));
-		return $day;
+		return strtolower($day);
 }
 
+function add_hour($hour, $minutes)
+
+{
+		$hour = strtotime($hour);
+		$minutesAdd = date('H:i', strtotime('+'.$minutes.' minutes', $hour));
+
+		return $minutesAdd;
+}
+
+function rest_minutes($hour, $minutes)
+
+{
+		$hour = strtotime($hour);
+		$minutesRest = date('H:i', strtotime('-'.$minutes.' minutes', $hour));
+    
+    return $minutesRest;
+}
+
+function hour_usual($hour)
+
+{
+		$minutes   = '720';
+		$afternoon = '13:00';
+
+		if ($hour >= $afternoon)
+
+		{
+				$hour = rest_minutes($hour, $minutes);
+				$hour = $hour.' pm';
+		}
+
+		return $hour;
+}
 
 use Sams\Entity\Configuration;
 

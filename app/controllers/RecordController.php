@@ -27,14 +27,12 @@ class RecordController extends BaseController {
 	public function createRecord($id)
 
 	{
-		  $elder = $this->elderRepository->find($id);
-		  $this->elderTask->elderActiviti($elder);
-			$recordCurrent = $this->recordRepository->getRecordCurrent($elder->id);
-			$this->recordTask->recordCurrentConfirmed($recordCurrent);
+		  $elder = $this->elderTask->elderActiviti($elder);
+			$this->recordTask->recordCurrentConfirmed($elde->id);
 			
-			$data    = Input::all();
-			$record  = $this->recordRepository->createRecord($elder->gender);
-			$manager = new RecordManager($record, array_add($data,'elder_id', $elder->id));
+			$record  = $this->recordRepository->createRecord();
+			$manager = new RecordManager($record, array_add(Input::all(),'elder_id', $elder->id));
+			
 			$manager->save();
 
 			return Response::json(['status'  => 'success',

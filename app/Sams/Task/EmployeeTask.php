@@ -2,9 +2,7 @@
 
 namespace Sams\Task;
 
-use Sams\Manager\ValidationException;
-
-class EmployeeTask {
+class EmployeeTask extends BaseTask {
 
 	public function employeeActiviti($employee)
 
@@ -12,8 +10,21 @@ class EmployeeTask {
 			if (!$employee->activiti)
 
 			{
-					throw new ValidationException("Error Processing Request", 'Empleado fuera de servicio');
+				  $message = 'Empleado fuera de nomina';
+				  $this->hasException($message);
 			}
 	}
+
+	public function employeeNotFound($employee)
+
+	{
+			if (!$employee)
+
+			{
+					$message = 'Error en la asignacion de empleado';
+					$this->hasException($message);
+			}
+	}
+
 
 }

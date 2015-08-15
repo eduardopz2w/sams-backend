@@ -17,8 +17,8 @@ class OccurrenceController extends BaseController {
 		                          OccurrenceRepository $occurrenceRepository)
 
 	{
-			$this->elderRepository     = $elderRepository;
-			$this->elderTask           = $elderTask;
+			$this->elderRepository      = $elderRepository;
+			$this->elderTask            = $elderTask;
 			$this->occurrenceRepository = $occurrenceRepository;
 	}
 
@@ -26,19 +26,22 @@ class OccurrenceController extends BaseController {
 
 	{
 			$elder = $this->elderRepository->find($id);
-			$this->elderTask->elderActiviti($elder);
-			$occurrence =  $this->occurrenceRepository->getModel();
-			$data  = Input::except('photo');
-			$photo = Input::get('location');
 
-			$manager = new OccurrenceManager($occurrence, array_add($data, 'elder_id', $elder->id));
+			$this->elderTask->elderActiviti($elder);
+
+			$occurrence = $this->occurrenceRepository->getModel();
+			$data       = Input::except('photo');
+			$photo      = Input::get('location');
+			$manager    = new OccurrenceManager($occurrence, array_add($data, 'elder_id', $elder->id));
+
 			$manager->save();
 
 			if (!empty($photo))
 
 			{
-					$entity = $manager->getOccurrence();
+					$entity  = $manager->getOccurrence();
 					$manager = new ImageOccurrenceManager($entity, $photo);
+
 					$manager->uploadCode();
 
 			}

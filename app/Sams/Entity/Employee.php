@@ -10,13 +10,19 @@ class Employee extends \Eloquent {
 	public function schedules()
 
 	{
-			return $this->belongsToMany('Sams\Entity\Schedule');
+			return $this->belongsToMany('Sams\Entity\Schedule')->withTimestamps();
 	}
 
 	public function attendances()
 
 	{
 			return $this->hasMany('Sams\Entity\Attendance');
+	}
+
+	public function actions()
+
+	{
+		  return $this->hasMany('Sams\Entity\Action');
 	}
 
 	public function permits()

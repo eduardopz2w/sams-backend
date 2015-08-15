@@ -1,14 +1,24 @@
 <?php
 
 namespace Sams\Task;
+use Sams\Repository\RecordRepository;
 
-use Sams\Manager\ValidationException;
+class RecordTask extends BaseTask {
 
-class RecordTask {
+	protected $recordRepo;
 
-	public function recordCurrentConfirmed($recordCurrent)
+	public function __construct(RecordRepository $recordRepo)
 
 	{
+			$this->recordRepo = $recordRepo;
+	}
+
+
+	public function recordCurrentConfirmed($id)
+
+	{
+			$recordCurrent = $this->recordRepo->getRecordCurrent($id);
+
 			if ($recordCurrent->count() > 0)
 
 			{
@@ -24,7 +34,8 @@ class RecordTask {
 					else
 
 					{
-							throw new ValidationException("Error Processing Request", 'Adulto mayor con historia vigente');
+						  $message = 'Adulto mayor con historia vigente';
+							$this->hasException($message);
 							
 					}
 
@@ -34,12 +45,11 @@ class RecordTask {
 	public function dateExpired($date)
 
 	{
-			$dateCurrent = current_date();
-			$timeStampCurrent = $this->converToTimeStamp($dateCurrent);
-			$timeStampDate = $this->converToTimeStamp($date);
-
+			$dateCurrent       = current_date();
+			$timeStampCurrent  = $this->converToTimeStamp($dateCurrent);
+			$timeStampDate     = $this->converToTimeStamp($date);
 			$secondsDifference = $timeStampCurrent - $timeStampDate;
-			$daysDifference = $secondsDifference / (60 * 60 * 24);
+			$daysDifference    = $secondsDifference / (60 * 60 * 24);
 
 			if ($daysDifference >= 365)
 

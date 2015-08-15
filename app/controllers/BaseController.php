@@ -1,5 +1,7 @@
 <?php
 
+use Sams\Manager\ValidationException;
+
 class BaseController extends Controller {
 
 	/**

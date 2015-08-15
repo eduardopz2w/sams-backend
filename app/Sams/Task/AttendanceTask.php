@@ -5,9 +5,8 @@ namespace Sams\Task;
 use Sams\Repository\AttendanceRepository;
 use Sams\Repository\ScheduleRepository;
 use Sams\Repository\PermitsRepository;
-use Sams\Manager\ValidationException;
 
-class AttendanceTask {
+class AttendanceTask extends BaseTask {
 
 	protected $attendanceRepo;
 	protected $scheduleRepo;
@@ -24,10 +23,10 @@ class AttendanceTask {
 			$this->permitTask     = $permitTask;
 	}
 
-	public function createAttendance()
+	public function createAttendance($date)
 
 	{
-			$schedules  = $this->getSchedule();
+			$schedules  = $this->getSchedule($date);
 
 			foreach ($schedules as $schedule) 
 			
@@ -37,16 +36,20 @@ class AttendanceTask {
 					foreach ($employees as $employee) 
 
 					{
-						 if ($employee->activiti)
+						 $assingSchedule = $employee->pivot->created_at;
+						
+						 $employeeInDate = $this->entityInDate($assingSchedule, $date);
+
+						 if ($employee->activiti && $employeeInDate)
 
 						 {
-								$this->checkSchedule($employee, $schedule);
+								$this->checkSchedule($employee, $schedule, $date);
 						 }
 					}
 			}
 	}
 
-	public function checkSchedule($employee, $schedule)
+	public function checkSchedule($employee, $schedule, $date)
 
 	{
 			$scheduleTurn    = $this->permitTask->confirmTurn($schedule->entry_time, $schedule->departure_time);
@@ -60,29 +63,33 @@ class AttendanceTask {
 			if ($scheduleTurn == 'double' && $employee->break_out)
 
 			{
-					$this->registerAttendance($turnMorning, $employee->id, $hourIn, $hourMornigOut);
-					$this->registerAttendance($turnAfternoon, $employee->id, $hourAfternoonIn, $hourOut);
+					$this->registerAttendance($turnMorning, $employee->id, $hourIn, $hourMornigOut, $date);
+					$this->registerAttendance($turnAfternoon, $employee->id, $hourAfternoonIn, $hourOut, $date);
 			}
 
 			else
 
 			{
-					$this->registerAttendance($scheduleTurn, $employee->id, $hourIn, $hourOut);
+					$this->registerAttendance($scheduleTurn, $employee->id, $hourIn, $hourOut, $date);
 			}
 	}
 
-	public function registerAttendance($turn, $idEmployee, $hourIn, $hourOut)
+	public function registerAttendance($turn, $idEmployee, $hourIn, $hourOut, $date)
 
 	{
 
 			 $attendance = $this->attendanceRepo->getModel();
-			 $permit     = $this->hasPermit($idEmployee, $turn);
+			 $permit     = $this->hasPermit($idEmployee, $turn, $date);
+
+			 $attendance->fill([
+			 			'employee_id' 	 => $idEmployee,
+			 			'turn'        	 => $turn,
+			 			'state'       	 => 'I',
+			 			'start_time'  	 => $hourIn,
+			 			'departure_time' => $hourOut,
+			 			'date_day'       => $date
+			 	]);
 			 
-			 $attendance->employee_id    = $idEmployee;
-			 $attendance->turn           = $turn;
-			 $attendance->state          = 'I';
-			 $attendance->start_time     = $hourIn;
-			 $attendance->departure_time = $hourOut;
 
 			 if ($permit)
 
@@ -93,38 +100,42 @@ class AttendanceTask {
 			 $attendance->save();
 	}
 
-
-	public function getSchedule()
+	public function entityInDate($assingSchedule, $date)
 
 	{
-			$day = $this->getDay();
-			$schedules = $this->scheduleRepo->timesToday($day);
+			$segment    = explode(' ', $assingSchedule);
+			$assingDate = $segment[0];
 
-			if ($schedules->count() == 0)
+			if ($assingDate < $date)
 
 			{
-					$message = 'No hay asistencias para esta fecha';
-					$this->hasException($message);
+					return true;
 			}
+
+			return false;
+	}
+
+
+	public function getSchedule($date)
+
+	{
+			$day = $this->getDay($date);
+			$schedules = $this->scheduleRepo->timesToday($day);
+
+			$this->confimedAssists($schedules);
 
 			return $schedules->get();
 	}
 
-	private function getDay()
+	private function getDay($date)
 
 	{
-			$date = current_date();
-			$day  = date_day($date);
-
-		 	return $day;
+			return $day = date_day($date);
 	}
 
-	public function hasPermit($idEmployee, $turn)
+	public function hasPermit($idEmployee, $turn, $date)
 
 	{
-		  $date = current_date();
-		  // $turn = $this->convertTurn($turn);
-
 			$permit = $this->permitRepo->getPermissionRegular($date, $idEmployee, $turn);
 
 			if ($permit->count() > 0)
@@ -136,31 +147,22 @@ class AttendanceTask {
 			else
 
 			{
-					$response = $this->hasPermitExtend($idEmployee);
+					$response = $this->hasPermitExtend($idEmployee, $date);
 			}
 
 			return $response;
 	}
 
-	public function hasPermitExtend($idEmployee)
+	public function hasPermitExtend($idEmployee, $date)
 
 	{
-			$permitExtend = $this->permitRepo->getPermissionExtend($idEmployee);
-			$date     = current_date();
-			$response = false;
+			$permitExtend = $this->permitRepo->getPermitActivity($idEmployee, $date);
+			$response     = false;
       
 			if ($permitExtend->count() > 0)
 
 			{
-					$permitExtend = $permitExtend->first();
-
-					if ($permitExtend->date_star <= $date && $permitExtend->date_end >= $date)
-
-					{
-							$response =  $permitExtend;
-					}
-
-					$this->permitTask->statePermissExtend($permitExtend);
+					$response = $permitExtend->first();
 			}
 
 			return $response;
@@ -176,6 +178,17 @@ class AttendanceTask {
 			return $turn;
 	}
 
+	public function confimedAssists($assists)
+
+	{
+			if ($assists->count() == 0)
+
+			{
+					$message = 'No hay asistencias para esta fecha';
+					$this->hasException($message);
+			}
+	}
+
 	public function confirmAttendancesTurn($sooner, $attendances)
 
 	{
@@ -184,6 +197,12 @@ class AttendanceTask {
 			{
 					$message = 'No hay asistencias para este turno';
 					$this->hasException($message);
+			}
+
+			else
+
+			{
+					$this->confimedAssists($attendances);
 			}
 	}
 
@@ -200,11 +219,5 @@ class AttendanceTask {
 			}
 	}
 
-
-	public function hasException($message)
-
-	{
-			throw new ValidationException("Error Processing Request", $message);
-	}
 
 }

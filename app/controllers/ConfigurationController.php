@@ -8,7 +8,8 @@ class ConfigurationController extends BaseController {
 
 	{
 			$configuration = get_configuration();
-			$manager = new ConfigurationManager($configuration, Input::all());
+			$manager       = new ConfigurationManager($configuration, Input::all());
+
 			$manager->save();
 
 			return Redirect::to('configuration', ['message' => 'configuracion actualizada']);

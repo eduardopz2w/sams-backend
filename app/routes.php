@@ -1,43 +1,64 @@
 <?php
 
-// notificacion
-Route::post('register/notifications', ['as' => 'add-instance', 'uses' => 'InstanceController@addInstance']);
-Route::get('confirmed/notifications/{id}', ['as' => 'confirmed-instance', 'uses' => 'InstanceController@confirmedInstance']);
-
-// elder
-Route::put('edit/elder/{id}', ['as' => 'update-elder', 'uses' => 'ElderController@updateElder']);
-
-// record
-Route::post('register/record/{id}', ['as' => 'add-record', 'uses' => 'RecordController@createRecord']);
-
-// image
-Route::post('register/img/record/{id}', ['as'  => 'record-img', 'uses'   => 'ImgController@addRecordImg']);
-Route::post('register/img/employee/{id}', ['as' => 'employee-img', 'uses' => 'ImgController@addEmployeeImg']);
-
-// employee
-Route::post('register/employee', ['as' => 'add-employee', 'uses' => 'EmployeeController@createEmployee']);
-
-// occurrence
-Route::post('register/occurrence/{id}', ['as' => 'occurrence', 'uses' => 'OccurrenceController@createOccurrence']);
-
 // configuration
-Route::put('configuration/edit', ['as' => 'config', 'uses' => 'ConfigurationController@config']);
 Route::get('configuration/{message?}', 'ConfigurationController@getConfiguration');
 
-// schedule
-Route::post('register/schedule/{id}', ['as' => 'schedule', 'uses' => 'ScheduleController@addSchedule']);
-
-
-// permits
-Route::post('register/permit/{id}', ['as' => 'add-permit', 'uses' => 'PermitController@createPermit']);
-
-// attendance 
-Route::get('attendance/{date}/{sooner?}', ['as' => 'attendance', 'uses' => 'AttendanceController@attendance']);
-
-// Auth
+//auth
 Route::post('login', ['as'  => 'login', 'uses'  => 'AuthController@login']);
-Route::get('user/authenticate', 'AuthController@getUserAutenticate');
 Route::get('logout' , ['as' => 'logout', 'uses' => 'AuthController@logout']);
+
+
+Route::group(['before' => 'auth-sentry'], function ()
+{
+
+		// notificacion
+		Route::post('register/notifications', ['as' => 'add-instance', 'uses' => 'InstanceController@addInstance']);
+		Route::get('confirmed/notifications/{id}', ['as' => 'confirmed-instance', 'uses' => 'InstanceController@confirmedInstance']);
+		
+		// elder
+    Route::put('edit/elder/{id}', ['as' => 'update-elder', 'uses' => 'ElderController@updateElder']);
+    Route::get('elders/{state}', ['as' => 'elders', 'uses' => 'ElderController@elders']);
+   	// record
+	  Route::post('register/record/{id}', ['as' => 'add-record', 'uses' => 'RecordController@createRecord']);
+   
+   	// image
+		Route::post('register/img/record/{id}', ['as'  => 'record-img', 'uses'   => 'ImgController@addRecordImg']);
+		Route::post('register/img/employee/{id}', ['as' => 'employee-img', 'uses' => 'ImgController@addEmployeeImg']);
+
+		// employee
+		Route::post('register/employee', ['as' => 'add-employee', 'uses' => 'EmployeeController@createEmployee']);
+
+		//occurrence
+		Route::post('register/occurrence/{id}', ['as' => 'occurrence', 'uses' => 'OccurrenceController@createOccurrence']);
+    
+    // configuration
+		Route::put('configuration/edit', ['as' => 'config', 'uses' => 'ConfigurationController@config']);
+    
+    // schedule
+		Route::post('register/employee/schedule/{id}', ['as' => 'schedule-employee', 'uses' => 'ScheduleController@addScheduleEmploye']);
+		Route::post('register/action/schedule/{id}', ['as' => 'schedule-action', 'uses' => 'ScheduleController@addScheduleAction']);
+    
+    // permits
+		Route::post('register/permit/{id}', ['as' => 'add-permit', 'uses' => 'PermitController@createPermit']);
+
+		// attendance 
+		Route::get('attendance/{sooner?}', ['as' => 'attendance', 'uses' => 'AttendanceController@attendance']);
+    
+    // auth
+    Route::get('user/authenticate', 'AuthController@getUserAutenticate');
+
+    // citation 
+    Route::post('register/citation/{id}', 'CitationController@createCitation');
+		Route::post('confirmed/citation/{id}/{confirmed?}/{notificacion?}', ['as' => 'confirmed-citation', 'uses' => 'CitationController@confirmedCitation']);
+		Route::get('citations/{date}', ['as' => 'day-citation', 'uses' => 'CitationController@citationDate']);
+    Route::get('citations/hour/day', ['as' => 'hour-citation', 'uses' => 'CitationController@citationHour']);
+
+    // action
+    Route::post('register/action', ['as' => 'add-action', 'uses' => 'ActionController@registerAction']);
+    Route::get('actions/{date}', ['as' => 'actions', 'uses' => 'ActionController@getActions']);
+    Route::get('events/{date}', ['as' => 'events', 'uses' => 'ActionController@getEvents']);
+    
+});
 
 
 
@@ -49,8 +70,10 @@ Route::get('/', function () {
 
 });
 
-
-
+// Route::get('test', function () {
+// 	dd(public_path());
+// 	// dd(app_path());
+// });
 
 
 // Route::get('test', function () {

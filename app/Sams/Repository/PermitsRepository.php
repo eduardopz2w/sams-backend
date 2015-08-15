@@ -20,15 +20,6 @@ class PermitsRepository extends BaseRepository {
 	 		               ->where('employee_id', $idEmployee);
 	 }
 
-	 public function getPermissionExtend($idEmployee)
-
-	 {
-	 		return Permit::where('employee_id', $idEmployee)
-	 		              ->where('state', 1)
-	 		              ->where('type', 'extend');
-	 		            
-	 }
-
 	 public function getPermissionRegular($date, $idEmployee, $turn)
 
 	 {
@@ -44,12 +35,49 @@ class PermitsRepository extends BaseRepository {
 	 		 							});
 	 }
 
-	 public function permissionBetween($idEmployee, $starDay, $endDay)
+	 public function permissionsBetweenRegular($idEmployee, $date)
+
+	 {
+	 			return Permit::where('employee_id', $idEmployee)
+	 			             ->where('date_star','<=', $date)
+	 			             ->where('date_end', '>=', $date);
+	 }
+
+	 public function permissionBetweenExtend($idEmployee, $starDay, $endDay)
 
 	 {
 	 			return Permit::where('employee_id', $idEmployee)
 	 			             ->where('date_star','>=', $starDay)
-	 			             ->where('date_star', '<=', $endDay);
+	 			             ->where('date_star','<=', $endDay);
+	 }
+
+	 public function getPermissionExtend($idEmployee, $starDay, $endDay)
+
+	 {
+	 		return Permit::where('employee_id', $idEmployee)
+	 		               ->where('date_star', '<=', $endDay)
+			               ->where('date_end','>=', $endDay)
+			               ->orWhere(function($q) use ($idEmployee, $starDay, $endDay)  {
+			                		$q->where('employee_id', $idEmployee)
+			                		  ->where('date_star', '>=', $starDay)
+			                		  ->where('date_end', '<=', $endDay);
+			                })
+			                ->orWhere(function($q) use ($idEmployee, $starDay, $endDay) {
+			                		$q->where('employee_id', $idEmployee)
+			                		  ->where('date_star', '<', $starDay)
+			                		  ->where('date_end', '>=', $starDay)
+			                		  ->where('date_end', '<=', $endDay);
+			                });
+	 		            
+	 }
+
+	 public function getPermitActivity($idEmployee, $date)
+
+	 {
+	 		return Permit::where('employee_id', $idEmployee)
+	 		             ->where('date_star', '<=', $date)
+	 		             ->where('date_end', '>=', $date);
 	 }
 
 }
+

@@ -29,11 +29,21 @@ class ScheduleRepository extends BaseRepository {
 								->where('employee_id', $idEm);
 	}
 
+	public function scheduleInAction($idH, $idA)
+
+	{
+			return \DB::table('action_schedule')
+			          ->where('schedule_id', $idH)
+			          ->where('action_id', $idA);
+	}
+
 	public function scheduleBetweenDifferences($star, $end)
 
 	{
 			return Schedule::where('departure_time', '>=', $star)
-			                 ->where('departure_time', '<', $end);
+			                ->where('departure_time', '<', $end)
+			                ->orderBy('departure_time', 'DESC');
+
 	}
 
 	public function timesToday($day)
@@ -58,5 +68,6 @@ class ScheduleRepository extends BaseRepository {
 			                });
 			               
 	}
+
 
 }

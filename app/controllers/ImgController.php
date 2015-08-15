@@ -33,7 +33,9 @@ class ImgController extends BaseController {
 
 	 {
 	 			$elder = $this->elderRepository->find($id);
+
 	 			$this->elderTask->elderActiviti($elder);
+
 	 			$record = $this->recordRepository->allRecord($elder->id)->first();
 
 	 			if (Input::hasFile('photo'))
@@ -58,6 +60,7 @@ class ImgController extends BaseController {
 
 	 {
 	 		$employee = $this->employeeRepository->find($id);
+	 		
 	 		$this->employeeTask->employeeActiviti($employee);
 
 	 		if (Input::hasFile('photo'))

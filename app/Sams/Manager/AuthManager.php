@@ -20,12 +20,11 @@ class AuthManager {
 
 	{
 			$credentials = $this->getCredentials();
-			$remember    = $this->stateRemember();
 
 			try
       
       {
-          return \Sentry::authenticate($credentials, $remember);
+          return \Sentry::authenticateAndRemember($credentials);
       }
 
       catch (\Cartalyst\Sentry\Users\LoginRequiredException $e)
@@ -70,18 +69,6 @@ class AuthManager {
       ];
 
       return $credentials;
-	}
-
-	public function stateRemember()
-
-	{
-			if (empty($this->data['remember']))
-
-			{
-					return false;
-			}
-
-			return true;
 	}
 
 	public function hasException($message)

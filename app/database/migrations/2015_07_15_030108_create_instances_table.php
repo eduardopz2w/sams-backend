@@ -21,7 +21,6 @@ class CreateInstancesTable extends Migration {
 			$table->date('visit_date');
 			$table->date('admission_date');
 			$table->string('description', 60);
-			$table->mediumText('observation');
 			$table->enum('state', ['waiting', 'rejected', 'confirmed']);
 
       $table->foreign('elder_id')->references('id')->on('elders')->onDelete('cascade');

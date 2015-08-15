@@ -33,26 +33,18 @@ App::after(function($request, $response)
 |
 */
 
-Route::filter('auth', function()
+
+Route::filter('auth-sentry', function ()
 {
-	if (Auth::guest())
-	{
-		if (Request::ajax())
+		if (!Sentry::check())
+
 		{
-			return Response::make('Unauthorized', 401);
+				return Response::make('Unauthorized', 401);
 		}
-		else
-		{
-			return Redirect::guest('login');
-		}
-	}
 });
 
 
-Route::filter('auth.basic', function()
-{
-	return Auth::basic();
-});
+
 
 /*
 |--------------------------------------------------------------------------

@@ -15,13 +15,14 @@ class CreateEldersTable extends Migration {
 		Schema::create('elders', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('identity_card')->unique();
+			$table->string('identity_card');
 			$table->string('full_name');
 			$table->string('address',60);
 			$table->char('gender');
 			$table->boolean('retired');
 			$table->boolean('pensioner');
 			$table->string('civil_status');
+			$table->date('date_birth');
 			$table->boolean('activiti');
 			$table->timestamps();
 		});
