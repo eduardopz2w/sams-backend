@@ -5,79 +5,105 @@ namespace Sams\Task;
 use Sams\Repository\EmployeeRepository;
 use Sams\Repository\ActionRepository;
 use Sams\Repository\ScheduleRepository;
-use Sams\Task\EmployeeTask;
-use Sams\Task\AttendanceTask;
 
 class ActionTask extends BaseTask {
 	 
 	protected $actionRepo;
-	protected $employeRepo;
 	protected $scheduleRepo;
-  protected $employeTask;
+  protected $employeeTask;
   protected $attendanceTask;
 
-	public function __construct(EmployeeRepository $employeeRepo, EmployeeTask $employeTask,
-		                          ActionRepository $actionRepo, ScheduleRepository $scheduleRepo,
-		                          AttendanceTask  $attendanceTask)
+	public function __construct(ActionRepository $actionRepo, ScheduleRepository $scheduleRepo,
+		                          AttendanceTask  $attendanceTask, EmployeeTask $employeeTask)
 
 	{
 		  $this->actionRepo     = $actionRepo;
-			$this->employeeRepo   = $employeeRepo;
 			$this->scheduleRepo   = $scheduleRepo;
-			$this->employeTask    = $employeTask;
+			$this->employeeTask   = $employeeTask;
 			$this->attendanceTask = $attendanceTask;
 	}
 
-	public function confirmedEmployee($idEmployee)
+	public function confirmedEmployee(&$data)
 
 	{
-			if (!empty($idEmployee))
+	    if (!empty($data['employee_ident']))
 
 			{
-					$employee = $this->employeeRepo->find($idEmployee);
-					$this->employeTask->employeeNotFound($employee);
-					$this->employeTask->employeeActiviti($employee);
+
+			    $employee = $this->employeeTask->findEmployeeByCredentials($data['employee_ident']);
+
+			 		if ($employee)
+
+			 		{
+			 		 	  $data = array_add($data, 'employee_id', $employee->id);
+			 		}
 			}
 	}
 
 
-	public function confirmedType($action)
+	public function confirmData($data)
 
 	{
-		  $hourIn  = $action->hour_in;
-		  $hourOut = $action->hour_out;
+		  $hourIn      = $data['hour_in'];
+		  $hourOut     = $data['hour_out'];
+		  $type        = $data['type'];
+		  $description = $data['description'];
 
-		  if ($action->type == 'special' && !empty($hourIn) && !empty($hourOut))
+		  if ($type == 'special'  && !empty($hourIn) && !empty($hourOut))
 
 		  {
-		  		if ($hourOut <= $hourIn)
+		      if ($hourOut <= $hourIn)
 
-					{
-							$message = 'Hora de culminacion debe ser mayor a hora de inicio';
-							$this->hasException($message);
-					}
+				  {
+					   $message = 'Hora de inicio debe ser menor a hora de fin';
+						 $this->hasException($message);
+				  }
 		  }
-	}
+	    
 
-	public function confirmedAction($action)
+	    $this->actionExist($type, $description);
+  }
+
+  public function actionExist($type, $description)
+
+  {
+  	  $description =  scapeText($description);
+
+  		if ($type == 'normal')
+
+  		{
+  				$action = $this->actionRepo->actionForDescription($description);
+
+  				if ($action->count() > 0)
+
+  				{
+  						$message = 'Actividad ya existe';
+  						$this->hasException($message);
+  				}
+  		}
+  }
+
+	public function confirmedAction($id)
 
 	{
+		  $action = $this->actionRepo->find($id);
+
 			if (!$action->state)
 
 			{
 					$message = 'Actualmente no se realiza esta actividad';
 					$this->hasException($message);
 			}
+
+			return $action;
 	}
 
-	
 	public function getActionNormal($date)
 
 	{
-		  $day = date_day($date);
-
+		  $day          = date_day($date);
+			$schedules    = $this->scheduleRepo->scheduleInActionDay($day);
 			$actionNormal = [];
-			$schedules    = $this->scheduleRepo->timesToday($day);
 
 			if ($schedules->count() > 0)
 
@@ -109,10 +135,8 @@ class ActionTask extends BaseTask {
 				 		 if ($action->state && $actionInDate)
 
 				 		 {
-				 		 	  $action->employee;  
-                $action->hour_in = $schedule->entry_time;
-                $action->hour_out  = $schedule->departure_time;
-
+                $action->hour_in  = $schedule->entry_time;
+                $action->hour_out = $schedule->departure_time;
 				 		 		array_push($actionNormal, $action);
 				 		 }
 

@@ -27,8 +27,9 @@ class RecordController extends BaseController {
 	public function createRecord($id)
 
 	{
-		  $elder = $this->elderTask->elderActiviti($elder);
-			$this->recordTask->recordCurrentConfirmed($elde->id);
+		  $elder = $this->elderTask->findElderById($id);
+		  
+			$this->recordTask->recordCurrentConfirmed($elder->id);
 			
 			$record  = $this->recordRepository->createRecord();
 			$manager = new RecordManager($record, array_add(Input::all(),'elder_id', $elder->id));

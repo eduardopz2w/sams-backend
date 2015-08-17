@@ -19,15 +19,15 @@ class ActionController extends BaseController {
 	 public function registerAction()
 
 	 {
-	 		 $data   = Input::all();
-	 		 $action = $this->actionRepo->getModel();
-       
-	 		 $this->actionTask->confirmedEmployee($data['employee_id']);
+	 		 $data = Input::all();
+	 		 $this->actionTask->confirmedEmployee($data);
 
+	 		 $action  = $this->actionRepo->getModel();
 	 		 $manager = new ActionManager($action, $data);
-	 		 $action  = $manager->validateAction();
 
-	 		 $this->actionTask->confirmedType($action);
+	 		 $manager->isValid();
+
+	 		 $this->actionTask->confirmData($data);
 
 	 		 $idActIon = $manager->save();
 

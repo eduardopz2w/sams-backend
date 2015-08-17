@@ -17,19 +17,41 @@ class ElderTask extends BaseTask {
 			$this->recordRepo = $recordRepo;
 	}
 
-	public function elderActiviti($id)
+	public function findElderById($id)
 
 	{
-		  $elder = $this->elderRepo->find($id);
+			$elder = $this->elderRepo->find($id);
+			$this->elderActiviti($elder);
 
+			return $elder;
+	}
+
+  public function findElderByCredential($identityCard)
+
+  {
+  	  $elder = $this->elderRepo->findElderByIdentify($identityCard);
+
+  		if ($elder->count() == 0)
+
+			{
+				  $message = 'Adulto mayor no encontrado';
+					$this->hasException($message);
+			}
+			
+			$elder = $elder->first();
+			$this->elderActiviti($elder);
+			return $elder;
+  }
+
+	public function elderActiviti($elder)
+
+	{
 			if (!$elder->activiti)
 
 			{
-				  $message = "Adulto mayor no esta en nomina";
+				  $message = "Adulto mayor no residente";
 				  $this->hasException($message);
 			}
-
-			return $elder;
 
 	}
 

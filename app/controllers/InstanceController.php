@@ -16,7 +16,6 @@ class InstanceController extends BaseController {
 	                            InstanceTask $instanceTask, ElderTask $elderTask)
 
 	{
-
 		  $this->elderRepo    = $elderRepo;
 		  $this->instanceRepo = $instanceRepo;
 			$this->instanceTask = $instanceTask;

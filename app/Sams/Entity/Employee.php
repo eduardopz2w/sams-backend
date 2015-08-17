@@ -30,4 +30,10 @@ class Employee extends \Eloquent {
 	{
 			return $this->hasMany('Sams\Entity\Permit');
 	}
+
+	public function outputs()
+
+	{
+			return $this->hasMany('Sams\Entity\Output');
+	}
 }

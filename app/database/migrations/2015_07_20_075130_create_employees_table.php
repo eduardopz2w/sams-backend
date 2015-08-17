@@ -17,12 +17,12 @@ class CreateEmployeesTable extends Migration {
 			$table->increments('id');
 			$table->string('identity_card');
 			$table->string('mime');
-			$table->string('image_url', 200);
+			$table->string('image_url');
 			$table->string('first_name');
 			$table->string('last_name');
 			$table->date('date_birth');
 			$table->string('phone');
-			$table->string('address', 100);
+			$table->string('address');
 			$table->char('gender');
 			$table->string('degree_instruction');
 			$table->string('civil_status');

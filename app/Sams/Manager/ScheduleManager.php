@@ -8,8 +8,9 @@ class ScheduleManager extends BaseManager {
 	public function validateSchedule($timeBreak)
 
 	{
-			$this->isValid();
 		  $data = $this->data;
+
+			$this->isValid();
 			$this->confirmHours($data, $timeBreak);
 			$this->confirmDays($data);
 	}
@@ -43,7 +44,8 @@ class ScheduleManager extends BaseManager {
 			if ($hourIntro >= $hourOutput && $hourIntro < $hourNight || $hourIntro == $hourOutput)
 
 			{
-					throw new ValidationException("Error Processing Request", 'Ingrese horarios correctamente');
+					$message = 'Ingrese horas correctamente';
+					$this->hasError($message);
 			}
 
 			if ($hourIntro < $hourNoon && $hourOutput > $hourAfternoon && $timeBreak)
@@ -128,7 +130,8 @@ class ScheduleManager extends BaseManager {
 			if ($hourTotal < $hourOutMin) 
 
 			{
-					throw new ValidationException("Error Processing Request", 'Horarios deben tener duracion de almenos '.$minDuration);		
+					$message = 'Horarios deben tener duracion de almenos '.$minDuration;
+					$this->hasError($message);
 			}
 	}
 
@@ -162,7 +165,8 @@ class ScheduleManager extends BaseManager {
 			if ($hourWorking > $maxHours)
 
 			{
-					throw new ValidationException("Error Processing Request", 'El maximo de horas de trabajo es '. $maxHours);
+				  $message = 'El maximo de horas de trabajo es '. $maxHours;
+					$this->hasError($message);
 			}
 
 	}
@@ -228,7 +232,8 @@ class ScheduleManager extends BaseManager {
 			else
 
 			{
-					throw new ValidationException("Error Processing Request", 'Ingrese dias');
+				  $message = 'Ingrese dias';
+					$this->hasError($message);
 			}
 	}
 
@@ -243,6 +248,12 @@ class ScheduleManager extends BaseManager {
 	{
 			 $data['days'] = $this->getDays(); 
 			 return $data;
+	}
+
+	public function hasError($message)
+
+	{
+			throw new ValidationException("Error Processing Request", $message);
 	}
 
 

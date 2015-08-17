@@ -119,12 +119,20 @@ function last_day_month($month, $year)
 		return date('Y-m-d', (mktime(0, 0, 0, $month + 1, 1, $year) -1));
 }
 
+function rest_date($days, $date)
+
+{
+		$date = date('Y-m-d', strtotime('-'.$days. ' day', strtotime($date)));
+		return $date;
+}
+
 function date_day($date)
 
 {
 		$day = date('l', strtotime($date));
 		return strtolower($day);
 }
+
 
 function add_hour($hour, $minutes)
 
@@ -158,6 +166,14 @@ function hour_usual($hour)
 		}
 
 		return $hour;
+}
+
+function scapeText($text)
+
+{
+		$textNotSpace = trim($text);
+		$textLower = strtolower($textNotSpace);
+		return $textLower;
 }
 
 use Sams\Entity\Configuration;

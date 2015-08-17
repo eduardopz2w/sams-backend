@@ -23,10 +23,10 @@ class ElderController extends BaseController {
 	public function updateElder($id)
 
 	{
-			$elder = $this->elderRepository->find($id);
-
+		 // Acomodar con elderTask
+			$elder         = $this->elderRepository->find($id);
 			$recordCurrent = $this->recordRepository->getRecordCurrent($elder->id);
-			$manager = new ElderManager($elder, Input::all());
+			$manager       = new ElderManager($elder, Input::all());
 			
 			$manager->save();
 

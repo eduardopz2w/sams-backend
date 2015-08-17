@@ -16,7 +16,7 @@ class CreatePermitsTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('employee_id')->unsigned();
-			$table->string('reason', 150);
+			$table->string('reason');
 			$table->date('date_star');
 			$table->date('date_end')->nullable();
 			$table->enum('turn', ['morning', 'afternoon', 'night', 'complete'])->nullable();

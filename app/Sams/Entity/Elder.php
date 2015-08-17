@@ -41,4 +41,16 @@ class Elder extends \Eloquent {
 	{
 			return $this->hasOne('Sams\Entity\Reference');
 	}
+
+	public function outputs()
+
+	{
+			return $this->hasMany('Sams\Entity\Output');
+	}
+
+	public function relatives()
+
+	{
+			return $this->hasMany('Sams\Entity\Relative');
+	}
 }

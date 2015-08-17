@@ -58,6 +58,11 @@ Route::group(['before' => 'auth-sentry'], function ()
     Route::get('actions/{date}', ['as' => 'actions', 'uses' => 'ActionController@getActions']);
     Route::get('events/{date}', ['as' => 'events', 'uses' => 'ActionController@getEvents']);
     
+    // relative
+    Route::post('register/relative', ['as' => 'add-relative', 'uses' => 'RelativeController@createRelative']);
+
+    // output
+    Route::post('register/output', ['as' => 'add-output', 'uses' => 'OutputController@createOutput']);
 });
 
 
@@ -69,6 +74,20 @@ Route::get('/', function () {
 	return View::make('picture');
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Route::get('test', function () {
 // 	dd(public_path());

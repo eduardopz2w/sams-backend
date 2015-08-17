@@ -16,9 +16,9 @@ class CreateOccurrencesTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('elder_id')->unsigned();
-			$table->string('location', 200);
+			$table->string('location');
 			$table->longText('case_situation');
-			$table->string('image_url', 100)->nullable();
+			$table->string('image_url')->nullable();
 			$table->string('mime')->nullable();
 
 			$table->foreign('elder_id')->references('id')->on('elders')->onDelete('cascade');

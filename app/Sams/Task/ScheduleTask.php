@@ -2,26 +2,58 @@
 
 namespace Sams\Task;
 
+use Sams\Manager\ScheduleManager;
 use Sams\Repository\ScheduleRepository;
+use Sams\Repository\EmployeeRepository;
 use Sams\Repository\ActionRepository;
 
 class ScheduleTask extends BaseTask {
 
 	protected $scheduleRepo;
+	protected $employeeRepo;
 	protected $actionRepo;
 
-	public function __construct(ScheduleRepository $scheduleRepo, ActionRepository $actionRepo)
+	public function __construct(ScheduleRepository $scheduleRepo, ActionRepository $actionRepo,
+		                          EmployeeRepository $employeeRepo)
 
 	{
 			$this->scheduleRepo = $scheduleRepo;
+			$this->employeeRepo = $employeeRepo;
 			$this->actionRepo   = $actionRepo;
 	}
 
-	public function scheduleConfirmed($hourIn, $hourOut, $days, $entity, $isEmployee)
+	public function addSchedule($entity, $data, $isEmployee, $timeBreak)
 
 	{
-		  $this->scheduleIntervalDay($hourIn, $hourOut, $entity->id, $days, $isEmployee);
-		  // $this->schedulesBetweenDifferences($hourIn, $days);
+			$schedule = $this->scheduleRepo->getModel();
+			$manager  = new ScheduleManager($schedule, $data);
+						
+			$manager->validateSchedule($timeBreak);
+
+			$days = $manager->getDays();
+				
+			$scheduleConfirmed = $this->scheduleConfirmed($data, $days, $entity, $isEmployee);
+			
+			if ($scheduleConfirmed)
+
+			{
+				  $idSchedule = $manager->save();
+				  $entity->schedules()->attach($idSchedule);
+			}
+
+			$respose = ['status'  => 'success',
+			            'message' => 'horario almacenado'];
+
+			return $respose;
+	}
+
+	public function scheduleConfirmed($data, $days, $entity, $isEmployee)
+
+	{
+		  $hourIn   = $data['entry_time'];
+			$hourOut  = $data['departure_time'];
+
+		  $this->scheduleIntervalDay($hourIn, $hourOut, $entity, $days, $isEmployee);
 
 			$schedule = $this->scheduleRepo->getScheduleForData($hourIn, $hourOut, $days);
 
@@ -29,7 +61,6 @@ class ScheduleTask extends BaseTask {
 
 			{
 					$schedule = $schedule->first();
-					$this->confirmScheduleEntity($schedule->id, $entity->id, $isEmployee);
 					$entity->schedules()->attach($schedule->id);
 
 					return false;
@@ -38,113 +69,76 @@ class ScheduleTask extends BaseTask {
 			return true;
 	}
 
-	public function confirmScheduleEntity($idS,$idE, $isEmployee)
+
+	public function scheduleIntervalDay($hourIn, $hourOut, $entity, $days, $isEmployee)
 
 	{
-			$scheduleInEntity = $this->inEntitiy($idS, $idE, $isEmployee);
+		  $id = $entity->id;
 
-			if ($scheduleInEntity->count() > 0)
-
-			{
-					$message = 'Ya posee este horario';
-					$this->hasException($message);
-			}
-	}
-
-	public function scheduleIntervalDay($hourIn, $hourOut, $idEntity, $days, $isEmployee)
-
-	{
-
-		  $scheduleInterval = $this->scheduleRepo->intervalSchedule($hourIn, $hourOut);
-
-		  if ($scheduleInterval->count() > 0)
-
-		  {
-		  		$scheduleInterval = $scheduleInterval->get();
-
-		  		foreach ($scheduleInterval as $schedule) 
-		  		
-		  		{ 
-              $scheduleInEntity = $this->inEntitiy($schedule->id, $idEntity, $isEmployee);
-
-		  				if ($scheduleInEntity->count() > 0)
-
-		  				{
-		  					  $this->confirmDay($schedule->days, $days);
-		  				}
-		  		}
-		  }
-	}
-
-	public function inEntitiy($idSchedule, $idEntity, $isEmployee)
-
-	{
 			if ($isEmployee)
 
 			{
-					$scheduleInEmployee = $this->scheduleRepo->scheduleInEmployee($idSchedule, $idEntity);
-					return $scheduleInEmployee;
+					$message = 'horas asignadas no deben interferir con otros horarios';
+					$entity  = $this->employeeRepo->employeeInSchedule($id, $hourIn, $hourOut, $days);
+
+					$this->confirmHour($entity, $message);
 			}
 
 			else
 
 			{
-					$scheduleInAction = $this->scheduleRepo->scheduleInAction($idSchedule, $idEntity);
-					return $scheduleInAction;
+					$idEmployee = $entity->employee_id;
+					$message    = 'horas de actividad no deben redundar';
+					$entity     = $this->actionRepo->actionInSchedule($id, $hourIn, $hourOut, $days);
+					
+					$this->confirmHour($entity, $message);
+					$this->confirmEmployeeHourActivity($idEmployee, $hourIn, $hourOut, $days);
 			}
+
 	}
 
-	public function confirmDay($daySchedule, $days)
+	public function confirmHour($entity, $message)
 
 	{
-			$segmentDay = explode(' ', $days);
-			
-			foreach($segmentDay as $day)
+			foreach ($entity as $e) 
 
 			{
-					if(str_contains($daySchedule, $day)) 
+				  $schedules = $e->schedules;
 
-					{
-						  
-						  $message = 'Horas asignadas no deben interferir con otros horarios';
-		  				$this->hasException($message);
-						  
-					}
+				  if (count($schedules) > 0)
+
+				  {
+				  		$this->hasException($message);
+				  }
+
+				  break;
 			}
 	}
 
-
-	// public function schedulesBetweenDifferences($hour, $days)
-
-	// {
-	// 		$hourDiscount = $this->hourDiscount($hour);
-	// 		$discount = $this->scheduleRepo->scheduleBetweenDifferences($hourDiscount, $hour);
-
-	// 		if ($discount->count() > 0)
-
-	// 		{
-	// 			  $diff     = true;
-	// 				$discount = $discount->first();
-	// 				$confirm  = $this->confirmDay($discount->days, $days, $diff);
-					
-	// 				if ($confirm)
-
-	// 				{
-	// 						$hour     = hour_usual($discount->departure_time);
-	// 						$message  = 'Se tiene horario que termina a las '.$hour.' los horarios deben tener diferencia de 30 minutos';
-	// 						$this->hasException($message);
-	// 				} 
-	// 		}
-	// }
-
-
-	public function hourDiscount($hour)
+	public function confirmEmployeeHourActivity($idEmployee, $hourIn, $hourOut, $days)
 
 	{
-			$hour = strtotime($hour);
+			if (!is_null($idEmployee))
 
-			$hourDiscount = date('H:i', strtotime('-29 minutes', $hour));
-			return $hourDiscount;
+			{
+					$entity = $this->actionRepo->scheduleInActioneEmployee($idEmployee, $hourIn, $hourOut, $days);
+
+					foreach ($entity as $e) 
+
+			    {
+				 	    $schedules = $e->schedules;
+
+				 	    if (count($schedules) > 0)
+
+				 	    {
+				 			   $message = 'Empleado tiene actividad entre las horas asignadas';
+				 			   $this->hasException($message);
+				 	    }
+
+				 	    break;
+			    }
+			}
 	}
+
 
 }

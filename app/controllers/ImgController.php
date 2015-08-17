@@ -32,9 +32,10 @@ class ImgController extends BaseController {
 	 public function addRecordImg($id)
 
 	 {
-	 			$elder = $this->elderRepository->find($id);
+	 			// $elder = $this->elderRepository->find($id);
 
-	 			$this->elderTask->elderActiviti($elder);
+	 			// $this->elderTask->elderActiviti($elder);
+	 	    $elder = $this->elderTask->findElderById($id);
 
 	 			$record = $this->recordRepository->allRecord($elder->id)->first();
 
@@ -59,9 +60,11 @@ class ImgController extends BaseController {
 	 public function addEmployeeImg($id)
 
 	 {
-	 		$employee = $this->employeeRepository->find($id);
+	 		// $employee = $this->employeeRepository->find($id);
 	 		
-	 		$this->employeeTask->employeeActiviti($employee);
+	 		// $this->employeeTask->employeeActiviti($employee);
+
+	 	  $employee = $this->employeeTask->findEmployeeById($id);
 
 	 		if (Input::hasFile('photo'))
 

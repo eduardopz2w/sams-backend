@@ -52,7 +52,7 @@ class AuthManager {
       catch (\Cartalyst\Sentry\Users\UserNotFoundException $e)
       
       {
-      	  $message = 'Usuario no registrado';
+      	  $message = 'Cuenta de usuario no registrada, verifique y vuelva a intentarlo';
           $this->hasException($message);
           
       }

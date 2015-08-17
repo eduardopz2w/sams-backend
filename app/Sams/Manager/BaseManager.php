@@ -27,7 +27,7 @@ abstract class BaseManager {
 
   {
   	 $rules = $this->getRules();
-  	 $validator = \Validator::make($this->data, $rules);
+     $validator = \Validator::make($this->data, $rules);
 
   	 if ($validator->fails())
 

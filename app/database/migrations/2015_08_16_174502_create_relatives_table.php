@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateCitationsTable extends Migration {
+class CreateRelativesTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,15 +12,14 @@ class CreateCitationsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('citations', function(Blueprint $table)
+		Schema::create('relatives', function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->integer('elder_id')->unsigned();
-			$table->string('state');
-			$table->string('address');
-			$table->date('date_day');
-			$table->time('hour');
-			$table->string('reason');
+			$table->string('identity_card');
+			$table->string('full_name');
+			$table->string('affective_relations');
+			$table->string('phone');
 			$table->timestamps();
 		});
 	}
@@ -33,7 +32,7 @@ class CreateCitationsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('citations');
+		Schema::drop('relatives');
 	}
 
 }

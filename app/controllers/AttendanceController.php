@@ -27,7 +27,7 @@ class AttendanceController extends BaseController {
 		  $this->attendanceTask->confirmDate($date);
 		  
 			$attendances = $this->attendanceRepo->attendanceDay($date);
-			$turn        = $this->attendanceTask->getTurn();
+			$turn = $this->attendanceTask->getTurn();
 	
 			if ($attendances->count() == 0)
 
@@ -35,8 +35,7 @@ class AttendanceController extends BaseController {
 					$this->attendanceTask->createAttendance($date);
 			}
 
-			$attendances = $this->employeeRepo->getAttendances($date, $sooner, $turn);
-			
+			$attendances = $this->employeeRepo->getAttendances($date, $sooner, $turn);		
 			$this->attendanceTask->confirmAttendancesTurn($sooner, $attendances);
 
 			return Response::json(['status' => 'success',

@@ -17,7 +17,7 @@ class CreateEldersTable extends Migration {
 			$table->increments('id');
 			$table->string('identity_card');
 			$table->string('full_name');
-			$table->string('address',60);
+			$table->string('address');
 			$table->char('gender');
 			$table->boolean('retired');
 			$table->boolean('pensioner');

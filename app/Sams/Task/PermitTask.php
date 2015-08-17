@@ -2,33 +2,19 @@
 
 namespace Sams\Task;
 
-use Sams\Repository\ScheduleRepository;
 use Sams\Repository\PermitsRepository;
+use Sams\Repository\EmployeeRepository;
 
 class PermitTask extends BaseTask {
 
-	protected $scheduleRepository;
-	protected $permitRepository;
+	protected $permitRepo;
+	protected $employeeRepo;
 
-	protected $months = ['01' => 'Enero',
-	  									 '02' => 'Febrero',
-	  									 '03' => 'Marzo',
-	  									 '04' => 'Abril',
-	  									 '05' => 'Mayo',
-	  									 '06' => 'Junio',
-	  									 '07' => 'Julio',
-	  									 '08' => 'Agosto',
-	  									 '09' => 'Septiembre',
-	  									 '10' => 'Octubre',
-	  									 '11' => 'Noviembre',
-	  									 '12' => 'Diciembre'
-	  				];
-
-	public function __construct(ScheduleRepository $scheduleRepository, PermitsRepository $permitRepository)
+	public function __construct(EmployeeRepository $employeeRepo, PermitsRepository $permitRepo)
 
 	{
-			$this->scheduleRepository = $scheduleRepository;
-		  $this->permitRepository   = $permitRepository;
+			$this->employeeRepo = $employeeRepo;
+		  $this->permitRepo   = $permitRepo;
 	}
 
 	public function confirmedPermit($permit)
@@ -38,12 +24,16 @@ class PermitTask extends BaseTask {
 			$firstDayMont = first_day_month($segments[1], date('Y'));
 			$lastDayMont  = last_day_month($segments[1], date('Y'));
 			$config       = get_configuration();
-			$permitMonth  = $this->permitRepository->permissionsMonth($firstDayMont, $lastDayMont, $permit->employee_id);
+			$month        = \Lang::get('utils.months_number.'.$segments[1]);
+			$maxPermit    = $config->max_permits;
+			$idEmployee   = $permit->employee_id;
 
-			if ($permitMonth->count() == $config->max_permits)
+			$permitMonth = $this->permitRepo->permitMonth($firstDayMont, $lastDayMont, $idEmployee);
+
+			if ($permitMonth->count() == $maxPermit)
 
 			{
-			 		$message = 'Empleado ya ha usado la cantidad maxima de '.$config->max_permits.' permisos por el mes de '.$this->months[$segments[1]];
+			 		$message = 'Empleado ya ha usado la cantidad maxima de '.$maxPermit.' permisos por el mes de '.$month;
 			 		$this->hasException($message);
 			}
 
@@ -54,96 +44,127 @@ class PermitTask extends BaseTask {
 	public function permissonAccordingType($permit)
 
 	{
-			if ($permit->type == 'normal')
+		  $dateInit   = $permit->date_star;
+		  $dateEnd    = $permit->date_end;
+		  $idEmployee = $permit->employee_id;
+		  $turn       = $permit->turn;
+		  $type       = $permit->type;
+
+			if ($type == 'normal')
 
 			{
-					$this->confirmedDay($permit->date_star, $permit->employee_id, $permit->turn);		
-					$schedules = $this->checkSchedule($permit->date_star, $permit->employee_id);
-					
-					$this->confirmSchedule($schedules, $permit);
-					$this->permissRegularBetween($permit->employee_id, $permit->date_star);
+					$this->confirmDay($permit);	
 			}
 
 			else
 
 			{
-				  $this->permissExtend($permit->employee_id, $permit->date_star, $permit->date_end);
-					$this->permissExtendBetween($permit->employee_id, $permit->date_star, $permit->date_end);
+				  $this->permitExtendBetween($permit);
 			}
 
 	}
 
-	public function confirmedDay($date, $idEmployee, $turn)
+	public function confirmDay($permit)
 
 	{
-			$permitDay = $this->permitRepository->getPermissionRegular($date, $idEmployee, $turn);
+		  $id   = $permit->employee_id;
+		  $date = $permit->date_star;
+		  $turn = $permit->turn;
+
+			$permitDay = $this->permitRepo->getPermitRegular($id, $date, $turn);
 
 			if ($permitDay->count() > 0)
 
 			{
 				  $permitDay = $permitDay->first();
-					$message   = 'Empleado ya tiene permiso para este  dia  y turno';
+					$message   = 'Empleado tiene permiso para este fecha y turno';
+
+					$this->hasException($message);
+			}
+
+			$this->permitRegularBetween($permit);
+			$this->checkSchedule($permit);
+	}
+
+	public function permitRegularBetween($permit)
+
+	{
+		  $id   = $permit->employee_id;
+		  $date = $permit->date_star;
+
+			$permitRegBetween = $this->permitRepo->permitRegularIsBetween($id, $date);
+
+			if ($permitRegBetween->count() > 0)
+
+			{
+					$permitRegBetween = $permitRegBetween->first();
+
+					$dateInt = $permitRegBetween->date_star;
+					$dateEnd = $permitRegBetween->date_end;
+					$message = 'Empleadosd tiene permiso desde '.$dateInt.' hasta '.$dateEnd. ' ingrese dia fuera del periodo';
+
 					$this->hasException($message);
 			}
 
 	}
 
-	public function checkSchedule($date, $idEmployee)
+
+	public function checkSchedule($permit)
 
 	{
-			$day = date_day($date);
+		  $id       = $permit->employee_id;
+		  $date     = $permit->date_star;
+			$day      = date_day($date);
+			$turn     = $permit->turn;
+			$employee = $this->employeeRepo->employeeInScheduleDay($id, $day);
+			$message  = 'Verifique fecha y turno';
 
-			$schedules = $this->scheduleRepository->timesToday($day);
-
-			if ($schedules->count() == 0)
+			foreach ($employee as $e) 
 
 			{
-				  $message = 'Verifique fecha y turno';
-					$this->hasException($message);
-			}
+					$schedules = $e->schedules;
 
-			return $schedules->get();
+					if (count($schedules) == 0)
+
+					{
+							$this->hasException($message);
+					}
+
+					break;
+			}
+    
+			if ($turn != 'complete')
+
+			{
+    			$this->confirmSchedule($schedules, $permit, $message);
+			}
+			
 	}
 
-	public function confirmSchedule($schedules, $permit)
+	public function confirmSchedule($schedules, $permit, $message)
 
 	{
-		 	$count     = 0;
-			$confirmed = false;
-			$breakOut  = $permit->employee->breka_out;
+		   
+		  $turn    = $permit->turn;
+      $confirm = false;
 
-			while ($count < count($schedules) && !$confirmed)
+      foreach ($schedules as $schedule) 
 
-			{
-					$schedule = $schedules[$count];
-					$hasSchedule = $this->scheduleRepository->scheduleInEmployee($schedule->id, $permit->employee_id);
-          
-          if ($hasSchedule->count() > 0)
+      {
+      	  $hourIn  = $schedule->entry_time;
+      	  $hourOut = $schedule->departure_time;
 
-          {
-          		if ($permit->turn == 'complete' || !$breakOut && $permit->turn != 'night')
+      		$turnHours = $this->confirmTurn($hourIn, $hourOut);
 
-          		{
-          				$confirmed = true;
-          		}
+      		if ($turnHours == $turn || $turn != 'night' && $turnHours == 'double')
 
-          		else
+      		{
+      				$confirm = true;
+      				break;
+      		}
+      }
 
-          		{
-          				$turnHours = $this->confirmTurn($schedule->entry_time, $schedule->departure_time);
-
-									if ($turnHours == $permit->turn || $permit->turn != 'night' && $turnHours == 'double')
-
-									{
-											$confirmed = true;
-									}
-          		}
-          }
-          $count++;
-			}
-
-			$message = 'Verifique fecha y turno';
-			if (!$confirmed) $this->hasException($message);
+      if (!$confirm) $this->hasException($message);
 	}
 
 	public function confirmTurn($hourIn, $hourOut)
@@ -181,60 +202,64 @@ class PermitTask extends BaseTask {
 
 	}
 
-	public function permissExtend($idEmployee, $starDay, $endDay)
+	public function permitExtendBetween($permit)
 
 	{
-			$permitExtend = $this->permitRepository->getPermissionExtend($idEmployee, $starDay, $endDay);
+		  $id       = $permit->employee_id;
+		  $dateInit = $permit->date_star;
+		  $dateEnd  = $permit->date_end;
+			$permitExtend = $this->permitRepo->permitExtendIsBetween($id, $dateInit, $dateEnd);
 
 			if ($permitExtend->count() > 0)
 
 			{
 					$permitExtend = $permitExtend->first();
-					$message = 'Empleado con permiso desde '.$permitExtend->date_star.' hasta '.$permitExtend->date_end. ' ingrese fechas fuera del periodo';
+
+				  $dateInit = $permitExtend->date_star;
+				  $dateEnd  = $permitExtend->date_end;
+
+					$message = 'Empleado tiene permiso desde '.$dateInit.' hasta '.$dateEnd. ' ingrese fechas fuera del periodo';
 					$this->hasException($message);
 			}
+     
+     $this->permitRegularInExtend($permit);
 
 	}
 
-	public function permissExtendBetween($eId, $starDay, $endDay)
+	public function permitRegularInExtend($permit)
 
 	{
-			$permissBetween = $this->permitRepository->permissionBetweenExtend($eId, $starDay, $endDay);
+			$id = $permit->employee_id;
 
-			if ($permissBetween->count() > 0)
+			$dateInit = $permit->date_star;
+			$dateEnd  = $permit->date_end;
+
+			$permitBetweenExtend = $this->permitRepo->permitRegularInExtend($id, $dateInit, $dateEnd);
+
+			if ($permitBetweenExtend->count() > 0)
 
 			{
-					$permissBetween = $permissBetween->first();
-					$message = 'Entre las fechas dadas se encuentra permiso para el '.$permissBetween->date_star;
+					$permitBetweenExtend = $permitBetweenExtend->first();
+
+					$dateInit = $permitBetweenExtend->date_star;
+					$message  = 'Entre las fechas dadas se encuentra permiso para el '.$dateInit;
+
 					$this->hasException($message);
 			}
 	}
 
-	public function permissRegularBetween($idEmployee, $date)
+	// public function statePermissExtend(&$permissExtend)
 
-	{
-			$permissBetween = $this->permitRepository->permissionsBetweenRegular($idEmployee, $date);
+	// {
+	// 	  $day = current_date();
 
-			if ($permissBetween->count() > 0)
+	// 		if ($permissExtend->date_end <= $day)
 
-			{
-					$permissBetween = $permissBetween->first();
-					$message = 'Empleado con permiso desde '.$permissBetween->date_star.' hasta '.$permissBetween->date_end. ' ingrese fecha fuera del periodo';
-					$this->hasException($message);
-			}
-	}
-
-	public function statePermissExtend(&$permissExtend)
-
-	{
-		  $day = current_date();
-			if ($permissExtend->date_end <= $day)
-
-			{
-					$permissExtend->state = 0;
-					$permissExtend->save();
-			}
-	}
+	// 		{
+	// 				$permissExtend->state = 0;
+	// 				$permissExtend->save();
+	// 		}
+	// }
 
 
 }

@@ -12,7 +12,7 @@ class PermitsRepository extends BaseRepository {
 	 		 return new Permit;
 	 }
 
-	 public function permissionsMonth($startDayMonth, $endDayMonth, $idEmployee)
+	 public function permitMonth($startDayMonth, $endDayMonth, $idEmployee)
 
 	 {
 	 	  return Permit::where('date_star', '>=', $startDayMonth)
@@ -20,7 +20,7 @@ class PermitsRepository extends BaseRepository {
 	 		               ->where('employee_id', $idEmployee);
 	 }
 
-	 public function getPermissionRegular($date, $idEmployee, $turn)
+	 public function getPermitRegular($idEmployee, $date, $turn)
 
 	 {
 	 		 return Permit::where('employee_id', $idEmployee)
@@ -35,7 +35,7 @@ class PermitsRepository extends BaseRepository {
 	 		 							});
 	 }
 
-	 public function permissionsBetweenRegular($idEmployee, $date)
+	 public function permitRegularIsBetween($idEmployee, $date)
 
 	 {
 	 			return Permit::where('employee_id', $idEmployee)
@@ -43,7 +43,7 @@ class PermitsRepository extends BaseRepository {
 	 			             ->where('date_end', '>=', $date);
 	 }
 
-	 public function permissionBetweenExtend($idEmployee, $starDay, $endDay)
+	 public function permitRegularInExtend($idEmployee, $starDay, $endDay)
 
 	 {
 	 			return Permit::where('employee_id', $idEmployee)
@@ -51,7 +51,7 @@ class PermitsRepository extends BaseRepository {
 	 			             ->where('date_star','<=', $endDay);
 	 }
 
-	 public function getPermissionExtend($idEmployee, $starDay, $endDay)
+	 public function permitExtendIsBetween($idEmployee, $starDay, $endDay)
 
 	 {
 	 		return Permit::where('employee_id', $idEmployee)
@@ -71,13 +71,13 @@ class PermitsRepository extends BaseRepository {
 	 		            
 	 }
 
-	 public function getPermitActivity($idEmployee, $date)
+	 // public function getPermitActivity($idEmployee, $date)
 
-	 {
-	 		return Permit::where('employee_id', $idEmployee)
-	 		             ->where('date_star', '<=', $date)
-	 		             ->where('date_end', '>=', $date);
-	 }
+	 // {
+	 // 		return Permit::where('employee_id', $idEmployee)
+	 // 		             ->where('date_star', '<=', $date)
+	 // 		             ->where('date_end', '>=', $date);
+	 // }
 
 }
 

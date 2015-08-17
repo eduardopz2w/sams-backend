@@ -31,10 +31,7 @@ class CitationController extends BaseController {
 	 public function createCitation($id)
 
 	 {
-	 			$elder = $this->elderRepo->find($id);
-
-	 			$this->elderTask->elderActiviti($elder);
-	 			
+	 	    $elder    = $this->elderTask->findElderById($id);
 	 			$data     = Input::all();
 	 			$citation = $this->citationRepo->getModel();
 	 			$manager  = new CitationManager($citation, array_add($data,'elder_id', $id));
@@ -64,6 +61,7 @@ class CitationController extends BaseController {
 	 			if ($notification)
 
 	 			{  
+	 				  // manager citation
 	 				  $data       = Input::all();
 	 				  $relation   = ['elder_id' => $elder->id, 'citation_id' => $citation->id];
 	 				  $data       = array_merge($data, $relation);

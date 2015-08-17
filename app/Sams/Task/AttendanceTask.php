@@ -26,7 +26,7 @@ class AttendanceTask extends BaseTask {
 	public function createAttendance($date)
 
 	{
-			$schedules  = $this->getSchedule($date);
+			$schedules = $this->getSchedule($date);
 
 			foreach ($schedules as $schedule) 
 			
@@ -157,7 +157,7 @@ class AttendanceTask extends BaseTask {
 
 	{
 			$permitExtend = $this->permitRepo->getPermitActivity($idEmployee, $date);
-			$response     = false;
+			$response = false;
       
 			if ($permitExtend->count() > 0)
 

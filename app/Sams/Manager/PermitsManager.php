@@ -9,22 +9,19 @@ class PermitsManager extends BaseManager {
 
 	{
 			$this->isValid();
-			$data = $this->data;
 
-			if ($data['type'] == 'extend')
+			$data    = $this->data;
+			$type    = $data['type'];
+			$dateIn  = $data['date_star'];
+			$dateEnd = $data['date_end'];
 
-			{
-					$this->cheackDate($data['date_star'], $data['date_end']);
-					$data = array_only($this->data, ['date_star', 'date_end', 'type', 'reason', 'employee_id']);
-			}
-
-			else
+			if ($type == 'extend')
 
 			{
-					$data = array_only($this->data, ['date_star', 'turn', 'type', 'reason', 'employee_id']);
+					$this->cheackDate($dateIn, $dateEnd);
 			}
 
-			$this->entity->fill($this->prepareData($data));
+			$this->entity->fill($this->prepareData($this->data));
 			return $this->entity;
 	}
 
@@ -34,7 +31,8 @@ class PermitsManager extends BaseManager {
   		if ($dateStar >= $dateEnd)
 
   		{
-  				throw new ValidationException("Error Processing Request", 'Fecha de inicio debe ser menor a fecha de culminacion');
+  			  $message = 'Fecha en que termina el permiso debe ser menor a su inicio';
+  				throw new ValidationException("Error Processing Request", $message);
   		}
   }
 
@@ -49,6 +47,7 @@ class PermitsManager extends BaseManager {
 
 	 {
 	 	   $day = current_date();
+
 	 		 $rules = [
          'reason'    => 'required|regex:/^[\pL\s]+$/u',
          'turn'      => 'required_if:type,normal|in:morning,afternoon,night,complete',
@@ -63,6 +62,18 @@ class PermitsManager extends BaseManager {
 	 public function prepareData($data)
 
 	 {
+	 	    if (!$data['date_end'])
+
+	 	    {
+	 	    		array_pull($data, 'date_end');
+	 	    }
+
+	 	    else
+
+	 	    {
+	 	    		array_pull($data, 'turn');
+	 	    }
+
 	 			$data['state'] = 1;
 	 			return $data;
 	 }

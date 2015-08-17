@@ -25,9 +25,11 @@ class OccurrenceController extends BaseController {
 	public function createOccurrence($id)
 
 	{
-			$elder = $this->elderRepository->find($id);
+			// $elder = $this->elderRepository->find($id);
 
-			$this->elderTask->elderActiviti($elder);
+			// $this->elderTask->elderActiviti($elder);
+
+		  $elder = $this->elderTask->findElderById($id);
 
 			$occurrence = $this->occurrenceRepository->getModel();
 			$data       = Input::except('photo');

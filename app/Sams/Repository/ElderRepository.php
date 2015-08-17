@@ -22,8 +22,12 @@ class ElderRepository extends BaseRepository{
 
 	{
 		  $join = Elder::leftJoin('records', 'elders.id', '=', 'records.elder_id')
-			    				  ->select('elders.id', 'elders.full_name', 'elders.identity_card',
-			    							     'records.image_url');
+			    				  ->select('elders.id', 
+			    				  	       'elders.full_name', 
+			    				  	       'elders.identity_card',
+			    							     'records.image_url'
+			    							     );
+			    				  
 			if ($state == 'active')
 
 		  {
