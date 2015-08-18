@@ -126,6 +126,14 @@ function rest_date($days, $date)
 		return $date;
 }
 
+
+function add_date($days, $date)
+
+{
+		$date = date('Y-m-d', strtotime('+'.$days. ' day', strtotime($date)));
+		return $date;
+}
+
 function date_day($date)
 
 {

@@ -42,7 +42,7 @@ Route::group(['before' => 'auth-sentry'], function ()
 		Route::post('register/permit/{id}', ['as' => 'add-permit', 'uses' => 'PermitController@createPermit']);
 
 		// attendance 
-		Route::get('attendance/{sooner?}', ['as' => 'attendance', 'uses' => 'AttendanceController@attendance']);
+		Route::post('attendance/{sooner?}', ['as' => 'attendance', 'uses' => 'AttendanceController@attendance']);
     
     // auth
     Route::get('user/authenticate', 'AuthController@getUserAutenticate');

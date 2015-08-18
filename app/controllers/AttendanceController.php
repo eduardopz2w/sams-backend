@@ -1,21 +1,17 @@
 <?php
 
 use Sams\Repository\AttendanceRepository;
-use Sams\Repository\EmployeeRepository;
 use Sams\Task\AttendanceTask;
 
 class AttendanceController extends BaseController {
 
 	protected $attendanceRepo;
-	protected $employeeRepo;
 	protected $attendanceTask;
 
-	public function __construct(AttendanceRepository $attendanceRepo, AttendanceTask $attendanceTask, 
-		                          EmployeeRepository $employeeRepo)
+	public function __construct(AttendanceRepository $attendanceRepo, AttendanceTask $attendanceTask)
 
 	{
 			$this->attendanceRepo = $attendanceRepo;
-			$this->employeeRepo   = $employeeRepo;
 			$this->attendanceTask = $attendanceTask;
 	}
 
@@ -25,21 +21,22 @@ class AttendanceController extends BaseController {
 		  $date = Input::get('date');
 
 		  $this->attendanceTask->confirmDate($date);
-		  
-			$attendances = $this->attendanceRepo->attendanceDay($date);
-			$turn = $this->attendanceTask->getTurn();
-	
-			if ($attendances->count() == 0)
+
+		  $attendanceConfirm = $this->attendanceRepo->attendanceDayConfirm($date);	
+
+			if ($attendanceConfirm->count() == 0)
 
 			{
 					$this->attendanceTask->createAttendance($date);
 			}
 
-			$attendances = $this->employeeRepo->getAttendances($date, $sooner, $turn);		
-			$this->attendanceTask->confirmAttendancesTurn($sooner, $attendances);
+			$attendances = $this->attendanceTask->getAttendance($date, $sooner);
 
 			return Response::json(['status' => 'success',
-				                     'data'   => $attendances->get()]);
+				                     'data'   => $attendances]);
 	}
 
 }
+
+
+

@@ -71,13 +71,13 @@ class PermitsRepository extends BaseRepository {
 	 		            
 	 }
 
-	 // public function getPermitActivity($idEmployee, $date)
+	 public function permitExtendActive($idEmployee, $date)
 
-	 // {
-	 // 		return Permit::where('employee_id', $idEmployee)
-	 // 		             ->where('date_star', '<=', $date)
-	 // 		             ->where('date_end', '>=', $date);
-	 // }
+	 {
+	 		return Permit::where('employee_id', $idEmployee)
+	 		             ->where('date_star', '<=', $date)
+	 		             ->where('date_end', '>=', $date);
+	 }
 
 }
 

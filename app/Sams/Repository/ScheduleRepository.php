@@ -72,7 +72,7 @@ class ScheduleRepository extends BaseRepository {
 	public function scheduleInEmployeeDay($day)
 
 	{
-			return Schedule::with(['employee'])
+			return Schedule::with(['employees'])
 			               ->where('days', 'LIKE', '%'.$day.'%');
 	}
 

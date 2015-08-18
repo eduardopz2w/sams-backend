@@ -23,6 +23,21 @@ class AttendanceTask extends BaseTask {
 			$this->permitTask     = $permitTask;
 	}
 
+	public function confirmDate($date)
+
+	{
+		  $dateCurrent = current_date();
+		  $dateBefore  = add_date('1', $dateCurrent);
+
+		  $date  = ['date' => $date];
+		  $rules = ['date' => 'date|before:'.$dateBefore];
+
+		  $validator = \Validator::make($date, $rules);
+
+		  if ($validator->fails()) $this->hasException($validator->messages());
+	}
+
+
 	public function createAttendance($date)
 
 	{
@@ -49,55 +64,15 @@ class AttendanceTask extends BaseTask {
 			}
 	}
 
-	public function checkSchedule($employee, $schedule, $date)
+	public function getSchedule($date)
 
 	{
-			$scheduleTurn    = $this->permitTask->confirmTurn($schedule->entry_time, $schedule->departure_time);
-			$turnMorning     = 'morning';
-			$turnAfternoon   = 'afternoon';
-			$hourIn          =  $schedule->entry_time;
-			$hourOut         =  $schedule->departure_time;
-			$hourMornigOut   = '12:00';
-			$hourAfternoonIn = '14:00';
+		  $day       = date_day($date);
+		  $schedules = $this->scheduleRepo->scheduleInEmployeeDay($day);
+      $this->confirmAttendance($schedules);
 
-			if ($scheduleTurn == 'double' && $employee->break_out)
-
-			{
-					$this->registerAttendance($turnMorning, $employee->id, $hourIn, $hourMornigOut, $date);
-					$this->registerAttendance($turnAfternoon, $employee->id, $hourAfternoonIn, $hourOut, $date);
-			}
-
-			else
-
-			{
-					$this->registerAttendance($scheduleTurn, $employee->id, $hourIn, $hourOut, $date);
-			}
-	}
-
-	public function registerAttendance($turn, $idEmployee, $hourIn, $hourOut, $date)
-
-	{
-
-			 $attendance = $this->attendanceRepo->getModel();
-			 $permit     = $this->hasPermit($idEmployee, $turn, $date);
-
-			 $attendance->fill([
-			 			'employee_id' 	 => $idEmployee,
-			 			'turn'        	 => $turn,
-			 			'state'       	 => 'I',
-			 			'start_time'  	 => $hourIn,
-			 			'departure_time' => $hourOut,
-			 			'date_day'       => $date
-			 	]);
-			 
-
-			 if ($permit)
-
-			 {
-			 		 $permit->attendances()->save($attendance);
-			 }
-
-			 $attendance->save();
+      $schedules = $schedules->get();
+		  return $schedules;
 	}
 
 	public function entityInDate($assingSchedule, $date)
@@ -115,33 +90,66 @@ class AttendanceTask extends BaseTask {
 			return false;
 	}
 
-
-	public function getSchedule($date)
-
-	{
-			$day = $this->getDay($date);
-			$schedules = $this->scheduleRepo->timesToday($day);
-
-			$this->confimedAssists($schedules);
-
-			return $schedules->get();
-	}
-
-	private function getDay($date)
+	public function checkSchedule($employee, $schedule, $date)
 
 	{
-			return $day = date_day($date);
+		  $id              = $employee->id;
+		  $hourIn          = $schedule->entry_time;
+			$hourOut         = $schedule->departure_time;
+			$scheduleTurn    = $this->permitTask->confirmTurn($hourIn, $hourOut);
+			$turnMorning     = 'morning';
+			$turnAfternoon   = 'afternoon';
+			$hourMornigOut   = '12:00';
+			$hourAfternoonIn = '14:00';
+
+			if ($scheduleTurn == 'double' && $employee->break_out)
+
+			{
+					$this->registerAttendance($turnMorning, $id, $hourIn, $hourMornigOut, $date);
+					$this->registerAttendance($turnAfternoon, $id, $hourAfternoonIn, $hourOut, $date);
+			}
+
+			else
+
+			{
+					$this->registerAttendance($scheduleTurn, $id, $hourIn, $hourOut, $date);
+			}
 	}
+
+	public function registerAttendance($turn, $idEmployee, $hourIn, $hourOut, $date)
+
+	{
+			 $attendance = $this->attendanceRepo->getModel();
+			 $permit     = $this->hasPermit($idEmployee, $turn, $date);
+
+			 $attendance->fill([
+			 	 'employee_id' 	  => $idEmployee,
+			 	 'turn'        	  => $turn,
+			 	 'state'       	  => 'I',
+			 	 'start_time'  	  => $hourIn,
+			 	 'departure_time' => $hourOut,
+			 	 'date_day'       => $date
+			 	]);
+			 
+			 if ($permit)
+
+			 {
+			 		 $permit->attendances()->save($attendance);
+			 }
+
+			 $attendance->save();
+	}
+
 
 	public function hasPermit($idEmployee, $turn, $date)
 
 	{
-			$permit = $this->permitRepo->getPermissionRegular($date, $idEmployee, $turn);
+			$permit = $this->permitRepo->getPermitRegular($date, $idEmployee, $turn);
 
 			if ($permit->count() > 0)
 
 			{
-					$response =  $permit->first();
+					$response = $permit->first();
 			}
 
 			else
@@ -156,8 +164,8 @@ class AttendanceTask extends BaseTask {
 	public function hasPermitExtend($idEmployee, $date)
 
 	{
-			$permitExtend = $this->permitRepo->getPermitActivity($idEmployee, $date);
-			$response = false;
+			$permitExtend = $this->permitRepo->permitExtendActive($idEmployee, $date);
+			$response     = false;
       
 			if ($permitExtend->count() > 0)
 
@@ -168,20 +176,35 @@ class AttendanceTask extends BaseTask {
 			return $response;
 	}
 
-	public function getTurn()
+
+	public function getAttendance($date, $sooner)
 
 	{
-		  $hour    = date('H:i');
-			$hourOut = null;
-			$turn    = $this->permitTask->confirmTurn($hour, $hourOut);
+		 $hour = $this->getHour();
 
-			return $turn;
+		 $attendance = $this->attendanceRepo->attendanceDay($date, $sooner, $hour);
+
+		  if ($sooner)
+
+		  {
+		  	  $this->confirmAttendance($attendance);
+		  }
+
+		  elseif ($attendance->count() == 0)
+
+		  {
+		  		$message = 'No hay asistencias para este turno';
+		  		$this->hasException($message);
+		  }
+
+		  $attendance = $attendance->get();
+		  return $attendance;
 	}
 
-	public function confimedAssists($assists)
+	public function confirmAttendance($attendance)
 
 	{
-			if ($assists->count() == 0)
+			if ($attendance->count() == 0)
 
 			{
 					$message = 'No hay asistencias para esta fecha';
@@ -189,35 +212,33 @@ class AttendanceTask extends BaseTask {
 			}
 	}
 
-	public function confirmAttendancesTurn($sooner, $attendances)
+
+	public function getHour()
 
 	{
-			if ($attendances->count() == 0 && !$sooner)
+			$hour      = date('H:i');
+			$hourNight = '17:00';
+			$hourNoon  = '12:00';
+
+			if ($hour > $hourNight)
 
 			{
-					$message = 'No hay asistencias para este turno';
-					$this->hasException($message);
+					$hourTurn = $hour;
+			}
+
+			elseif ($hour > $hourNoon)
+
+			{
+					$hourTurn = $hourNight;
 			}
 
 			else
 
 			{
-					$this->confimedAssists($attendances);
+					$hourTurn = $hourNoon;
 			}
+      
+      return $hourTurn;
 	}
-
-	public function confirmDate($date)
-
-	{
-			$dateCurrent = current_date();
-
-			if ($date > $dateCurrent)
-
-			{
-					$message = 'fecha no ha pasado';
-					$this->hasException($message);
-			}
-	}
-
 
 }
