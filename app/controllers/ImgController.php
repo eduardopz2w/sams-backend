@@ -32,11 +32,7 @@ class ImgController extends BaseController {
 	 public function addRecordImg($id)
 
 	 {
-	 			// $elder = $this->elderRepository->find($id);
-
-	 			// $this->elderTask->elderActiviti($elder);
-	 	    $elder = $this->elderTask->findElderById($id);
-
+	 	    $elder  = $this->elderTask->findElderById($id);
 	 			$record = $this->recordRepository->allRecord($elder->id)->first();
 
 	 			if (Input::hasFile('photo'))

@@ -14,10 +14,11 @@ Route::group(['before' => 'auth-sentry'], function ()
 		// notificacion
 		Route::post('register/notifications', ['as' => 'add-instance', 'uses' => 'InstanceController@addInstance']);
 		Route::get('confirmed/notifications/{id}', ['as' => 'confirmed-instance', 'uses' => 'InstanceController@confirmedInstance']);
-		
+		Route::get('waiting/notifications/{id}', ['as' => 'waiting-instance', 'uses' => 'InstanceController@instanceWaitingElder']);
 		// elder
     Route::put('edit/elder/{id}', ['as' => 'update-elder', 'uses' => 'ElderController@updateElder']);
     Route::get('elders/{state}', ['as' => 'elders', 'uses' => 'ElderController@elders']);
+    Route::get('elder/{id}', ['as' => 'elder', 'uses' => 'ElderController@elder']);
    	// record
 	  Route::post('register/record/{id}', ['as' => 'add-record', 'uses' => 'RecordController@createRecord']);
    
@@ -63,8 +64,10 @@ Route::group(['before' => 'auth-sentry'], function ()
 
     // output
     Route::post('register/output', ['as' => 'add-output', 'uses' => 'OutputController@createOutput']);
-});
 
+    // search smart
+    Route::get('search/elders', ['as' => 'search-elders', 'uses' => 'SearchController@searchElder']);
+});
 
 
 

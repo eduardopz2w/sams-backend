@@ -21,6 +21,14 @@ return [
 	 	'10' => 'Octubre',
 	 	'11' => 'Noviembre',
 	 	'12' => 'Diciembre'
+	],
+
+	'referred_instance' => [
+	   'presidency_inass' => 'Presidencia del Inass',
+	   'social_welfare'   => 'Gerencia de Bienestar Social',
+	   'health'           => 'Gerencias de Salud',
+	   'cssr'             => 'Director del C.S.S.R',
+	   'other'            => 'Otros'
 	]
  	
 ];

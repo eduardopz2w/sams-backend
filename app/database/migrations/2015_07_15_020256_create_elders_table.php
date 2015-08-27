@@ -22,7 +22,7 @@ class CreateEldersTable extends Migration {
 			$table->boolean('retired');
 			$table->boolean('pensioner');
 			$table->string('civil_status');
-			$table->date('date_birth');
+			$table->date('date_birth')->nullable();
 			$table->boolean('activiti');
 			$table->timestamps();
 		});

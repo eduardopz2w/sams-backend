@@ -16,7 +16,7 @@ class CitationsTableSeeder extends Seeder {
         'elder_id' => 1,
         'state'    => 'loading',
         'address'  => $faker->address,
-        'date_day' => '2015-08-09',
+        'date_day' => '2015-08-20',
         'hour'     => $faker->time,
         'reason'   => $faker->word
 			]);

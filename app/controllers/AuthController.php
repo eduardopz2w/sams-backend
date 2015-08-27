@@ -37,7 +37,7 @@ class AuthController extends BaseController {
 
 	{
 			$user      = $this->userRepo->getUserLogin();
-			$citation  = $this->citationRepo->getCitationsCurrent();
+			$citation  = $this->citationRepo->citationsCurrent();
 			$instances = $this->instanceRepo->getInstanceVisited();
 			$outputs   = $this->outputRepo->getOutputsTimeLimit();
 
@@ -48,7 +48,7 @@ class AuthController extends BaseController {
 				                                  'group'     => $user->getGroups()->first(),
 				                                  'visited'   => $instances->count(),
 				                                  'citation'  => $citation->count(),
-				                                  'outputs'   => 0],
+				                                  'outputs'   => $outputs->count()],
 				                                  ]);
 	}
 

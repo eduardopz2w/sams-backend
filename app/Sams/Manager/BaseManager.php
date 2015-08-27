@@ -16,11 +16,11 @@ abstract class BaseManager {
 
   // abstract public function getRules();
 
-  public function getRules()
+  // public function getRules()
 
-  {
-     return 'test';
-  } // Se debe eliminar
+  // {
+  //    return 'test';
+  // } 
 
 
   public function isValid()

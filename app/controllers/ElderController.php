@@ -1,52 +1,74 @@
 <?php
 
 use Sams\Repository\ElderRepository;
-use Sams\Repository\RecordRepository;
+use Sams\Repository\InstanceRepository;
+use Sams\Repository\CitationRepository;
 use Sams\Manager\ElderManager;
 use Sams\Task\ElderTask;
 
 class ElderController extends BaseController {
 
-	protected $elderRepository;
-	protected $recordRepository;
+  protected $elderRepo;
+	protected $recordRepo;
+	protected $instanceRepo;
+	protected $citationRepo;
 	protected $elderTask;
 
-	public function __construct(ElderRepository $elderRepository, RecordRepository $recordRepository,
-		                          ElderTask $elderTask)
+	public function __construct(ElderRepository $elderRepo, InstanceRepository $instanceRepo,
+		                          CitationRepository $citationRepo, ElderTask $elderTask)
 
 	{
-			$this->elderRepository  = $elderRepository;
-			$this->recordRepository = $recordRepository;
-			$this->elderTask        = $elderTask;
+	  $this->elderRepo    = $elderRepo;
+	  $this->instanceRepo = $instanceRepo;
+	  $this->citationRepo = $citationRepo;
+	  $this->elderTask    = $elderTask;
 	}
 
 	public function updateElder($id)
 
 	{
-		 // Acomodar con elderTask
-			$elder         = $this->elderRepository->find($id);
-			$recordCurrent = $this->recordRepository->getRecordCurrent($elder->id);
-			$manager       = new ElderManager($elder, Input::all());
-			
-			$manager->save();
+	  $elder         = $this->elderRepo->find($id);
+	  $recordCurrent = $this->recordRepo->getRecordCurrent($elder->id);
+	  $manager       = new ElderManager($elder, Input::all());
 
-			if ($elder->activiti && $recordCurrent->count() == 0)
+    $manager->save();
 
-			{
-					return Response::json(['status'  => 'info',
-						                     'message' => 'Recuerda registrar historia clinica']);
-			}
-
-			return Response::json(['status' => 'success',
-				                     'message' => 'Datos actualizados']);
+	  return Response::json(['status' => 'success',
+				                   'message' => 'Datos actualizados']);
 	}
 
 	public function elders($state)
 
 	{
-			$elders = $this->elderTask->getElders($state);
+	  $elders = $this->elderTask->getElders($state);
 
-			return Response::json($elders);
+	  return Response::json($elders);
+	}
+
+	public function elder($id)
+
+	{
+	  $elder = $this->elderRepo->elderWithRecord($id);
+
+	  $this->notFound($elder);
+
+	  $instance = $this->instanceRepo->instanceWaiting($elder->id);
+    
+	  $citation = $this->citationRepo->citationElder($elder->id);
+
+	  return Response::json(['status' => 'success',
+          								 'elder'  => ['identity_card' => $elder->identity_card,
+          								              'full_name'     => $elder->full_name,
+          								              'address'       => $elder->address,
+          								              'gender'        => $elder->gender,
+          								              'retired'       => $elder->retired,
+          								              'pensioner'     => $elder->pensioner,
+          								              'civil_status'  => $elder->civil_status,
+          								              'date_birth'    => $elder->date_birth,
+          								              'activiti'      => $elder->activiti,
+          								              'citation'      => $citation->count(),
+          								              'instance'      => $instance->count()]
+          							  ]);
 	}
 
 }

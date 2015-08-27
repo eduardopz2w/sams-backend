@@ -12,41 +12,52 @@ class InstanceController extends BaseController {
 	protected $elderRepo;
 	protected $instanceTask;
 
-	public function __construct(InstanceRepository $instanceRepo, ElderRepository $elderRepo,
+  public function __construct(InstanceRepository $instanceRepo, ElderRepository $elderRepo,
 	                            InstanceTask $instanceTask, ElderTask $elderTask)
-
 	{
-		  $this->elderRepo    = $elderRepo;
-		  $this->instanceRepo = $instanceRepo;
-			$this->instanceTask = $instanceTask;
+	  $this->elderRepo    = $elderRepo;
+		$this->instanceRepo = $instanceRepo;
+	  $this->instanceTask = $instanceTask;
 	}
 
 	public function addInstance()
 
 	{
-		  $data     = Input::all();
-		  $elder    = $this->instanceTask->elderFound($data['identity_card']);
-			$instance = $this->instanceRepo->getModel();
-			$manager  = new InstanceManager($instance, $data);
+	  $this->instanceTask->maxElders();
 
-		  $this->instanceTask->confirmElder($elder);  
-			$manager->createInstance($elder);
+		$data     = Input::all();
+		$elder    = $this->instanceTask->elderFound($data['identity_card']);
+	  $instance = $this->instanceRepo->getModel();
+	  $manager  = new InstanceManager($instance, $data);
 
-			return Response::json(['status'  => 'success',
-				                     'message' => 'Notificacion de Ingreso Almacenada']);
+		$this->instanceTask->confirmElder($elder);  
+	  $manager->createInstance($elder);
+
+	  return Response::json(['status'  => 'success',
+				                   'message' => 'Notificacion de Ingreso Almacenada']);
 	}
 
 	public function confirmedInstance($id)
 
 	{
-		  $elder    = $this->elderRepo->find($id);
-		  $instance = $elder->getInstanceWaiting()->first();
-		  
-			$this->instanceTask->confirmInstance($instance);
+	  $instance = $this->instanceRepo->instanceWaiting($id)->first();
+	  $state    = Input::get('state');
+		$response = $this->instanceTask->confirmInstance($instance, $state);
 
-			return Response::json(['status' => 'success',
-				                     'message' => 'Notificacion de Entrada Confirmada']);
+		return Response::json($response);
+	}
 
+	public function instanceWaitingElder($id)
+
+	{
+	  $instance = $this->instanceTask->getInstaceWaiting($id);
+
+	  return Response::json(['status'   => 'success',
+	  	                     'instance' => ['referred'    => \Lang::get('utils.referred_instance.'.$instance->referred),
+	  	                                    'address'     => $instance->address,
+	  	                                    'visit_date'  => $instance->visit_date,
+	  	                                    'description' => $instance->description]
+	  	                    ]);
 	}
 
 }

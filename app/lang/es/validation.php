@@ -54,7 +54,7 @@ return array(
 
 	"mimes"         => "El campo :attribute debe ser un archivo de tipo :values.",
 	"min"           => array(
-			"numeric" => "El campo :attribute debe tener al menos :min.",
+			"numeric" => "El campo :attribute debe tener al menos :min digitos",
 			"file"    => "El campo :attribute debe tener al menos :min kilobytes.",
 			"string"  => "El campo :attribute debe tener al menos :min caracteres.",
 	),
@@ -115,7 +115,12 @@ return array(
 	*/
 
 	'attributes' => array(
-		'username' => 'usuario',
-		'password' => 'contraseña'
+		'username'      => 'usuario',
+		'password'      => 'contraseña',
+		'identity_card' => 'cedula',
+		'full_name'     => 'nombre',
+		'address'       => 'dirección',
+		'visit_date'    => 'fecha visita',
+		'description'   => 'descripcion'
 	),
 );

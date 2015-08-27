@@ -87,7 +87,7 @@ class CitationTask extends BaseTask {
 			}
 	}
 
-	public function confirmedCitationDate($citations)
+	public function citationConfirmedDate($citations)
 
 	{
 			if ($citations->count() == 0)
@@ -99,35 +99,37 @@ class CitationTask extends BaseTask {
 
 			$citations = $citations->get();
 
-			$this->langState($citations);
+			// $this->langState($citations);
 			return $citations;
 	}
 
-	public function langState(&$citations)
+	// public function langState(&$citations)
+
+	// {
+	// 		foreach ($citations as $citation) 
+
+	// 		{
+	// 			  $stateLang = $citation->state_entry;
+	// 			  $citation->state = $stateLang;
+	// 		}
+	// }
+
+	public function citationConfirmHour()
 
 	{
-			foreach ($citations as $citation) 
+	  $citations = $this->citationRepo->citationsCurrent();
 
-			{
-				  $stateLang = $citation->state_entry;
-				  $citation->state = $stateLang;
-			}
-	}
+		if ($citations->count() == 0)
 
-	public function confirmCitationHour()
+		{
+		  $message = 'No hay citas para este momento';
+			$this->hasException($message);
+		}
 
-	{
-	 		$citations  = $this->citationRepo->getCitationsCurrent($date, $hourExpect, $hourAfter);
-
-			if ($citations->count() == 0)
-
-			{
-				  $message = 'No hay citas para este momento';
-					$this->hasException($message);
-			}
-
-			return $citations->get();
-	}
-
+		$citations = $citations->get();
+			
+		return $citations;
+		
+  }
 
 }

@@ -58,7 +58,7 @@ class ElderTask extends BaseTask {
 	public function getElders($state)
 
 	{
-			$elders  = $this->elderRepo->getEldersActiviti($state);
+			$elders  = $this->elderRepo->elders($state);
 
 			if ($elders->count() > 0)
 
