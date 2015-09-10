@@ -58,6 +58,7 @@ class ElderRepository extends BaseRepository{
 	{
 	  return  Elder::where('elders.id', $id)
 	           ->leftJoin('records', 'elders.id', '=', 'records.elder_id')
+             ->orderBy('records.created_at', 'DESC')
 	           ->select('*', 'elders.id')
 	           ->first();
 

@@ -12,53 +12,51 @@ class InstanceController extends BaseController {
 	protected $elderRepo;
 	protected $instanceTask;
 
-  public function __construct(InstanceRepository $instanceRepo, ElderRepository $elderRepo,
-	                            InstanceTask $instanceTask, ElderTask $elderTask)
-	{
-	  $this->elderRepo    = $elderRepo;
+  public function __construct(InstanceRepository $instanceRepo, 
+  	                          ElderRepository $elderRepo,
+	                            InstanceTask $instanceTask, 
+	                            ElderTask $elderTask) {
+  	$this->elderRepo    = $elderRepo;
 		$this->instanceRepo = $instanceRepo;
 	  $this->instanceTask = $instanceTask;
-	}
+  }
 
-	public function addInstance()
-
-	{
+	public function create() {
 	  $this->instanceTask->maxElders();
 
-		$data     = Input::all();
-		$elder    = $this->instanceTask->elderFound($data['identity_card']);
+	  $data = Input::all();
+		$elder = $this->instanceTask->elderFound($data['identity_card']);
 	  $instance = $this->instanceRepo->getModel();
-	  $manager  = new InstanceManager($instance, $data);
+	  $manager = new InstanceManager($instance, $data);
 
-		$this->instanceTask->confirmElder($elder);  
+	  $this->instanceTask->confirmElder($elder);  
 	  $manager->createInstance($elder);
 
-	  return Response::json(['status'  => 'success',
+	  return Response::json(['status' => 'success',
 				                   'message' => 'Notificacion de Ingreso Almacenada']);
 	}
 
-	public function confirmedInstance($id)
-
-	{
-	  $instance = $this->instanceRepo->instanceWaiting($id)->first();
-	  $state    = Input::get('state');
+	public function confirmedInstance($id) {
+		$instance = $this->instanceRepo->find($id);
+	  $state = Input::get('state');
 		$response = $this->instanceTask->confirmInstance($instance, $state);
 
 		return Response::json($response);
 	}
 
-	public function instanceWaitingElder($id)
+	public function instanceWaiting($elderId) {
+	  $instance = $this->instanceRepo->instanceWaiting($elderId)->first();
 
-	{
-	  $instance = $this->instanceTask->getInstaceWaiting($id);
+	  $this->notFound($instance);
 
-	  return Response::json(['status'   => 'success',
-	  	                     'instance' => ['referred'    => \Lang::get('utils.referred_instance.'.$instance->referred),
-	  	                                    'address'     => $instance->address,
-	  	                                    'visit_date'  => $instance->visit_date,
-	  	                                    'description' => $instance->description]
-	  	                    ]);
+	  $instance = $this->instanceTask->format($instance);
+
+	  return Response::json(['status' => 'success',
+	  	                     'instance' => $instance]);
 	}
+	 
+
+	 
 
 }
 

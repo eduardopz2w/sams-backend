@@ -9,18 +9,29 @@ class BaseController extends Controller {
 	 *
 	 * @return void
 	 */
-	protected function setupLayout()
-	{
-		if ( ! is_null($this->layout))
-		{
+	protected function setupLayout() {
+		if ( ! is_null($this->layout)) {
 			$this->layout = View::make($this->layout);
 		}
 	}
-
-	public function notFound($value)
-
-	{
-	  if (!$value) App::abort(404);
+	
+	public function notFound($value) {
+	  if (!$value) {
+	  	$this->abort();
+	  }
 	}
+
+	public function notFoundPivot($pivot) {
+		if ($pivot->count() == 0) {
+			$this->abort();
+		}
+	}
+
+	public function abort() {
+	  App::abort(404);
+	}
+
+	
+	
 
 }

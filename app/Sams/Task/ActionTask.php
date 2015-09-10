@@ -2,7 +2,6 @@
 
 namespace Sams\Task;
 
-use Sams\Repository\EmployeeRepository;
 use Sams\Repository\ActionRepository;
 use Sams\Repository\ScheduleRepository;
 
@@ -10,177 +9,87 @@ class ActionTask extends BaseTask {
 	 
 	protected $actionRepo;
 	protected $scheduleRepo;
-  protected $employeeTask;
   protected $attendanceTask;
 
-	public function __construct(ActionRepository $actionRepo, ScheduleRepository $scheduleRepo,
-		                          AttendanceTask  $attendanceTask, EmployeeTask $employeeTask)
-
-	{
-		  $this->actionRepo     = $actionRepo;
-			$this->scheduleRepo   = $scheduleRepo;
-			$this->employeeTask   = $employeeTask;
-			$this->attendanceTask = $attendanceTask;
+	public function __construct(ActionRepository $actionRepo, 
+		                          ScheduleRepository $scheduleRepo,
+                              AttendanceTask $attendanceTask) {
+		$this->actionRepo = $actionRepo;
+		$this->scheduleRepo = $scheduleRepo;
+    $this->attendanceTask = $attendanceTask;
 	}
 
-	public function confirmedEmployee(&$data)
+  public function changeState($action) {
+    $state = $action->state;
 
-	{
-	    if (!empty($data['employee_ident']))
+    if ($state) {
+      $message = 'Actividad ya no sera realizada';
+      $action->state = 0;
+    } else {
+      $message = 'Actividad vigente';
+      $action->state = 1;
+    }
 
-			{
+    $action->save();
 
-			    $employee = $this->employeeTask->findEmployeeByCredentials($data['employee_ident']);
+    $response = [
+     'status' => 'success',
+     'message' => $message
+    ];
 
-			 		if ($employee)
-
-			 		{
-			 		 	  $data = array_add($data, 'employee_id', $employee->id);
-			 		}
-			}
-	}
-
-
-	public function confirmData($data)
-
-	{
-		  $hourIn      = $data['hour_in'];
-		  $hourOut     = $data['hour_out'];
-		  $type        = $data['type'];
-		  $description = $data['description'];
-
-		  if ($type == 'special'  && !empty($hourIn) && !empty($hourOut))
-
-		  {
-		      if ($hourOut <= $hourIn)
-
-				  {
-					   $message = 'Hora de inicio debe ser menor a hora de fin';
-						 $this->hasException($message);
-				  }
-		  }
-	    
-
-	    $this->actionExist($type, $description);
+    return $response;
   }
 
-  public function actionExist($type, $description)
+  public function getForDay($date) {
+    $day = date_day($date);
+    $schedules = $this->scheduleRepo->scheduleInActionDay($day);
+    $actionsContent = [];
+    
+    if ($schedules->count() > 0) {
+      $schedules = $schedules->get();
 
-  {
-  	  $description =  scapeText($description);
+      $this->actionForSchedule($schedules, $actionsContent, $date);
+    }
 
-  		if ($type == 'normal')
+    $message = 'No hay actividades para este dia';
 
-  		{
-  				$action = $this->actionRepo->actionForDescription($description);
+    $this->countQuantity($actionsContent, $message);
 
-  				if ($action->count() > 0)
+    $response = [
+      'status' => 'success',
+      'data' => $actionsContent
+    ];
 
-  				{
-  						$message = 'Actividad ya existe';
-  						$this->hasException($message);
-  				}
-  		}
+    return $response;
   }
 
-	public function confirmedAction($id)
+  public function actionForSchedule($schedules, &$actionsContent, $date) {
+    foreach ($schedules as $schedule) {
+      $actions = $schedule->actions;
 
-	{
-		  $action = $this->actionRepo->find($id);
+      foreach ($actions as $action) {
+        $assingSchedule = $action->pivot->created_at;
+        $actionInDate = $this->attendanceTask->entityInDate($assingSchedule , $date);
+        $state = $action->state;
+        
+        if ($state && $actionInDate) {
+          $action->hour_in  = $schedule->entry_time;
+          $action->hour_out = $schedule->departure_time;
 
-			if (!$action->state)
+          array_push($actionsContent, $action);
+        }
+      }
+    }
+  }
 
-			{
-					$message = 'Actualmente no se realiza esta actividad';
-					$this->hasException($message);
-			}
+  public function countQuantity($quantify, $message) {
+    $count = count($quantify);
 
-			return $action;
-	}
+    if ($count == 0) {
+      $this->hasException($message);
+    }
+  }
 
-	public function getActionNormal($date)
-
-	{
-		  $day          = date_day($date);
-			$schedules    = $this->scheduleRepo->scheduleInActionDay($day);
-			$actionNormal = [];
-
-			if ($schedules->count() > 0)
-
-			{
-					$schedules = $schedules->get();
-
-					$this->getActionForSchedule($schedules, $actionNormal, $date);
-			}
-
-			$response = $this->stateAction(count($actionNormal), $actionNormal);
-
-			return $response;
-	}
-
-	public function getActionForSchedule($schedules, &$actionNormal, $date)
-
-	{
-			foreach ($schedules as $schedule) 
-
-			{
-				 $actions = $schedule->actions;
-
-				 foreach ($actions as $action) 
-
-				 {
-				 	   $assingSchedule = $action->pivot->created_at;
-				 	   $actionInDate   = $this->attendanceTask->entityInDate($assingSchedule , $date);
-             
-				 		 if ($action->state && $actionInDate)
-
-				 		 {
-                $action->hour_in  = $schedule->entry_time;
-                $action->hour_out = $schedule->departure_time;
-				 		 		array_push($actionNormal, $action);
-				 		 }
-
-				 }
-			}
-	}
-
-	public function getActionSpecial($date)
-
-	{
-			$actionSpecial = $this->actionRepo->getActionSpecial($date);
-
-			$count = $actionSpecial->count();
-
-			if ($count > 0)
-
-			{
-					$actionSpecial = $actionSpecial->get();
-			}
-
-			$response = $this->stateAction($count, $actionSpecial);
-
-			return $response;
-	}
-
-	public function stateAction($count, $actions)
-
-	{
-
-			if ($count == 0)
-
-			{
-					return ['status'  => 'error',
-					        'message' => 'No hay actividades'];
-			}
-
-			else
-
-			{
-					return ['status'  => 'success',
-					        'data'    => $actions];
-			}
-	}
-
-
-
+  
+		 
 }

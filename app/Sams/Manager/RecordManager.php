@@ -4,28 +4,26 @@ namespace Sams\Manager;
 
 class RecordManager extends BaseManager {
 	
-	public function prepareData($data)
+  public function getRules() {
+    $rules = [
+      'size_diaper'=> 'in:S,M,L',
+      'baston'  => 'in:1 point,3 point, 4 point',
+      'index_katz' => 'required',
+      'index_lawtonbrody'  => 'required',
+      'disability_physical'=> 'required',
+      'disability_psychic' => 'required'
+    ];
 
-	{
-		 $data['state'] = 1;
-     $this->confirmCheck($data);
-		 return $data;
-	}
-
-	public function confirmCheck(&$data)
-
-	{
-		 $confirmeds = array_only($data, ['feeding_assisted', 'wheelchair', 'walker', 'self_validating']);
-
-     array_walk($confirmeds, function ($item) use (&$data) {
-     	
-     	 if (!isset($item))
-     	 {
-     			$data[$item] = 0;
-     	 }
-     	 
-     });
-	}
-
+    return $rules;
+  }
+  
+	public function prepareData($data) {
+    $data['state'] = 1;
+    
+    array_pull($data, 'photo');
+    array_pull($data, 'mime');
+  
+    return $data;
+  }
 
 }

@@ -15,16 +15,9 @@ class CreateActionsTable extends Migration {
 		Schema::create('actions', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('employee_id')->unsigned()->nullable();
+			$table->string('name');
 			$table->string('description');
-			$table->string('type');
-			$table->string('responsible')->nullable();
-			$table->date('date_day')->nullable();
-			$table->time('hour_in')->nullable();
-			$table->time('hour_out')->nullable();
 			$table->boolean('state');
-
-			$table->foreign('employee_id')->references('id')->on('employees');
 			$table->timestamps();
 		});
 	}

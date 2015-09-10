@@ -121,25 +121,20 @@ class InstanceTask extends BaseTask {
 
 	}
 
-	public function getInstaceWaiting($idElder)
+	public function format($instance) {
+		$elder = $instance->elder;
+		$instance = [
+		  'id' => $instance->id,
+			'referred' => \Lang::get('utils.referred_instance.'.$instance->referred),
+	  	'address' => $instance->address,
+	  	'visit_date'=> $instance->visit_date,
+	  	'description' => $instance->description,
+	  	'elder_id' => $elder->id,
+	  	'identity_card' => $elder->identity_card,
+	  	'full_name' => $elder->full_name,	
+	  ];
 
-	{
-	  $instance = $this->instanceRepo->instanceWaiting($idElder);
-
-	  if ($instance->count() == 0)
-
-	  {
-	  	$message = 'Adulto mayor no posee notificacion de ingreso por confirmar';
-	    $this->hasException($message);
-	  }
-
-	  else
-
-	  {
-	  	$instance = $instance->first();
-	    return $instance;
-	  }
-
+	  return $instance;
 	}
 
 }

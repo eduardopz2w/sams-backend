@@ -4,56 +4,64 @@ namespace Sams\Task;
 
 use Sams\Repository\ElderRepository;
 use Sams\Repository\RecordRepository;
+use Sams\Repository\CitationRepository;
+use Sams\Repository\InstanceRepository;
 
 class ElderTask extends BaseTask {
 
 	protected $elderRepo;
 	protected $recordRepo;
+	protected $citationRepo;
+	protected $instanceRepo;
 
-	public function __construct(ElderRepository $elderRepo, RecordRepository $recordRepo)
-
-	{
-			$this->elderRepo  = $elderRepo;
-			$this->recordRepo = $recordRepo;
-	}
-
-	public function findElderById($id)
+	public function __construct(ElderRepository $elderRepo, RecordRepository $recordRepo,
+		                          CitationRepository $citationRepo, InstanceRepository $instanceRepo)
 
 	{
-			$elder = $this->elderRepo->find($id);
-			$this->elderActiviti($elder);
+	  $this->elderRepo    = $elderRepo;
+		$this->recordRepo   = $recordRepo;
+		$this->citationRepo = $citationRepo;
+		$this->instanceRepo = $instanceRepo;
 
-			return $elder;
 	}
 
-  public function findElderByCredential($identityCard)
+	// public function findElderById($id)
 
-  {
-  	  $elder = $this->elderRepo->findElderByIdentify($identityCard);
+	// {
+	// 	   $elder = $this->elderRepo->find($id);
+	// 	   $this->elderActiviti($elder);
 
-  		if ($elder->count() == 0)
+	// 		return $elder;
+	// }
 
-			{
-				  $message = 'Adulto mayor no encontrado';
-					$this->hasException($message);
-			}
+  // public function findElderByCredential($identityCard)
+
+  // {
+  // 	  $elder = $this->elderRepo->findElderByIdentify($identityCard);
+
+  // 		if ($elder->count() == 0)
+
+		// 	{
+		// 		  $message = 'Adulto mayor no encontrado';
+		// 			$this->hasException($message);
+		// 	}
 			
-			$elder = $elder->first();
-			$this->elderActiviti($elder);
-			return $elder;
-  }
+		// 	$elder = $elder->first();
+		// 	$this->elderActiviti($elder);
+		// 	return $elder;
+  // }
 
-	public function elderActiviti($elder)
+	// public function elderActiviti($elder)
 
-	{
-			if (!$elder->activiti)
+	// {
+	// 		if (!$elder->activiti)
 
-			{
-				  $message = "Adulto mayor no residente";
-				  $this->hasException($message);
-			}
+	// 		{
+	// 			  $message = "Adulto mayor no residente";
+	// 			  $this->hasException($message);
+	// 		}
 
-	}
+	// }
 
 	public function getElders($state)
 
@@ -77,6 +85,28 @@ class ElderTask extends BaseTask {
 			}
 
 			return $response;
+	}
+
+	public function format($elder)
+
+	{
+	  $instance = $this->instanceRepo->instanceWaiting($elder->id);   
+	  $citation = $this->citationRepo->citationElder($elder->id);
+
+	  $elder = ['identity_card' => $elder->identity_card,
+              'full_name'     => $elder->full_name,
+              'address'       => $elder->address,
+              'gender'        => $elder->gender,
+              'retired'       => $elder->retired,
+              'pensioner'     => $elder->pensioner,
+              'civil_status'  => \Lang::get('utils.civil_status.'. $elder->civil_status),
+              'date_birth'    => $elder->date_birth,
+              'activiti'      => $elder->activiti,
+              'image_url'     => $elder->image_url,
+              'citation'      => $citation->count(),
+              'instance'      => $instance->count()];
+              
+    return $elder;
 	}
 
 

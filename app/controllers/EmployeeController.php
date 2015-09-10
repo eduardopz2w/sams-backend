@@ -1,28 +1,74 @@
 <?php
 
 use Sams\Manager\EmployeeManager;
+use Sams\Manager\EmployeeEditManager;
 use Sams\Repository\EmployeeRepository;
+use Sams\Task\EmployeeTask;
 
 class EmployeeController extends BaseController {
    
-	 protected $employeeRepository;
+  protected $employeeRepo;
+  protected $employeeTask;
 
-	 public function __construct(EmployeeRepository $employeeRepository)
+	public function __construct(EmployeeRepository $employeeRepo, EmployeeTask $employeeTask) {
+    $this->employeeRepo = $employeeRepo;
+    $this->employeeTask = $employeeTask;
+  }
 
-	 {
-	 		$this->employeeRepository = $employeeRepository;
-	 }
+  public function create() {
+    $employee = $this->employeeRepo->createEmployee();
+    $data = Input::all();
+    $manager = new EmployeeManager($employee, $data);
+    
+    $manager->save();
 
-   public function createEmployee()
+    if (isset($data['photo'])) {
+      $this->employeeTask->addImg($employee, $data['photo'], $data['mime']); 
+    }
 
-   {
-   		$employee   = $this->employeeRepository->getModel();
-   		$manager    = new EmployeeManager($employee, Input::all());
-   		$idEmployee = $manager->confirmEmployee();
+    return Response::json(['status' => 'success',
+                           'message' => 'Empleado registrado',
+                           'id' => $employee->id]);
+  }
 
-   		return Response::json(['status'  => 'success',
-                             'message' => 'Empleado registrado',
-   			                     'id'      => $idEmployee]);
-   }
+  public function show($id) {
+    $employee = $this->employeeRepo->find($id);
+
+    $this->notFound($employee);
+
+    $employee = $this->employeeTask->format($employee);
+
+    return Response::json(['status' => 'success',
+                           'employee' => $employee]);
+  }
+
+  public function edit($id) {
+    $employee = $this->employeeRepo->find($id);
+    $data = Input::except('_method');
+    $manager = new EmployeeEditManager($employee, $data);
+
+    $manager->save();
+
+    if (isset($data['photo'])) {
+      $this->employeeTask->addImg($employee, $data['photo'], $data['mime']);
+    }
+
+    return Response::json(['status' => 'success',
+                           'message' => 'Datos actualizados']);
+  }
+
+  public function getAttendances($id) {
+    $employee = $this->employeeRepo->find($id);
+    $attendances = $employee->attendances;
+
+    $this->employeeTask->confirmAttendances($attendances);
+
+    $response = [
+      'status' => 'success',
+      'data' => $attendances
+    ];
+
+    return Response::json($response);
+  }
 
 }

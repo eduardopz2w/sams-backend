@@ -27,10 +27,10 @@ class InstanceRepository extends BaseRepository{
 			             ->where('state' ,'waiting');
 	}
 
-	public function instanceWaiting($id)
+	public function instanceWaiting($elderId)
 
 	{
-	  return Instance::where('elder_id', $id)
+	  return Instance::where('elder_id', $elderId)
 	                 ->where('state', 'waiting');
 	}
 

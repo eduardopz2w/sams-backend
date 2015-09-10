@@ -4,50 +4,45 @@ namespace Sams\Manager;
 
 class EmployeeManager extends BaseManager {
 
-	public function confirmEmployee()
+  public function getRules()
 
-	{
-			$this->save();
-			return $this->entity->id;
-	}
-	
+  {
+    $rules = [
+      'identity_card'      => 'required|numeric|unique:employees,identity_card',
+      'address'            => 'required',
+      'first_name' 		     => 'required|regex:/^[\pL\s]+$/u',
+      'last_name'  		     => 'required|regex:/^[\pL\s]+$/u',
+      'date_birth' 		     => 'required|date',
+      'phone'      		     => 'numeric',
+      'gender'             => 'required',
+      'degree_instruction' => 'required|in:none,primary,secondary,university',
+      'civil_status'       => 'required|in:married,single',
+      'office'             => 'required',
+    ];
+    return $rules;
+  }
+
 	public function prepareData($data)
 
 	{
-			$data['activiti'] = 1;
-			$this->assignUrl($data);
-			$this->checkBreakOut($data);
-			return $data;
-	}
-
-	public function assignUrl(&$data)
-
-	{
-		 $path = public_path().'\image\geriatric';
-
-			if ($data['gender'] == 'm')	
+	  $data['activiti'] = 1;
 			
-			{
-					$data['image_url'] =  $path.'\profile.default_man.jpg';
-			}
+		if (!isset($data['break_out']))
 
-			else
+		{
+		  $data['break_out'] = 0;
+		}
 
-			{
-					$data['image_url'] = $path.'\profile.default_woman.jpg';
-			}
+		else
 
-			$data['mime'] = 'jpg';
-	}
-
-	public function checkBreakOut(&$data)
-
-	{
-			if (!isset($data['break_out']))
-
-			{
-					$data['break_out'] = 0;
-			}
+		{
+		  $data['break_out'] = 1;
+		}
+    
+    array_pull($data, 'photo');
+    array_pull($data, 'mime');
+    
+		return $data;
 	}
 
 }

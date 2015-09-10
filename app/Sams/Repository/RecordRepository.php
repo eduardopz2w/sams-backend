@@ -9,36 +9,36 @@ class RecordRepository extends BaseRepository {
 	public function getModel()
 
 	{
-			return new Record;
-	}
-
-	public function getRecordDeprecated($id)
-
-	{
-			return Record::where('elder_id', $id)->where('state', false);
-	}
-
-	public function getRecordCurrent($id)
-
-	{
-			return Record::where('elder_id', $id)->where('state', true);
+	  return new Record;
 	}
 
 	public function createRecord()
 
 	{
-			$record = new Record();
-			
-			$record->image_url = 'http://localhost/image/geriatric/profile_default_man.jpg';
-			$record->mime      = 'jpg';
-			
-			return $record;
+	  $record = new Record();
+	  $record->image_url = 'http://localhost/image/geriatric/default/profile_default_man.png';
+	  $record->mime = 'jpg';	
+	  return $record;
 	}
 
-	public function allRecord($id)
+	public function record($idRecord, $idElder)
 
 	{
-      return Record::where('elder_id', $id)->orderBy('created_at', 'DESC');
+	  return Record::where('id', $idRecord)
+	               ->where('elder_id', $idElder)
+	               ->first();
 	}
+
+	public function recordCurrent($id)
+
+	{
+	  return Record::where('elder_id', $id)->where('state', 1);
+	}
+
+	// public function totalRecords($id)
+
+	// {
+ //    return Record::where('elder_id', $id)->orderBy('created_at', 'DESC');
+	// }
 
 }

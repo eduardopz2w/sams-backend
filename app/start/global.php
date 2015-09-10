@@ -100,96 +100,76 @@ require app_path().'/filters.php';
 
 date_default_timezone_set("America/Caracas");
 
-
-function current_date()
-
-{
-		return date('Y-m-d');
+function current_date() {
+	return date('Y-m-d');
 }
 
-function first_day_month($month, $year)
-
-{
-		return date('Y-m-d', mktime(0,0,0, $month, 1, $year));
+function first_day_month($month, $year) {
+	return date('Y-m-d', mktime(0,0,0, $month, 1, $year));
 }
 
-function last_day_month($month, $year)
-
-{
-		return date('Y-m-d', (mktime(0, 0, 0, $month + 1, 1, $year) -1));
+function last_day_month($month, $year) {
+	return date('Y-m-d', (mktime(0, 0, 0, $month + 1, 1, $year) -1));
 }
 
-function rest_date($days, $date)
+function rest_date($days, $date) {
+	$date = date('Y-m-d', strtotime('-'.$days. ' day', strtotime($date)));
 
-{
-		$date = date('Y-m-d', strtotime('-'.$days. ' day', strtotime($date)));
-		return $date;
+	return $date;
+}
+		
+function add_date($days, $date) {
+	$date = date('Y-m-d', strtotime('+'.$days. ' day', strtotime($date)));
+
+	return $date;
 }
 
+function date_day($date) {
+	$day = date('l', strtotime($date));
 
-function add_date($days, $date)
-
-{
-		$date = date('Y-m-d', strtotime('+'.$days. ' day', strtotime($date)));
-		return $date;
+	return strtolower($day);
 }
 
-function date_day($date)
+function add_hour($hour, $minutes) {
+	$hour = strtotime($hour);
+	$minutesAdd = date('H:i', strtotime('+'.$minutes.' minutes', $hour));
 
-{
-		$day = date('l', strtotime($date));
-		return strtolower($day);
+	return $minutesAdd;
 }
-
-
-function add_hour($hour, $minutes)
-
-{
-		$hour = strtotime($hour);
-		$minutesAdd = date('H:i', strtotime('+'.$minutes.' minutes', $hour));
-
-		return $minutesAdd;
-}
-
-function rest_minutes($hour, $minutes)
-
-{
-		$hour = strtotime($hour);
-		$minutesRest = date('H:i', strtotime('-'.$minutes.' minutes', $hour));
+	
+function rest_minutes($hour, $minutes) {
+	$hour = strtotime($hour);
+	$minutesRest = date('H:i', strtotime('-'.$minutes.' minutes', $hour));
     
-    return $minutesRest;
+  return $minutesRest;
 }
+		
+function hour_usual($hour) {
+	$minutes = '720';
+	$afternoon = '13:00';
 
-function hour_usual($hour)
+	if ($hour >= $afternoon) {
+		$hour = rest_minutes($hour, $minutes);
+		$hour = $hour.' pm';
+	}
 
-{
-		$minutes   = '720';
-		$afternoon = '13:00';
-
-		if ($hour >= $afternoon)
-
-		{
-				$hour = rest_minutes($hour, $minutes);
-				$hour = $hour.' pm';
-		}
-
-		return $hour;
+	return $hour;
 }
+		
+function scapeText($text) {
+	$textNotSpace = trim($text);
+	$textLower = strtolower($textNotSpace);
 
-function scapeText($text)
-
-{
-		$textNotSpace = trim($text);
-		$textLower = strtolower($textNotSpace);
-		return $textLower;
+	return $textLower;
 }
 
 use Sams\Entity\Configuration;
 
-function get_configuration()
-
-{
-		return Configuration::find(1);
+function get_configuration() {
+	return Configuration::find(1);
 }
+
+
+
 
 

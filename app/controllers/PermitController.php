@@ -1,40 +1,43 @@
 <?php
 
-use Sams\Manager\PermitsManager;
-use Sams\Repository\PermitsRepository;
+use Sams\Manager\PermitManager;
+use Sams\Repository\PermitRepository;
+use Sams\Repository\EmployeeRepository;
 use Sams\Task\PermitTask;
-use Sams\Task\EmployeeTask;
 
 
 class PermitController extends BaseController {
 
-	 protected $permitRepository;
-	 protected $permitTask;
-	 protected $employeeTask;
+	protected $permitRepo;
+  protected $employeeRepo;
+	protected $permitTask;
 
-   public function __construct(PermitsRepository $permitRepository, PermitTask $permitTask, 
-                               EmployeeTask $employeeTask)
-
-   {
-   	  $this->permitRepository = $permitRepository;
-   	  $this->permitTask       = $permitTask;
-   	  $this->employeeTask     = $employeeTask;
+  public function __construct(PermitRepository $permitRepo, 
+                              EmployeeRepository $employeeRepo,
+                              PermitTask $permitTask) {
+      $this->permitRepo   = $permitRepo;
+      $this->employeeRepo = $employeeRepo;
+      $this->permitTask   = $permitTask;
    }
 
-   public function createPermit($id)
+   public function createPermit($employeeId) {
+      $employee = $this->employeeRepo->find($employeeId);
+      $permit = $this->permitRepo->getModel();
+      $manager = new PermitManager($permit, array_add(Input::all(), 'employee_id', $employee->id));
+      $permit = $manager->validPermit();
 
-   {
-         $employee = $this->employeeTask->findEmployeeById($id);
-   		$permit   = $this->permitRepository->getModel();
-   		$manager  = new PermitsManager($permit, array_add(Input::all(), 'employee_id', $employee->id));
-   		$permit   = $manager->validPermit();
+      $this->permitTask->confirmedPermit($permit);
+      $manager->save();
 
-   		$this->permitTask->confirmedPermit($permit);
+      return Response::json(['status'  => 'success',
+                            'message' => 'Permiso registrado']);
+   }
+
+     
+
          
-   		$manager->save();
 
-   		return Response::json(['status'  => 'success',
-   				                 'message' => 'Permiso registrado']);
-   }
+     
+   
 
 }

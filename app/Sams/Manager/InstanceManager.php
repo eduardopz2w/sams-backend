@@ -10,7 +10,7 @@ class InstanceManager extends BaseManager {
 		$date = current_date();
 
 	  $rules = [
-	  	'identity_card' => 'required|min:6|numeric',
+	  	'identity_card' => 'required|numeric',
 	  	'full_name'     => 'required|regex:/^[\pL\s]+$/u',
 	  	'referred'      => 'required|in:presidency_inass,social_welfare,health,cssr,other',
 	  	'address'       => 'required',

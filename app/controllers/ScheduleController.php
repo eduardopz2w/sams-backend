@@ -1,54 +1,70 @@
 <?php
 
 use Sams\Repository\ScheduleRepository;
-use Sams\Task\EmployeeTask;
+use Sams\Repository\EmployeeRepository;
+use Sams\Repository\ActionRepository;
 use Sams\Task\ScheduleTask;
-use Sams\Task\ActionTask;
 
 
 class ScheduleController extends BaseController {
 
-	  protected $scheduleRepo;
-		protected $employeeTask;
-		protected $scheduleTask;
-		protected $actionTask;
+  protected $scheduleRepo;
+	protected $employeeRepo;
+	protected $actionRepo;
+	protected $scheduleTask;
 
-		public function __construct(ScheduleRepository $scheduleRepo, EmployeeTask $employeeTask, 
-			                          ScheduleTask $scheduleTask, ActionTask $actionTask)
+	public function __construct(ScheduleRepository $scheduleRepo, 
+		                          EmployeeRepository $employeeRepo, 
+		                          ActionRepository $actionRepo,
+			                        ScheduleTask $scheduleTask) {
+		$this->scheduleRepo = $scheduleRepo;
+	  $this->employeeRepo = $employeeRepo;
+	  $this->actionRepo   = $actionRepo;
+	  $this->scheduleTask = $scheduleTask;
+	}
+	 
+	public function addScheduleEmployee($id) {
+		$employee = $this->employeeRepo->find($id);
+	  $data = Input::all();
+	  $isEmployee = true;
+		$timeBreak = $employee->break_out;
+	  $response = $this->scheduleTask->addSchedule($employee, $data, $isEmployee, $timeBreak);
+
+	  return $response;
+  }
+	 
+	public function addScheduleAction($id) {
+		$action = $this->actionRepo->find($id);
+	  $data = Input::all();
+	  $isEmployee = false;
+	  $timeBreak = false;
+	  $response = $this->scheduleTask->addSchedule($action, $data, $isEmployee, $timeBreak);
+
+	  return $response;
+	}
+	  
+	public function getScheduleEmp($scheduleId, $employeeId) {
+	  $scheduleInEmployee = $this->scheduleRepo->scheduleInEmployee($scheduleId, $employeeId);
+
+    $this->notFoundPivot($scheduleInEmployee);
+
+		$schedule = $this->scheduleRepo->find($scheduleId);
 		
-		{
-			  $this->scheduleRepo = $scheduleRepo;
-				$this->employeeTask = $employeeTask;
-				$this->scheduleTask = $scheduleTask;
-				$this->actionTask   = $actionTask;
-		}
+		return Response::json(['status' => 'success',
+			                     'schedule' => $schedule]);
+	}
 
-		public function addScheduleEmploye($id)
+	public function removeScheduleEmp($scheduleId, $employeeId) {
+		$employee = $this->employeeRepo->find($employeeId);
+		$data = Input::all();
+		$isEmployee = true;
+		$timeBreak = $employee->break_out;
+		$response = $this->scheduleTask->addSchedule($employee, $data, $isEmployee, $timeBreak);
 
-		{
-	 	    $employee = $this->employeeTask->findEmployeeById($id);
+		$employee->schedules()->detach($scheduleId);
 
-				$data       = Input::all();
-				$isEmployee = true;
-				$timeBreak  = $employee->break_out;
-				$response   = $this->scheduleTask->addSchedule($employee, $data, $isEmployee, 
-					                                             $timeBreak);
-
-				return $response;
-		}
-
-		public function addScheduleAction($id)
-
-		{
-				$action     = $this->actionTask->confirmedAction($id);
-				$data       = Input::all();
-				$isEmployee = false;
-				$timeBreak  = false;
-				$response   = $this->scheduleTask->addSchedule($action, $data, $isEmployee, 
-					                                             $timeBreak);
-
-				return $response;
-		}
+		return $response;
+	}
 
 }
 

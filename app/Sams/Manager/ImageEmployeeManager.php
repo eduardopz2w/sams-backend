@@ -2,28 +2,19 @@
 
 namespace Sams\Manager;
 
-class ImageEmployeeManager extends PictureManager {
+class ImageEmployeeManager extends ImageManager {
 
-	public function getNameFile()
-
-	{
-			$idF  = $this->entity->id;
-			$mime = $this->entity->mime;
-			return '\img'.$idF.'.'.$mime;
+	public function getDirName() {
+	  return public_path().'\image\geriatric\employees'.'\employee'.$this->entity->id;
 	}
 
-	public function getDirName()
-
-	{
-		  $idE = $this->entity->id;
-			return public_path().'\image\geriatric\employees'.'\employee'.$idE;
-	}
-	public function getFormatNameFile()
-
-	{
-		 $file = $this->getSpaceExtensions();
-		 return $formatNameFile  = str_replace('\img', 'img', $file);
+	public function getNameFile() {
+		$image = uniqid('\img', true);
+	  $image = str_replace('.', '', $image);
+	  $image = $image.$this->entity->id.'.'.$this->entity->mime;
+	  
+	  return $image;
 	}
 
-
+	
 }

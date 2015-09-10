@@ -2,24 +2,22 @@
 
 namespace Sams\Manager;
 
-class ImageRecordManager extends PictureManager {
-
-	
-	public function getNameFile()
-
-	{
-		  $idH  = $this->entity->id;
-		  $mime = $this->entity->mime;
-
-		  return '\history'.$idH.'.'.$mime;
-	}
+class ImageRecordManager extends ImageManager {
 
 	public function getDirName()
 
 	{
-			$idE  = $this->entity->elder_id;
-			return public_path().'\image\geriatric\records'.'\elder'.$idE;
+	  return public_path().'\image\geriatric\records\elder' . $this->entity->elder_id;
 	}
 
+	public function getNameFile()
+
+	{
+		$history = uniqid('\history', true);
+		$history = str_replace('.', '', $history);
+		$history = $history.$this->entity->id.'.'.$this->entity->mime;
+
+		return $history;
+	}
 
 }

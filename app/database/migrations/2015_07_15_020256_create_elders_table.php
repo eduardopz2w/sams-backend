@@ -17,11 +17,11 @@ class CreateEldersTable extends Migration {
 			$table->increments('id');
 			$table->string('identity_card');
 			$table->string('full_name');
-			$table->string('address');
-			$table->char('gender');
-			$table->boolean('retired');
-			$table->boolean('pensioner');
-			$table->string('civil_status');
+			$table->string('address')->nullable();
+			$table->char('gender')->nullable();
+			$table->boolean('retired')->nullable();
+			$table->boolean('pensioner')->nullable();
+			$table->string('civil_status')->nullable();
 			$table->date('date_birth')->nullable();
 			$table->boolean('activiti');
 			$table->timestamps();

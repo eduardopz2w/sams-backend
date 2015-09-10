@@ -9,18 +9,18 @@ return [
  	],
 
  'months_number' => [
- 	 	'01' => 'Enero',
-	 	'02' => 'Febrero',
-	 	'03' => 'Marzo',
-	 	'04' => 'Abril',
-	 	'05' => 'Mayo',
-	 	'06' => 'Junio',
-	 	'07' => 'Julio',
-	 	'08' => 'Agosto',
-	 	'09' => 'Septiembre',
-	 	'10' => 'Octubre',
-	 	'11' => 'Noviembre',
-	 	'12' => 'Diciembre'
+ 	 	'01' => 'enero',
+	 	'02' => 'febrero',
+	 	'03' => 'marzo',
+	 	'04' => 'abril',
+	 	'05' => 'mayo',
+	 	'06' => 'junio',
+	 	'07' => 'julio',
+	 	'08' => 'agosto',
+	 	'09' => 'septiembre',
+	 	'10' => 'octubre',
+	 	'11' => 'noviembre',
+	 	'12' => 'diciembre'
 	],
 
 	'referred_instance' => [
@@ -29,6 +29,20 @@ return [
 	   'health'           => 'Gerencias de Salud',
 	   'cssr'             => 'Director del C.S.S.R',
 	   'other'            => 'Otros'
-	]
+	],
+
+
+	'degree_instruction' => [
+		'primary' => 'Educacion Basica',
+		'secondary' => 'Educacion Segundaria',
+		'university' => 'Educacion Superior'
+	],
+
+	'civil_status' => [
+	  'single' => 'Soltero',
+	  'married' => 'Casado'
+	],
+
+	
  	
 ];

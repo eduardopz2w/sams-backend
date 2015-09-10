@@ -1,169 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Document</title>
-    <style type="text/css">
-        .container{ width: 350px; float: left;}
-        .titulo{ font-size: 12pt; font-weight: bold;}
-        #camara, #foto{
-            width: 320px;
-            min-height: 240px;
-            border: 1px solid #008000;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style>
+    .contenedor{ width: 350px; float: left;}
+    .titulo{ font-size: 12pt; font-weight: bold;}
+    #camara, #foto{
+      width: 320px;
+      min-height: 240px;
+      border: 1px solid #008000;
+    }
+  </style>
 </head>
 <body>
-    <button id="initialize">Iniciar</button>
-    <button id="pick">Foto</button>
-    <button id="stop">Detener</button>
-    <input type="time">
-  <div id="container">
-    <video id="camera" autoplay></video>
-  </div>
-  <div id="container">
-     <canvas id="photo"></canvas>
-  </div>
 
-   <form id="files">
-      <!-- <input type="text" id="location">
-      <input type="text" id="case_situation"> -->
-      <input type="time" id="time">
-      <input type="time" id="timeH">
-      <button type="submit">Subir imagen</button>
-   </form>
-   <figure id="content" value="">
-       
-   </figure>
-
-   
-  
-<input type="text" id="field">
+<div id='botonera'>
+    <input id='botonIniciar' type='button' value = 'Iniciar'></input>
+    <input id='botonDetener' type='button' value = 'Detener'></input>
+    <input id='botonFoto' type='button' value = 'Foto'></input>
+</div>
+<div class="contenedor">
+    <div class="titulo">Cámara</div>
+    <video id="camara" autoplay controls></video>
+</div>
+<div class="contenedor">
+    <div class="titulo">Foto</div>
+    <canvas id="foto" ></canvas>
+</div> 
 
 {{HTML::script('js/jquery-1.11.3.min.js')}}
- <script>
+<script>
+                      //Nos aseguramos que estén definidas
+//algunas funciones básicas
+console.log(window.URL);
+
+window.URL = window.URL || window.webkitURL;
 
 
 
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia ||
+function() {
+    alert('Su navegador no soporta navigator.getUserMedia().');
+};
 
-    window.URL = window.URL || window.webkitURL;
-    
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia ||
-                            navigator.mozGetUserMedia || navigator.msGetUserMedia || 
-                            function(){alert('Su navegador no soporta navigator.getUserMedia().');};
 
-  $(function () {
-    
-    // Upload File
+console.log(navigator.getUserMedia);
+//Este objeto guardará algunos datos sobre la cámara
+window.datosVideo = {
+    'StreamVideo': null,
+    'url': null
+}
 
-   // var fileImg  = document.getElementById('fileImage');
-   var formData = new FormData();
-   var photo    = $('#photo');
-   var ctx      = photo[0].getContext('2d');
-  
-  
+jQuery('#botonIniciar').on('click', function(e) {
 
-   function showUploadedImage(source) {
-        // var $content = $('#content');
-        var imgShow  = document.createElement('img');
-
-        imgShow.src = source;
-        var width = imgShow.width;
-        var height = imgShow.height;
-
-        photo.attr({'width': 1200, 'height': 800});
+    //Pedimos al navegador que nos da acceso a 
+    //algún dispositivo de video (la webcam)
+    navigator.getUserMedia({
+        'audio': false,
+        'video': true
+    }, function(streamVideo) {
+        console.log(streamVideo);
         
-        ctx.drawImage(imgShow, 0, 0, 1200, 800);
-        $content.html(imgShow);
+        datosVideo.StreamVideo = streamVideo;
+        datosVideo.url = window.URL.createObjectURL(streamVideo);
+        jQuery('#camara').attr('src', datosVideo.url);
 
-   }
-
-   fileImg.addEventListener('change', function (e) {
-        var file   = e.target.files;
-        var reader = new FileReader();
-
-        reader.onloadend = function (e) {
-            console.log(formData);
-            formData.append('photo', file[0]);
-            showUploadedImage(e.target.result);
-
-        }
-
-        reader.readAsDataURL(file[0]);
-        
-   });
-
-   $('#files').on("submit", function (e) {
-        e.preventDefault();
-
-        // var time = $('#time').val();
-        // var timeH = $('#timeH').val();
-
-        // formData.append('time', time);
-        // formData.append('timeH', timeH);
-/*
-        var case_situation = $('#case_situation').val();
-        var location = $('#location').val();
-
-        formData.append('case_situation', case_situation);
-        formData.append('location', location);
-       */
-        $.ajax({
-               url: 'register/img/record/1',
-               type: 'POST',
-               data: formData,
-               processData : false, 
-              contentType : false,
-              success: function (e) {
-               console.log('funciono');
-            }
-       })
-
-   })
-
-   
- // Pick life
-    window.dataVideo = {
-        'StreamVideo' : null,
-        'url' : null
-    };
-
-
-    var btnInitialize = document.getElementById('initialize');
-    var btnStop       = document.getElementById('stop');
-    var btnPick       = document.getElementById('pick');
-    var dataUrl;
-    var fileSubmit;
-
-    btnInitialize.addEventListener('click', function () {
-        navigator.getUserMedia({audio: false, video: true}, function (streamVideo) {
-            dataVideo.StreamVideo = streamVideo;
-            dataVideo.url = window.URL.createObjectURL(streamVideo);
-            $('#camera').attr('src', dataVideo.url);
-        },function () {alert('no se pudo realizar conexion con la camara')})
+    }, function() {
+        alert('No fue posible obtener acceso a la cámara.');
     });
 
-    btnStop.addEventListener('click', function () {
-        if (dataVideo.StreamVideo)  {
-            dataVideo.StreamVideo.stop();
-            window.URL.revokeObjectURL(dataVideo.url);
-        }
+
+
+});
+
+jQuery('#botonDetener').on('click', function(e) {
+
+    if (datosVideo.StreamVideo) {
+        datosVideo.StreamVideo.stop();
+        window.URL.revokeObjectURL(datosVideo.url);
+    }
+
+});
+
+jQuery('#botonFoto').on('click', function(e) {
+    var oCamara, oFoto, oContexto, w, h;
+
+    oCamara = jQuery('#camara');
+    oFoto = jQuery('#foto');
+    w = oCamara.width();
+    h = oCamara.height();
+    oFoto.attr({
+        'width': w,
+        'height': h
     });
+    oContexto = oFoto[0].getContext('2d');
+    oContexto.drawImage(oCamara[0], 0, 0, w, h);
 
-    btnPick.addEventListener('click', function () {
-            var camera = $('#camera');
-            var width  = camera.width();
-            var height = camera.height();
-            photo.attr({'width' : width, 'height': height});
-            ctx.drawImage(camera[0], 0, 0, width, height);
-
-            dataUrl = photo[0].toDataURL('image/png');
-            $('#content').html(camera[0]);
-            formData.append('photo', dataUrl);
-    });
-
-  })//jquery ready
- </script>
+});
+</script>
 </body>
 </html>
 

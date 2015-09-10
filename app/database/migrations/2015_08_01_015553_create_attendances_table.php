@@ -16,14 +16,12 @@ class CreateAttendancesTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('employee_id')->unsigned();
-			$table->time('retardation');
-			$table->time('extra_hours');
 			$table->char('state');
 			$table->string('turn');
 			$table->time('start_time');
 			$table->time('departure_time');
-			$table->time('check_in')->nullable();
-			$table->time('check_out')->nullable();
+			$table->time('hour_in')->nullable();
+			$table->time('hour_out')->nullable();
 			$table->integer('notifying_id')->nullable();
 			$table->string('notifying_type')->nullable();
 			$table->date('date_day');

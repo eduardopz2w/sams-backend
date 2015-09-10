@@ -6,51 +6,67 @@ use Sams\Entity\Attendance;
 
 class AttendanceRepository extends BaseRepository {
 
-	public function getModel()
 
-	{
-		 return new Attendance;
+	public function getModel() {
+		return new Attendance;
+	}
+	
+	public function attendanceForDay($date) {
+		return Attendance::where('created_at', 'LIKE', '%'.$date.'%');
 	}
 
-
-	public function attendanceDayConfirm($date)
-
-	{
-			return Attendance::where('created_at', 'LIKE', '%'.$date.'%');
+	public function attendanceToday($date, $hour) {
+		return Attendance::join('employees', 'attendances.employee_id', '=', 'employees.id')
+										 ->select(
+		  		            	'employees.identity_card',
+		  		            	'employees.first_name',
+		  		            	'employees.last_name',
+		  		            	'attendances.start_time',
+		  		             	'attendances.date_day',
+		  		             	'attendances.id'
+		  		             )
+											 ->where('attendances.date_day', $date)
+                       ->where('state', 'I')
+                       ->where('departure_time', '<=', $hour);
 
 	}
 
-	public function attendanceDay($date, $sooner, $hour)
-
-	{
-			$join = Attendance::join('employees', 'attendances.employee_id', '=', 'employees.id')
-												->select(
-		  		            		'employees.id',
-		  		            		'employees.first_name',
-		  		            		'employees.last_name',
-		  		            		'attendances.start_time',
-		  		              	'attendances.departure_time',
-		  		              	'attendances.date_day'
-		  		              );
-
-		  if (is_null($sooner))
-
-		  {
-		  		$attendances = $join->where('attendances.date_day', $date)
-                       			  ->where('state', '<>', 'A')
-                       			  ->where('departure_time', '<=', $hour);
-		  }
-
-		  else
-
-		  {
-		  		$attendances = $join->where('attendances.date_day', $date)
-                       			  ->where('state', '<>', 'A');
-			                 				
-		  }
-
-		  return $attendances;
+	public function attendanceForDate($date) {
+		return Attendance::join('employees', 'attendances.employee_id', '=', 'employees.id')
+										 ->select(
+										 		'employees.identity_card',
+		  		            	'employees.first_name',
+		  		            	'employees.last_name',
+		  		            	'attendances.start_time',
+		  		            	'attendances.departure_time',
+		  		              'attendances.hour_in',
+		  		              'attendances.hour_out',
+		  		             	'attendances.state',
+		  		             	'attendances.id'
+		  		            )
+										  ->where('attendances.date_day', $date)
+										  ->whereNull('notifying_id');
 	}
 
+	public function attendanceWaiting ($date) {
+	  return Attendance::join('employees', 'attendances.employee_id', '=', 'employees.id')
+										  ->select(
+		  		             	 'employees.identity_card',
+		  		            	 'employees.first_name',
+		  		            	 'employees.last_name',
+		  		             	 'attendances.departure_time',
+		  		               'attendances.date_day',
+		  		               'attendances.id'
+		  		              )
+										  ->where('attendances.date_day', $date)
+										  ->where('state', 'E');
+	}
+
+	public function checkHourOut($hourIn, $hourOut, $date, $employeeId) {
+		return Attendance::where('employee_id', $employeeId)
+		                 ->where('start_time','>', $hourIn)
+		                 ->where('start_time', '<=', $hourOut)
+		                 ->where('created_at', 'LIKE', '%'.$date.'%');
+	}
 
 }
