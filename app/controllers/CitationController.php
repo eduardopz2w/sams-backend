@@ -1,7 +1,6 @@
 <?php
 
 use Sams\Manager\CitationManager;
-use Sams\Manager\ReferenceManager;
 use Sams\Repository\CitationRepository;
 use Sams\Repository\ElderRepository;
 use Sams\Repository\ReferenceRepository;
@@ -14,85 +13,120 @@ class CitationController extends BaseController {
 	protected $citationRepo;
 	protected $referenceRepo;
 	protected $citationTask;
-	protected $elderTask;
 
-	public function __construct(CitationTask $citationTask, ElderRepository $elderRepo, ElderTask $elderTask, 
-		                          CitationRepository $citationRepo, ReferenceRepository $referenceRepo)
 
-	{
+	public function __construct(ElderRepository $elderRepo, 
+		                          CitationRepository $citationRepo, 
+		                          ReferenceRepository $referenceRepo,
+		                          CitationTask $citationTask) {
 		$this->elderRepo     = $elderRepo;
 	 	$this->citationRepo  = $citationRepo;
 	 	$this->referenceRepo = $referenceRepo;
-	 	$this->elderTask     = $elderTask;
 		$this->citationTask  = $citationTask;
 	}
 
-	public function createCitation($id)
-
-	{
-		$elder    = $this->elderTask->findElderById($id);
-		$data     = Input::all();
+	public function create($elderId) {
+		$elder = $this->elderRepo->find($elderId);
 		$citation = $this->citationRepo->getModel();
-		$manager  = new CitationManager($citation, array_add($data,'elder_id', $id));
-		$hour     = $data['hour'];
-		$dateDay  = $data['date_day'];
+		$data = Input::all();
+		$manager = new CitationManager($citation, $data);
 
 		$manager->isValid();
 
-		$this->citationTask->hourInterval($elder->id, $hour, $dateDay);
-	 			
+		$hour = $data['hour'];
+		$date = $data['date_day'];
+
+		$this->citationTask->confirmHour($date, $hour);
+		$this->citationTask->hourInterval($elder, $hour, $date);
+		$manager->save();
+		$elder->citations()->save($citation);
+
+		$response = [
+			'status' => 'success',
+			'message' => 'Cita ha sido guardada'
+		];
+
+		return Response::json($response);
+	}
+
+	public function citationsForElder($elderId) {
+		$elder = $this->elderRepo->find($elderId);
+		$citations = $this->citationTask->getElderCitations($elder);
+		$response = [
+			'status' => 'success',
+			'data' => $citations
+		];
+
+		return Response::json($citations);
+	}
+
+	public function show($elderId, $citationId) {
+		$elder = $this->elderRepo->find($elderId);
+		$citation = $elder->citations()->where('id', $citationId)->first();
+
+		$this->notFound($citation);
+
+		$response = [
+			'status' => 'success',
+			'data' => $citation
+		];
+
+		return Response::json($response);
+	}
+
+	public function edit($elderId, $citationId) {
+		$elder = $this->elderRepo->find($elderId);
+		$citation = $this->citationRepo->find($citationId);
+		$data = Input::except('_method');
+		$manager = new CitationManager($citation, $data);
+
+		$manager->isValid();
+
+		$hour = $data['hour'];
+		$date = $data['date_day'];
+
+		$this->citationTask->confirmHour($date, $hour);
+		$this->citationTask->hourInterval($elder, $hour, $date);
 		$manager->save();
 
-		return Response::json(['status'  => 'success',
-	 				                     'message' => 'cita guardada']);
+		$response = [
+			'status' => 'success',
+			'message' => 'Cita ha sido modificada'
+		];
+
+		return Response::json($response);
 	}
 
-	 // public function confirmedCitation($id, $confirmed = null, $notification = null)
+	public function delete($elderId , $citationId) {
+		$citation = $this->citationRepo->find($citationId);
 
-	 // {
-	 // 	    // arreglar
-	 // 	    $citation = $this->citationRepo->find($id);
-	 // 	    $this->citationTask->citationConfirmed($citation);
+		$citation->delete();
 
-	 // 	    $elder = $citation->elder;
-        
-	 // 			if ($notification)
+		$response = [
+			'status' => 'success',
+			'message' => 'Cita eliminada'
+		];
 
-	 // 			{  
-	 // 				  // manager citation
-	 // 				  $data       = Input::all();
-	 // 				  $relation   = ['elder_id' => $elder->id, 'citation_id' => $citation->id];
-	 // 				  $data       = array_merge($data, $relation);
-	 // 				  $references = $this->referenceRepo->getModel();
-	 // 					$manager    = new ReferenceManager($references, $data);		
-
-	 // 					$manager->save();
-
-	 // 			}
-
-	 // 			$message = $this->citationTask->stateCitation($citation, $confirmed, $notification);
-
-	 // 			return Response::json(['status'  => 'success',
-	 // 				                     'message' => $message]);
-	 // }
-
-	public function citationDate($date)
-
-	{
-	  $citations = $this->citationRepo->getCitationsDate($date);
-		$citations = $this->citationTask->citationConfirmedDate($citations);
-
-		return Response::json(['status' => 'success',
-	 		 	                    'data'   => $citations]);
+		return Response::json($response);
 	}
 
-	public function citationHour()
+	public function confirmed($elderId, $citationId) {
+		$citation = $this->citationRepo->find($citationId);
+		$state = Input::get('state');
+    $response = $this->citationTask->confirmedCitation($citation, $state);
 
-	{	
-	  $citations = $this->citationTask->citationConfirmHour();
-	 		
-	 	return Response::json(['status' => 'success',
-	 			                   'data'  => $citations]);
+    return $response;
+	}
+
+	public function citationsCurrent() {
+    $citations = $this->citationTask->getCurrentCitations();
+
+    $response = [
+    	'status' => 'success',
+    	'data' => $citations
+    ];
+
+    return Response::json($response);
 	}
 
 }

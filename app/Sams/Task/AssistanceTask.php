@@ -94,7 +94,7 @@ class AssistanceTask extends BaseTask {
   }
 
   public function getHour() {
-    $hour = date('H:i');
+    $hour = current_hour();
 
     return $hour;
   }

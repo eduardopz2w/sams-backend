@@ -16,21 +16,12 @@ class CreateOutputsTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('elder_id')->unsigned();
-			$table->integer('employee_id')->unsigned()->nullable();
-			$table->integer('relative_id')->unsigned()->nullable();
-			$table->string('image_url')->nullable();
-			$table->string('mime')->nullable();
-			$table->time('hour_output');
-			$table->time('hour_arrival');
-			$table->date('date_init');
-			$table->date('date_end');
+			$table->string('info')->nullable();
+			$table->date('date_start')->nullable();
+			$table->date('date_end')->nullable();
 			$table->string('type');
-			$table->string('address');
 			$table->boolean('state');
-
 			$table->foreign('elder_id')->references('id')->on('elders')->onDelete('cascade');
-			$table->foreign('employee_id')->references('id')->on('employees');
-			$table->foreign('relative_id')->references('id')->on('relatives');
 			$table->timestamps();
 		});
 	}

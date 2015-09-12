@@ -17,10 +17,10 @@ class CreateCitationsTable extends Migration {
 			$table->increments('id');
 			$table->integer('elder_id')->unsigned();
 			$table->string('state');
-			$table->string('address');
 			$table->date('date_day');
 			$table->time('hour');
 			$table->string('reason');
+			$table->foreign('elder_id')->references('id')->on('elders')->onDelete('cascade');
 			$table->timestamps();
 		});
 	}

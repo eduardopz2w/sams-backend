@@ -198,7 +198,7 @@ class AttendanceTask extends BaseTask {
 	}
 
 	public function getHour() {
-		$hour = date('H:i');
+		$hour = current_hour();
 	  $hourAfternoon = '17:00';
 	  $hourNoon  = '12:00';
 

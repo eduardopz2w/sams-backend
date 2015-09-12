@@ -104,6 +104,10 @@ function current_date() {
 	return date('Y-m-d');
 }
 
+function current_hour() {
+	return date('H:i');
+}
+
 function first_day_month($month, $year) {
 	return date('Y-m-d', mktime(0,0,0, $month, 1, $year));
 }

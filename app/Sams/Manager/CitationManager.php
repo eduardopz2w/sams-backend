@@ -4,33 +4,24 @@ namespace Sams\Manager;
 
 class CitationManager extends BaseManager {
 
-	public function getRules()
+	public function getRules() {
+		$date = current_date();
+		$day = 1;
+		$date = rest_date($day, $date);
+		$rules = [
+			'date_day' => 'required|date|after:'.$date,
+			'hour' => 'required|date_format:H:i',
+			'reason' => 'required|regex:/^[\pL\s]+$/u'
+		];
 
-	{
-		  $day = current_date();
-
-			$rules = [
-			  'address'  => 'required',
-			  'date_day' => 'required|date|after:'.$day,
-			  'hour'     => 'required|date_format:H:i',
-			  'reason'   => 'required|regex:/^[\pL\s]+$/u'
-			];
-
-			return $rules;
+		return $rules;
 	}
+		 
+	public function prepareData($data) {
+		$data['state'] = 'loading';
 
-	public function save()
-
-	{
-			$this->entity->fill($this->prepareData($this->data));
-			$this->entity->save();
+		return $data;
 	}
-
-	public function prepareData($data)
-
-	{
-			$data['state'] = 'loading';
-			return $data;
-	}
+	
 
 }

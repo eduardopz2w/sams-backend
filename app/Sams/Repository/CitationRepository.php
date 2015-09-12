@@ -6,71 +6,29 @@ use Sams\Entity\Citation;
 
 class CitationRepository extends BaseRepository {
 
-	public function getModel()
-
-	{
+	public function getModel() {
 	  return new Citation;
 	}
-
-	public function getCitationsDate($date)
-
-	{
-	  return Citation::join('elders', 'citations.elder_id', '=', 'elders.id')
-             			 ->select('citations.address', 'citations.date_day','citations.hour',
-             	              'citations.state','citations.reason',
-             	              'elders.full_name','elders.identity_card')
-             		   ->where('date_day', $date);
-	}
-
-	public function citationsCurrent()
-
-	{
-    $date         = current_date();
-    $minutes      = '60';
-    $hour         = date('H:i');
-    $hourExpected = add_hour($hour, $minutes);
-    $hourAfter    = add_hour($hourExpected, $minutes);
-      
+	
+	public function getCitationsCurrent($date, $hourExpected, $hourAfter) {
 		return Citation::join('elders', 'citations.elder_id', '=', 'elders.id')
-             			->select('citations.address',
+             			 	->select('citations.address',
              	        		 'citations.date_day',
              	             'citations.hour',
              	             'citations.reason',
              	             'elders.full_name',
              	             'elders.identity_card')
-             			->where('date_day', $date)
-             			->where('hour', '>=', $hourExpected)
-             			->where('hour', '<', $hourAfter)
-             			->where('state', 'loading')
-             			->orWhere(function ($q) use ($date, $hourExpected) {
-             						$q->where('date_day', $date)
-             							->where('hour', '<', $hourExpected)
-             							->where('state', 'loading');
+             				->where('date_day', $date)
+             				->where('hour', '>=', $hourExpected)
+             				->where('hour', '<', $hourAfter)
+             				->where('state', 'loading')
+             				->orWhere(function ($query) use ($date, $hourExpected) {
+             						$query->where('date_day', $date)
+             									->where('hour', '<', $hourExpected)
+             									->where('state', 'loading');
              				 })
-                  ->orderBy('hour', 'DESC');
+                  	->orderBy('hour', 'DESC');
 	}
-	
-	public function hourInterval($idElder, $hour, $hourBefore, $hourAfter, $date)
-
-	{
-	  return Citation::where('elder_id', $idElder)
-			             ->where('date_day', $date)
-			             ->where('hour','>', $hourBefore)
-			             ->where('hour', '<=', $hour)
-			             ->orWhere(function ($q) use ($date, $hour, $hourAfter) {
-			                  $q->where('date_day', $date)
-			                  	->where('hour', '>', $hour)
-			                  	->where('hour', '<=', $hourAfter);
-			              });
-	}
-
-  public function citationElder($idElder)
-
-  {
-    return Citation::where('elder_id', $idElder)
-                   ->where('state', 'loading');
-  }
-
 
 
 }

@@ -50,10 +50,13 @@ Route::group(['before' => 'auth-sentry'], function ()
   // auth
   Route::get('user/authenticate', 'AuthController@getUserAutenticate');
   // citation 
-  Route::post('register/citation/{id}', 'CitationController@createCitation');
-	Route::post('confirmed/citation/{id}/{confirmed?}/{notificacion?}', ['as' => 'confirmed-citation', 'uses' => 'CitationController@confirmedCitation']);
-	Route::get('citations/{date}', ['as' => 'day-citation', 'uses' => 'CitationController@citationDate']);
-  Route::get('citations/hour/day', ['as' => 'hour-citation', 'uses' => 'CitationController@citationHour']);
+  Route::post('elder/{elderId}/citation', ['as' => 'citation-create', 'uses' => 'CitationController@create']);
+  Route::get('elder/{elderId}/citations', ['as' => 'citation-all', 'uses' => 'CitationController@citationsForElder']);
+	Route::get('elder/{eldeId}/citation/{citationId}', ['as' => 'citation-show', 'uses' => 'CitationController@show']);
+  Route::put('elder/{elderId}/citation/{citationId}/edit', ['as' => 'citation-edit', 'uses' => 'CitationController@edit']);
+  Route::get('elder/{elderId}/citation/{citationId}/confirmed', ['as' => 'citation->confirmed', 'uses' => 'CitationController@confirmed']);
+  Route::delete('elder/{elderId}/citation/{citationId}/delete', ['as' => 'citation-delete', 'uses' => 'CitationController@delete']);
+  Route::get('citations/current', ['as' => 'citation-current', 'uses' => 'CitationController@citationsCurrent']);
   // action
   Route::post('action/register', ['as' => 'action-register', 'uses' => 'ActionController@register']);
   Route::get('action/all', ['as' => 'action-all', 'uses' => 'ActionController@actions']);
@@ -73,8 +76,17 @@ Route::group(['before' => 'auth-sentry'], function ()
   Route::delete('occasion/{id}/delete', ['as' => 'occasion-delete', 'uses' => 'OccasionController@delete']);
   // relative
   Route::post('register/relative', ['as' => 'add-relative', 'uses' => 'RelativeController@createRelative']);
+
+  //Product
+  Route::post('product/register', ['as' => 'product-register', 'uses' => 'ProductController@register']);
+  Route::get('product/all', ['as' => 'product-all', 'uses' => 'ProductController@all']);
+  Route::get('product/{id}', ['as' => 'product-show', 'uses' => 'ProductController@show']);
+  Route::put('product/{id}/edit', ['as' => 'product-edit', 'uses' => 'ProductController@edit']);
+  Route::delete('product/{id}/delete', ['as' => 'product-delete', 'uses' => 'ProductController@delete']);
+
+
   // output
-  Route::post('register/output', ['as' => 'add-output', 'uses' => 'OutputController@createOutput']);
+  Route::post('elder/{elderId}/output', ['as' => 'output-create', 'uses' => 'OutputController@create']);
   // search smart
   Route::get('search/elders', ['as' => 'search-elders', 'uses' => 'SearchController@searchElder']);
 });
