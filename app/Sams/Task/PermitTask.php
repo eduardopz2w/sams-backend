@@ -46,7 +46,6 @@ class PermitTask extends BaseTask {
 		  $message = 'Empleado ha usado la cantidad maxima de '.$maxPermit.' permisos por el mes de '.$month;
 
 		  $this->hasException($message);
-
 	  }
 
 		$this->permissonAccordingType($permit);

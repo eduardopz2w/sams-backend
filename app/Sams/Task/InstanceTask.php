@@ -9,120 +9,64 @@ class InstanceTask extends BaseTask {
 	protected $elderRepo;
 	protected $instanceRepo;
 
-  public function __construct(ElderRepository $elderRepo, InstanceRepository $instanceRepo)
-
-	{
-	  $this->elderRepo    = $elderRepo;
+  public function __construct(ElderRepository $elderRepo, 
+  	                          InstanceRepository $instanceRepo) {
+  	$this->elderRepo    = $elderRepo;
 	  $this->instanceRepo = $instanceRepo;
-	}
-
-	public function elderFound($identityCard)
-
-	{
-	  $elder = $this->elderRepo->findElderByIdentify($identityCard);
-
-	  if ($elder->count() > 0)
-
-	  {
-		  $elder = $elder->first();
-		}
-
-		else
-
-		{
-		  $elder = $this->elderRepo->getModel();
-		}
-
-		return $elder;
-	}
-
-	public function confirmElder($elder)
-
-	{
-	  $this->instanceWaiting($elder->id);
-    $this->elderResident($elder);
-	}
-
-	public function instanceWaiting($idElder)
-
-	{
-	  $instanceWaiting = $this->instanceRepo->instanceWaiting($idElder);
-		  
-		if ($instanceWaiting->count() > 0)
-
-		{
-		  $message = 'Debe confirmar notificacion pendiente';
-		  $this->hasException($message);	
-		}
-	}
-
-	public function elderResident($elder)
-
-	{
-	  if ($elder->activiti)
-
-		{
-		  $message = 'Adulto Mayor ya residenciado';
-		  $this->hasException($message);
-		}
-	}
-
-
-	public function confirmInstance($instance, $state)
-
-	{
-	  if ($state == 'confirmed')
-
-		{
-	  	$instance->state = $state;
-	  	$instance->save();
-			$this->confirmedElder($instance);
-
-			$response = ['status'  => 'success',
-			             'message' => 'Notificacion de entrada confirmada'];
-		}
-
-		else
-
-		{
-		  $instance->state = $state;
-		  $instance->save();
-
-		  $response = ['status' => 'info',
-		               'message' => 'Notificacion de entrada ha sido rechazada'];
-		}
-
-		return $response;
-
-	}
-
-	public function confirmedElder($instance)
-
-	{
-	  $elder = $instance->elder;
-	  $elder->activiti = 1;
-	  $elder->save();
-	}
-
-	public function maxElders()
-
-	{
-	  $config   = get_configuration();
+  }
+	 
+	public function maxElders() {
+		$config = get_configuration();
 	  $maxElder = $config->max_impeachment;
-	  $state    = 'active';
-	  $elders   = $this->elderRepo->elders($state);
+	  $state = 'active';
+	  $elders = $this->elderRepo->elders($state);
+	  $count = $elders->count();
 
-	  if ($maxElder == $elders->count())
-
-	  {
+	  if ($maxElder == $count) {
 	    $message = 'El maximo de adultos residentes es de'.$maxElder;
+
 	    $this->hasException($message);
 	  }
+	}
+	  
+	public function elderFound($identityCard) {
+		$elder = $this->elderRepo->findElderByIdentify($identityCard);
 
+	  if ($elder->count() > 0) {
+	  	$elder = $elder->first();
+
+	  	$this->confirmElder($elder);
+
+		  return $elder;
+	  }
+		
+		else {
+		  $elder = $this->elderRepo->getModel();
+		  $elder = $elder->create(['identity_card' => $identityCard]);
+
+		  return $elder;
+		}
+	}
+	 
+	public function confirmElder($elder) {
+		if ($elder->activiti) {
+			$message = 'Adulto mayor ya es residente';
+
+			$this->hasException($message);
+		}
+
+		$instance = $elder
+									->instances()
+										->where('state', 'waiting');
+
+		if ($instance->count() > 0) {
+			$message = 'Adulto mayor posee notificacion de registro por confirmar';
+
+			$this->hasException($message);
+		}
 	}
 
-	public function format($instance) {
-		$elder = $instance->elder;
+	public function format($elder, $instance) {
 		$instance = [
 		  'id' => $instance->id,
 			'referred' => \Lang::get('utils.referred_instance.'.$instance->referred),
@@ -136,5 +80,53 @@ class InstanceTask extends BaseTask {
 
 	  return $instance;
 	}
+
+	public function confirmInstance($instance, $state) {
+		if ($state == 'confirmed') {
+			$message = 'Notificacion confirmada';
+		} else {
+			$message = 'Notificacion rechazada';
+		}
+
+		$instance->state = $state;
+		$instance->save();
+
+		$response = [
+			'status' => 'success',
+			'message' => $message
+		];
+
+		return $response;
+	}
+
+	public function getInstancesWaiting() {
+		$date = current_date();
+		$instances = $this->instanceRepo->getInstanceVisited($date);
+
+		if ($instances->count() == 0) {
+			$message = 'No hay notificaciones de entradada por confirmar';
+
+			$this->hasException($message);
+		}
+    
+    $instances = $instances->get();
+
+    return $instances;
+	}
+
+	public function getInstancesElder($elder) {
+		$instances = $elder->instances();
+
+		if ($instances->count() == 0) {
+			$message = 'Adulto mayor no posee notifacion de entrada registradas';
+
+			$this->hasException($message);
+		}
+
+		$instances = $instances->get();
+
+		return $instances;
+	}
+
 
 }

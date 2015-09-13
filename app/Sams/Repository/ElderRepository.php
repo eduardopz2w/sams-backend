@@ -6,61 +6,44 @@ use Sams\Entity\Elder;
 
 class ElderRepository extends BaseRepository{
 	
-	public function getModel()
-
-	{
-			return new Elder;
+	public function getModel() {
+		return new Elder;
 	}
 
-	public function findElderByIdentify($identify)
-
-	{
-	  return Elder::where('identity_card', $identify);
+	public function elderWithRecord($id) {
+	  return Elder::where('elders.id', $id)
+	           		 ->leftJoin('records', 'elders.id', '=', 'records.elder_id')
+             		 ->orderBy('records.created_at', 'DESC')
+	           		 ->select('*', 'elders.id')
+	           		 ->first();
 	}
 
-
-	public function findEldersByName($name)
-
-	{
-	  return Elder::where('full_name', 'LIKE', '%'.$name.'%')
-	              ->take(5)
-	              ->get()
-	              ->toArray();
+	public function findEldersByName($name) {
+		return Elder::where('full_name', 'LIKE', '%'.$name.'%')
+	               ->take(5)
+	               ->get()
+	               ->toArray();
 	}
 
-	public function elders($state)
-
-	{
-	  $join = Elder::leftJoin('records', 'elders.id', '=', 'records.elder_id')
-			    			 ->select('elders.id', 
+	public function findElderByIdentify($identityCard) {
+		return Elder::where('identity_card', $identityCard);
+	}
+	
+	public function elders($state) {
+		$join = Elder::leftJoin('records', 'elders.id', '=', 'records.elder_id')
+			    			  ->select('elders.id', 
 			    				  	    'elders.full_name', 
 			    				  	    'elders.identity_card',
 			    							  'records.image_url'
 			    							  );
 			    				  
-    if ($state == 'active')
+    if ($state == 'active') {
+		  $elders = $join->where('activiti', 1);
+    } else {
+    	$elders = $join->where('activiti', 0);
+    }
 
-		{
-		  $query = $join->where('activiti', 1);
-		}
-
-		else
-
-		{
-		  $query = $join->where('activiti', 0);
-		}
-
-		return $query;
+		return $elders;
 	}
-
-	public function elderWithRecord($id)
-
-	{
-	  return  Elder::where('elders.id', $id)
-	           ->leftJoin('records', 'elders.id', '=', 'records.elder_id')
-             ->orderBy('records.created_at', 'DESC')
-	           ->select('*', 'elders.id')
-	           ->first();
-
-	}
+	
 }

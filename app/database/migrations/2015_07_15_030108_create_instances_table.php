@@ -20,7 +20,7 @@ class CreateInstancesTable extends Migration {
 			$table->string('address');
 			$table->date('visit_date');
 			$table->string('description')->nullable();
-			$table->enum('state', ['waiting', 'rejected', 'confirmed']);
+			$table->enum('state', ['waiting', 'reject', 'confirmed']);
 
       $table->foreign('elder_id')->references('id')->on('elders')->onDelete('cascade');
 			$table->timestamps();

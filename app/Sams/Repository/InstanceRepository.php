@@ -6,32 +6,27 @@ use Sams\Entity\Instance;
 
 class InstanceRepository extends BaseRepository{
 	
-	public function getModel()
-
-	{
-			return new Instance;
+	public function getModel() {
+		return new Instance;
 	}
 
-	public function getInstanceConfirmed($id)
-
-	{
-	  return Instance::where('elder_id', $id)
-			             ->where('state', 'confirmed');
+	public function getInstanceVisited($date) {
+		return Instance::join('elders', 'instances.elder_id', '=', 'elders.id')
+		               ->select(
+		               		'elders.identity_card',
+		               		'instances.referred',
+		               		'instances.address',
+		               		'instances.visit_date',
+		               		'instances.description'
+		               	)
+		               ->where('visit_date', '<=', $date)
+			             ->where('state' ,'waiting')
+			             ->orderBy('visit_date', 'DESC');
 	}
 
-	public function getInstanceVisited()
+	
+		
+	
 
-	{
-	  $date = current_date();
-		return Instance::where('visit_date', $date)
-			             ->where('state' ,'waiting');
-	}
-
-	public function instanceWaiting($elderId)
-
-	{
-	  return Instance::where('elder_id', $elderId)
-	                 ->where('state', 'waiting');
-	}
 
 }

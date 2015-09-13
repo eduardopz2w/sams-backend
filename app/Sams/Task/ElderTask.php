@@ -4,8 +4,6 @@ namespace Sams\Task;
 
 use Sams\Repository\ElderRepository;
 use Sams\Repository\RecordRepository;
-use Sams\Repository\CitationRepository;
-use Sams\Repository\InstanceRepository;
 
 class ElderTask extends BaseTask {
 
@@ -14,16 +12,51 @@ class ElderTask extends BaseTask {
 	protected $citationRepo;
 	protected $instanceRepo;
 
-	public function __construct(ElderRepository $elderRepo, RecordRepository $recordRepo,
-		                          CitationRepository $citationRepo, InstanceRepository $instanceRepo)
+	public function __construct(ElderRepository $elderRepo,
+                              RecordRepository $recordRepo) {
+    $this->elderRepo  = $elderRepo;
+    $this->recordRepo = $recordRepo;
+  }
 
-	{
-	  $this->elderRepo    = $elderRepo;
-		$this->recordRepo   = $recordRepo;
-		$this->citationRepo = $citationRepo;
-		$this->instanceRepo = $instanceRepo;
+  public function maxElders() {
+    $config = get_configuration();
+    $maxElder = $config->max_impeachment;
+    $state = 'active';
+    $elders = $this->elderRepo->elders($state);
+    $count = $elders->count();
 
-	}
+    if ($maxElder == $count) {
+      $message = 'El maximo de adultos residentes es de'.$maxElder;
+
+      $this->hasException($message);
+    }
+  }
+
+  public function format($elder) {
+    $instance = $elder
+                  ->instances()
+                    ->where('state', 'waiting')
+                    ->count();
+    $citation = $elder
+                  ->citations()
+                    ->count();
+    $elder = [
+      'identity_card' => $elder->identity_card,
+      'full_name' => $elder->full_name,
+      'address' => $elder->address,
+      'gender' => $elder->gender,
+      'retired' => $elder->retired,
+      'pensioner' => $elder->pensioner,
+      'civil_status' => \Lang::get('utils.civil_status.'. $elder->civil_status),
+      'date_birth' => $elder->date_birth,
+      'activiti' => $elder->activiti,
+      'image_url'=> $elder->image_url,
+      'citation' => $citation,
+      'instance' => $instance
+    ];
+              
+    return $elder;
+  }
 
 	// public function findElderById($id)
 
@@ -87,27 +120,11 @@ class ElderTask extends BaseTask {
 			return $response;
 	}
 
-	public function format($elder)
+	
 
-	{
-	  $instance = $this->instanceRepo->instanceWaiting($elder->id);   
-	  $citation = $this->citationRepo->citationElder($elder->id);
-
-	  $elder = ['identity_card' => $elder->identity_card,
-              'full_name'     => $elder->full_name,
-              'address'       => $elder->address,
-              'gender'        => $elder->gender,
-              'retired'       => $elder->retired,
-              'pensioner'     => $elder->pensioner,
-              'civil_status'  => \Lang::get('utils.civil_status.'. $elder->civil_status),
-              'date_birth'    => $elder->date_birth,
-              'activiti'      => $elder->activiti,
-              'image_url'     => $elder->image_url,
-              'citation'      => $citation->count(),
-              'instance'      => $instance->count()];
-              
-    return $elder;
-	}
+	
+	  
+	
 
 
 }

@@ -16,19 +16,23 @@ class EmployeeController extends BaseController {
   }
 
   public function create() {
-    $employee = $this->employeeRepo->createEmployee();
+    $employee = $this->employeeRepo->getModel();
     $data = Input::all();
     $manager = new EmployeeManager($employee, $data);
     
-    $manager->save();
+    $manager->create();
 
     if (isset($data['photo'])) {
-      $this->employeeTask->addImg($employee, $data['photo'], $data['mime']); 
+      $this->employeeTask->addImg($employee, $data['photo'], $data['mimeRequest']); 
     }
 
-    return Response::json(['status' => 'success',
-                           'message' => 'Empleado registrado',
-                           'id' => $employee->id]);
+    $response = [
+      'status' => 'success',
+      'message' => 'Empleado registrado',
+      'data' => $employee
+    ];
+
+    return Response::json($response);
   }
 
   public function show($id) {
@@ -47,14 +51,18 @@ class EmployeeController extends BaseController {
     $data = Input::except('_method');
     $manager = new EmployeeEditManager($employee, $data);
 
-    $manager->save();
+    $manager->edit();
 
     if (isset($data['photo'])) {
-      $this->employeeTask->addImg($employee, $data['photo'], $data['mime']);
+      $this->employeeTask->addImg($employee, $data['photo'], $data['mimeRequest']);
     }
 
-    return Response::json(['status' => 'success',
-                           'message' => 'Datos actualizados']);
+    $response = [
+      'status' => 'success',
+      'message' => 'Datos actualizados'
+    ];
+
+    return Response::json($response);
   }
 
   public function getAttendances($id) {

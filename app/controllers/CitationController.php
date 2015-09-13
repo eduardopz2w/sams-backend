@@ -30,17 +30,15 @@ class CitationController extends BaseController {
 		$citation = $this->citationRepo->getModel();
 		$data = Input::all();
 		$manager = new CitationManager($citation, $data);
-
-		$manager->isValid();
-
+		$citation = $manager->saveRelation();
 		$hour = $data['hour'];
 		$date = $data['date_day'];
 
 		$this->citationTask->confirmHour($date, $hour);
 		$this->citationTask->hourInterval($elder, $hour, $date);
-		$manager->save();
+	
 		$elder->citations()->save($citation);
-
+	
 		$response = [
 			'status' => 'success',
 			'message' => 'Cita ha sido guardada'
@@ -87,7 +85,7 @@ class CitationController extends BaseController {
 
 		$this->citationTask->confirmHour($date, $hour);
 		$this->citationTask->hourInterval($elder, $hour, $date);
-		$manager->save();
+		$manager->edit();
 
 		$response = [
 			'status' => 'success',

@@ -31,8 +31,8 @@ class ScheduleTask extends BaseTask {
 		$scheduleConfirmed = $this->scheduleConfirmed($data, $days, $entity, $isEmployee);
 
 		if ($scheduleConfirmed) {
-			$manager->save();
-		  $entity->schedules()->attach($schedule->id);
+			$schedule = $manager->saveRelation();
+		  $entity->schedules()->save($schedule);
 		}
 
 		$response = [

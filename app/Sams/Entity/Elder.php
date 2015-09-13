@@ -4,7 +4,7 @@ namespace Sams\Entity;
 
 class Elder extends \Eloquent {
 	protected $fillable = ['identity_card', 'full_name', 'address', 'gender',
-	                       'retired', 'pensioner', 'civil_status', 'date_birth'];
+	                       'retired', 'pensioner', 'civil_status', 'date_birth', 'activiti'];
 
 	public function instances() {
 		return $this->hasMany('Sams\Entity\Instance');

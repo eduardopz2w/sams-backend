@@ -31,9 +31,81 @@ class OutputController extends BaseController {
 
 		$manager->isValid();
 		$this->outputTask->confirmedDate($data);
-		$manager->save();
-		$elder->outputs()->save(output);
+		
+		$output = $manager->saveRelation();
+
+		$elder->outputs()->save($output);
+
+		$response = [
+		 'status' => 'success',
+		 'message' => 'Salida guardada'
+		];
+
+		return Response::json($response);
 	}
+
+	public function show($elderId, $outputId) {
+		$elder = $this->elderRepo->find($elderId);
+		$output = $elder->outputs()->where('id', $outputId)->first();
+
+		$this->notFound($output);
+
+		$response = [
+			'status' => 'success',
+			'data' => $output
+		];
+
+		return Response::json($response);
+	}
+
+	public function confirmed($elderId, $outputId) {
+		$output = $this->outputRepo->find($outputId);
+		$info = Input::get('info');
+
+		$this->outputTask->confirmed($output, $info);
+
+		$response = [
+			'status' => 'success',
+			'message' => 'Salida confirmada'
+		];
+
+		return Response::json($response);
+	}
+
+	public function delete($elderId, $outputId) {
+		$output = $this->outputRepo->find($outputId);
+
+		$output->delete();
+
+		$response = [
+			'status' => 'success',
+			'message' => 'Salida eliminada'
+		];
+
+		return Response::json($response);
+	}
+
+	public function outputsForElder($elderId) {
+		$elder = $this->elderRepo->find($elderId);
+		$outputs = $this->outputTask->getOutputElder($elder);
+		$response = [
+			'status' => 'success',
+			'data' => $outputs
+		];
+
+		return Response::json($response);
+	}
+
+	public function getOutputType($type) {
+		$outputs = $this->outputTask->getOutputType($type);
+		$response = [
+			'status' => 'success',
+			'data' => $outputs
+		];
+
+		return Response::json($response);
+	}
+
 
 
 }
