@@ -43,6 +43,24 @@ class InstanceController extends BaseController {
 	  return Response::json($response);
 	}
 
+	public function show($elderId, $instanceId) {
+		$elder = $this->elderRepo->find($elderId);
+		$instance = $elder
+									->instances()
+										->where('id', $instanceId)
+										->first();
+
+		$this->notFound($instance);
+
+		$response = [
+			'status' => 'success',
+			'data' => $instance
+		];
+
+		return Response::json($response);
+
+	}
+
 	public function edit($elderId, $instanceId) {
 		$instance = $this->instanceRepo->find($instanceId);
 		$elder = $instance->elder;
@@ -60,6 +78,14 @@ class InstanceController extends BaseController {
 			'message' => 'Notificacion de entrada confirmada',
 			'data' => $elder
 		];
+
+		return Response::json($response);
+	}
+
+	public function confirmed($elderId, $instanceId) {
+		$instance = $this->instanceRepo->find($instanceId);
+	  $state = Input::get('state');
+		$response = $this->instanceTask->confirmInstance($instance, $state);
 
 		return Response::json($response);
 	}
@@ -82,15 +108,7 @@ class InstanceController extends BaseController {
 		return $response;
 	}
 
-	public function confirmed($elderId, $instanceId) {
-		$instance = $this->instanceRepo->find($instanceId);
-	  $state = Input::get('state');
-		$response = $this->instanceTask->confirmInstance($instance, $state);
-
-		return Response::json($response);
-	}
-
-	public function instancesWaiting() {
+	public function getInstancesWaiting() {
 		$instances = $this->instanceTask->getInstancesWaiting();
 		$response = [
 			'status' => 'success',
@@ -109,6 +127,19 @@ class InstanceController extends BaseController {
     ];
 
     return Response::json($response);
+	}
+
+	public function delete($elderId, $instanceId) {
+		$instance = $this->instanceRepo->find($instanceId);
+
+		$instance->delete();
+
+		$response = [
+			'status' => 'success',
+			'message' => 'Notificacion de entrada eliminada'
+		];
+
+		return Response::json($response);
 	}
 
 }

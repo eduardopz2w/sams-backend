@@ -17,10 +17,11 @@ class CreatePermitsTable extends Migration {
 			$table->increments('id');
 			$table->integer('employee_id')->unsigned();
 			$table->string('reason');
-			$table->date('date_star');
+			$table->date('date_start');
 			$table->date('date_end')->nullable();
+			$table->date('date_cancel')->nullable();
 			$table->enum('turn', ['morning', 'afternoon', 'night', 'complete'])->nullable();
-			$table->boolean('state');
+			$table->string('state');
 			$table->string('type');
 
 			$table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');

@@ -19,7 +19,7 @@ class ActionTask extends BaseTask {
     $this->attendanceTask = $attendanceTask;
 	}
 
-  public function changeState($action) {
+  public function actionState($action) {
     $state = $action->state;
 
     if ($state) {
@@ -40,7 +40,21 @@ class ActionTask extends BaseTask {
     return $response;
   }
 
-  public function getForDay($date) {
+  public function getActions() {
+    $actions = $this->actionRepo->getActions();
+
+    if ($actions->count() == 0) {
+      $message = 'No hay actividades registradas';
+
+      $this->hasException($message);
+    }
+
+    return $actions;
+  }
+
+
+  public function getForDay() {
+    $date = current_date();
     $day = date_day($date);
     $schedules = $this->scheduleRepo->scheduleInActionDay($day);
     $actionsContent = [];
@@ -51,16 +65,13 @@ class ActionTask extends BaseTask {
       $this->actionForSchedule($schedules, $actionsContent, $date);
     }
 
-    $message = 'No hay actividades para este dia';
+    if (count($actionsContent) == 0) {
+      $message = 'No hay actividades para este dia';
 
-    $this->countQuantity($actionsContent, $message);
+      $this->hasException($message);
+    }
 
-    $response = [
-      'status' => 'success',
-      'data' => $actionsContent
-    ];
-
-    return $response;
+    return $actionsContent;
   }
 
   public function actionForSchedule($schedules, &$actionsContent, $date) {
@@ -82,14 +93,5 @@ class ActionTask extends BaseTask {
     }
   }
 
-  public function countQuantity($quantify, $message) {
-    $count = count($quantify);
-
-    if ($count == 0) {
-      $this->hasException($message);
-    }
-  }
-
-  
 		 
 }

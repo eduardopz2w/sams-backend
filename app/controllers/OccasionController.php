@@ -15,14 +15,14 @@ class OccasionController extends BaseController {
     $this->occasionTask = $occasionTask;
   }
 
-  public function register() {
+  public function create() {
     $occasion = $this->occasionRepo->getModel();
     $data = Input::all();
     $manager = new OccasionManager($occasion, $data);
 
     $manager->isValid();
     $this->occasionTask->confirmOccasion($data);
-    $manager->save();
+    $manager->create();
 
     $response = [
       'status' => 'success',
@@ -34,8 +34,8 @@ class OccasionController extends BaseController {
 
   }
 
-  public function show($id) {
-    $occasion = $this->occasionRepo->find($id);
+  public function show($occasionId) {
+    $occasion = $this->occasionRepo->find($occasionId);
 
     $this->notFound($occasion);
 
@@ -47,14 +47,14 @@ class OccasionController extends BaseController {
     return Response::json($response);
   }
 
-  public function edit($id) {
-    $occasion = $this->occasionRepo->find($id);
+  public function edit($occasionId) {
+    $occasion = $this->occasionRepo->find($occasionId);
     $data = Input::all();
     $manager = new OccasionManager($occasion, $data);
 
     $manager->isValid();
     $this->occasionTask->confirmOccasion($data);
-    $manager->save();
+    $manager->edit();
 
     $response = [
       'status' => 'success',
@@ -66,7 +66,6 @@ class OccasionController extends BaseController {
   }
 
   public function getForDate() {
-    
     $date = Input::get('date');
     
     $this->occasionTask->validateDate($date);
@@ -81,8 +80,8 @@ class OccasionController extends BaseController {
     return Response::json($response);
   }
 
-  public function delete($id) {
-    $occasion = $this->occasionRepo->find($id);
+  public function delete($occasionId) {
+    $occasion = $this->occasionRepo->find($occasionId);
 
     $occasion->delete();
 

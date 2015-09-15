@@ -2,20 +2,24 @@
 
 use Sams\Manager\AttendanceManager;
 use Sams\Repository\AttendanceRepository;
+use Sams\Repository\EmployeeRepository;
 use Sams\Task\AttendanceTask;
 use Sams\Task\AssistanceTask;
 	
 class AttendanceController extends BaseController {
 
+	protected $employeeRepo;
 	protected $attendanceRepo;
 	protected $attendanceTask;
 	protected $assistanceTask;
 
 	public function __construct(AttendanceRepository $attendanceRepo, 
+		                          EmployeeRepository $employeeRepo,
 			                        AttendanceTask $attendanceTask,
 			                        AssistanceTask $assistanceTask) {
-		$this->attendanceRepo  = $attendanceRepo;
-		$this->attendanceTask  = $attendanceTask;
+		$this->employeeRepo   = $employeeRepo;
+		$this->attendanceRepo = $attendanceRepo;
+		$this->attendanceTask = $attendanceTask;
 		$this->assistanceTask = $assistanceTask;
 	}
 
@@ -40,15 +44,7 @@ class AttendanceController extends BaseController {
 		return Response::json($response);
 	}
 
-	public function confirmed($id) {
-		$attendance = $this->attendanceRepo->find($id);
-		$state = Input::get('state');
-    $response = $this->assistanceTask->confirmedAssitance($attendance, $state);
-		
-		return Response::json($response);
-	}
-
-	public function attendanceWaiting() {
+	public function attendancesWaiting() {
 		$date = Input::get('date');
 
 		$response = $this->attendanceTask->getAttendanceWaiting($date);
@@ -56,8 +52,8 @@ class AttendanceController extends BaseController {
 		return Response::json($response);
 	}
 
-	public function edit($id) {
-		$attendance = $this->attendanceRepo->find($id);
+	public function edit($employeeId, $attendanceId) {
+		$attendance = $this->attendanceRepo->find($attendanceId);
 		$employee = $attendance->employee;
 		$employeeState = $employee->activiti;
 
@@ -66,24 +62,40 @@ class AttendanceController extends BaseController {
 		$employeeId = $employee->id;
 		$data = Input::except('_method');
 		$manager = new AttendanceManager($attendance, $data);
-		$scheduleIn = $attendance->start_time;
-		$scheduleOut = $attendance->departure_time;
-		$turn = $attendance->turn;
+	
 
 		$manager->isValid();
-		$this->assistanceTask->checkAssistance($data, $scheduleIn, $scheduleOut, $employeeId, $turn);
-		$manager->save();
+		$this->assistanceTask->checkAssistance($data, $employee, $attendance);
+		$manager->edit();
 
 		$response = [
 			'status' => 'success',
-			'message' => 'Horario actualizado',
+			'message' => 'Asistencia actualizada',
 		  'data' => $attendance,
 		];
 
 		return Response::json($response);
 	}
 
-			
+	public function confirmed($employeeId, $attendanceId) {
+		$attendance = $this->attendanceRepo->find($attendanceId);
+		$state = Input::get('state');
+    $response = $this->assistanceTask->confirmedAssitance($attendance, $state);
+		
+		return Response::json($response);
+	}
+
+	public function assistanceForEmployee($employeeId) {
+		$employee = $this->employeeRepo->find($employeeId);
+		$attendances = $this->assistanceTask->getAssistanceForEmploye($employee);
+		$response = [
+			'stutus' => 'success',
+			'data' => $attendances
+		];
+
+		return Response::json($response);
+	}
+
 
 }
 

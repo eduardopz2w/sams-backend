@@ -11,101 +11,127 @@ Route::get('logout' , ['as' => 'logout', 'uses' => 'AuthController@logout']);
 Route::group(['before' => 'auth-sentry'], function ()
 {
 
-  // notificacion
-	Route::post('elder/instance', ['as' => 'instance-create', 'uses' => 'InstanceController@create']);
-  Route::get('elder/{elderId}/instance/waiting', ['as' => 'instance-waiting', 'uses' => 'InstanceController@instanceWaiting']);
-  Route::get('elder/{elderId}/instance/{instanceId}/confirmed', ['as' => 'instance-confirmed', 'uses' => 'InstanceController@confirmed']);
-  Route::put('elder/{elderId}/instance/{instanceId}/edit', ['as' => 'instance-edit', 'uses' => 'InstanceController@edit']);
-  Route::get('elder/{elderId}/instances', ['as' => 'instances-elder', 'uses' => 'InstanceController@instancesElder']);
-	Route::get('instances/waiting', ['as' => 'instances-waiting', 'uses' => 'InstanceController@instancesWaiting']);
-	// elder;
+    // elder;
   Route::get('elder/{id}', ['as' => 'elder-show', 'uses' => 'ElderController@show']);
   Route::put('elder/{id}/edit', ['as' => 'elder-edit', 'uses' => 'ElderController@edit']);
   Route::delete('elder/{id}/delete', ['as' => 'elder-delete', 'uses' => 'ElderController@delete']);
   Route::get('elders/{state}', ['as' => 'elders', 'uses' => 'ElderController@elders']);
+
+  // notificacion
+	Route::post('elder/instance', ['as' => 'instance-create', 'uses' => 'InstanceController@create']);
+  Route::get('elder/{elderId}/instance/{instanceId}', ['as' => 'instance-show', 'uses' => 'InstanceController@show']);
+  Route::get('elder/{elderId}/instance/waiting', ['as' => 'instance-waiting', 'uses' => 'InstanceController@instanceWaiting']);
+  Route::get('elder/{elderId}/instance/{instanceId}/confirmed', ['as' => 'instance-confirmed', 'uses' => 'InstanceController@confirmed']);
+  Route::put('elder/{elderId}/instance/{instanceId}/edit', ['as' => 'instance-edit', 'uses' => 'InstanceController@edit']);
+  Route::delete('elder/{elderId}/instance/{instanceId}/delete', ['as' => 'instance-delete', 'uses' => 'InstanceController@delete']);
+  Route::get('elder/{elderId}/instances', ['as' => 'instances-elder', 'uses' => 'InstanceController@instancesElder']);
+	Route::get('instances/waiting', ['as' => 'instances-waiting', 'uses' => 'InstanceController@getInstancesWaiting']);
+
   // record
-	Route::post('record/{elderId}/register', ['as' => 'add-record', 'uses' => 'RecordController@create']);
-  Route::get('show/record/{id}/{idRecord}', ['as' => 'show-record', 'uses' => 'RecordController@showRecord']);
-  Route::put('edit/record/{id}', ['as' => 'edit-record', 'uses' => 'RecordController@editRecord']);
-  Route::get('state/record/{id}', ['as' => 'state-record', 'uses' => 'RecordController@stateRecord']);
-	// employee
-	Route::post('employee', ['as' => 'employee-create', 'uses' => 'EmployeeController@create']);
-  Route::put('employee/{id}/edit', ['as' => 'employee-edit','uses' => 'EmployeeController@edit']);
-  Route::get('employee/{id}', ['as' => 'employee->show', 'uses' => 'EmployeeController@show']);
-  Route::get('employee/{id}/attendances', ['as' => 'employee-attendances', 'uses' => 'EmployeeController@getAttendances']);
-
-
-	//occurrence
-	Route::post('register/occurrence/{id}', ['as' => 'occurrence', 'uses' => 'OccurrenceController@createOccurrence']);
-  // configuration
-	Route::put('configuration/edit', ['as' => 'config', 'uses' => 'ConfigurationController@config']);
-  // schedule
-	Route::post('register/employee/schedule/{id}', ['as' => 'schedule-addemployee', 'uses' => 'ScheduleController@addScheduleEmployee']);
-	Route::post('register/action/schedule/{id}', ['as' => 'schedule-addaction', 'uses' => 'ScheduleController@addScheduleAction']);
-  Route::get('schedule/{id}/employee/{employeeId}', ['as' => 'schedule-employee', 'uses' => 'ScheduleController@getScheduleEmp']);
-  Route::post('schedule/{id}/employee/{employeeId}/remove', ['as' => 'schedule-removeEmp', 'uses' => 'ScheduleController@removeScheduleEmp']);
-  // permit
-	Route::post('employee/{employeeId}/permit', ['as' => 'permit-create', 'uses' => 'PermitController@create']);
-  Route::get('employee/{employeeId}/permit/{permitId}', ['as' => 'permit-show', 'uses' => 'PermitController@show']);
-  Route::get('employee/{employeeId}/permits', ['as' => 'permit-employees', 'uses' => 'PermitController@permitForEmployee']);
-
-	// attendance 
-	Route::get('attendances', ['as' => 'attendance', 'uses' => 'AttendanceController@attendances']);
-  Route::get('attendances/{id}/confirmed', ['as' => 'attendance-add', 'uses' => 'AttendanceController@confirmed']);
-  Route::get('attendances/waiting', ['as' => 'attendance-waiting', 'uses' => 'AttendanceController@attendanceWaiting']);
-  Route::put('attendances/{id}/edit', ['as' => 'attendance-edit', 'uses' => 'AttendanceController@edit']);
-  // auth
-  Route::get('user/authenticate', 'AuthController@getUserAutenticate');
-  // citation 
+  Route::post('elder/{elderId}/record', ['as' => 'record-create', 'uses' => 'RecordController@create']);
+  Route::get('elder/{elderId}/records', ['as' => 'records-elder', 'uses' => 'RecordController@recordsForElder']);
+  Route::get('elder/{elderId}/record/state', ['as' => 'record-state', 'uses' => 'RecordController@state']);
+  Route::get('elder/{elderId}/record/{recordId}', ['as' => 'record-show', 'uses' => 'RecordController@show']);
+  Route::put('elder/{elderId}/record/{recordId}/edit', ['as' => 'record-edit', 'uses' => 'RecordController@edit']);
+  Route::delete('elder/{elderId}/record/{recordId}/delete', ['as' => 'record-delete', 'uses' => 'RecordController@delete']);
+  
+   // citation 
   Route::post('elder/{elderId}/citation', ['as' => 'citation-create', 'uses' => 'CitationController@create']);
   Route::get('elder/{elderId}/citations', ['as' => 'citation-all', 'uses' => 'CitationController@citationsForElder']);
-	Route::get('elder/{eldeId}/citation/{citationId}', ['as' => 'citation-show', 'uses' => 'CitationController@show']);
+  Route::get('elder/{eldeId}/citation/{citationId}', ['as' => 'citation-show', 'uses' => 'CitationController@show']);
   Route::put('elder/{elderId}/citation/{citationId}/edit', ['as' => 'citation-edit', 'uses' => 'CitationController@edit']);
   Route::get('elder/{elderId}/citation/{citationId}/confirmed', ['as' => 'citation->confirmed', 'uses' => 'CitationController@confirmed']);
   Route::delete('elder/{elderId}/citation/{citationId}/delete', ['as' => 'citation-delete', 'uses' => 'CitationController@delete']);
   Route::get('citations/current', ['as' => 'citation-current', 'uses' => 'CitationController@citationsCurrent']);
-  // action
-  Route::post('action/register', ['as' => 'action-register', 'uses' => 'ActionController@register']);
-  Route::get('action/all', ['as' => 'action-all', 'uses' => 'ActionController@actions']);
-  Route::get('action/all/{date}', ['as' => 'action-date', 'uses' => 'ActionController@getForDate']);
-  Route::get('action/{id}', ['as' => 'action', 'uses' => 'ActionController@show']);
-  Route::put('action/{id}/edit', ['as' => 'action', 'uses' => 'ActionController@edit']);
-  Route::get('action/{id}/schedules', ['as' => 'action-schedules', 'uses' => 'ActionController@getSchedules']);
-  Route::get('action/{id}/schedules/{scheduleId}/remove', ['as' => 'remove-schedule', 'uses' => 'ActionController@removeSchedule']);
-  Route::get('action/{id}/state', ['as' => 'action-state', 'uses' => 'ActionController@state']);
-  Route::delete('action/{id}/delete', ['as' => 'action-delete', 'uses' => 'ActionController@delete']);
-  
-  //Occasion
-  Route::post('occasion/register', ['as' => 'occasion-register', 'uses' => 'OccasionController@register']);
-  Route::get('occasion/all', ['as' => 'occasion-date', 'uses' => 'OccasionController@getForDate']);
-  Route::get('occasion/{id}', ['as' => 'occasion-show', 'uses' => 'OccasionController@show']);
-  Route::put('occasion/{id}/edit', ['as' => 'occasion-edit', 'uses' => 'OccasionController@edit']);
-  Route::delete('occasion/{id}/delete', ['as' => 'occasion-delete', 'uses' => 'OccasionController@delete']);
-  // relative
-  Route::post('register/relative', ['as' => 'add-relative', 'uses' => 'RelativeController@createRelative']);
 
-  //Product
-  Route::post('product/register', ['as' => 'product-register', 'uses' => 'ProductController@register']);
-  Route::get('product/all', ['as' => 'product-all', 'uses' => 'ProductController@all']);
-  Route::get('product/{id}', ['as' => 'product-show', 'uses' => 'ProductController@show']);
-  Route::put('product/{id}/edit', ['as' => 'product-edit', 'uses' => 'ProductController@edit']);
-  Route::delete('product/{id}/delete', ['as' => 'product-delete', 'uses' => 'ProductController@delete']);
+  //occurrence
+  Route::post('elder/{elderId}/occurrence', ['as' => 'occurrence-create', 'uses' => 'OccurrenceController@create']);
+  Route::get('elder/{elderId}/occurrences', ['as' => 'occurrence-elder', 'uses' => 'OccurrenceController@occurrencesForElder']);
+  Route::get('elder/{elderId}/occurrence/{occurrenceId}', ['as' => 'occurrence-show', 'uses' => 'OccurrenceController@show']);
+  Route::put('elder/{elderId}/occurrence/{occurrenceId}/edit', ['as' => 'occurrence-edit', 'uses' => 'OccurrenceController@edit']);
+  Route::delete('elder/{elderId}/occurrence/{occurrenceId}/delete', ['as' => 'occurrence-delete', 'uses' => 'OccurrenceController@delete']);
+ 
 
-  // output
+ // output
   Route::post('elder/{elderId}/output', ['as' => 'output-create', 'uses' => 'OutputController@create']);
   Route::get('elder/{elderId}/outputs', ['as' => 'outputs-elder', 'uses' => 'OutputController@outputsForElder']);
   Route::get('elder/{elderId}/output/{outputId}', ['as' => 'output-show', 'uses' => 'OutputController@show']);
   Route::get('elder/{elderId}/output/{outputId}/confirmed', ['as' => 'output-confirmed', 'uses' => 'OutputController@confirmed']);
   Route::delete('elder/{elderId}/output/{outputId}/delete', ['as' => 'output-delete', 'uses' => 'OutputController@delete']);
   Route::get('outputs/{type}', ['as' => 'outputs-type', 'uses' => 'OutputController@getOutputType']);
-  // search smart
+
+	// employee
+  Route::get('employees/{state}', ['as' => 'employees', 'uses' => 'EmployeeController@employees']);
+	Route::post('employee', ['as' => 'employee-create', 'uses' => 'EmployeeController@create']);
+  Route::get('employee/{id}', ['as' => 'employee->show', 'uses' => 'EmployeeController@show']);
+  Route::put('employee/{id}/edit', ['as' => 'employee-edit','uses' => 'EmployeeController@edit']);
+  Route::delete('employee/{id}/delete', ['as' => 'employee-delete', 'uses' => 'EmployeeController@delete']);
+
+  // attendance 
+  Route::get('attendances', ['as' => 'attendance', 'uses' => 'AttendanceController@attendances']);
+  Route::get('attendances/waiting', ['as' => 'attendance-waiting', 'uses' => 'AttendanceController@attendancesWaiting']);
+  Route::get('employee/{employeeId}/attendances', ['as' => 'attendances-employee', 'uses' => 'AttendanceController@assistanceForEmployee']);
+  Route::get('employee/{employeeId}/attendance/{attendanceId}/confirmed', ['as' => 'attendance-confirmed', 'uses' => 'AttendanceController@confirmed']);
+  Route::put('employee/{employeeId}/attendance/{attendanceId}/edit', ['as' => 'attendance-edit', 'uses' => 'AttendanceController@edit']);
+  
+
+  // permit
+  Route::post('employee/{employeeId}/permit', ['as' => 'permit-create', 'uses' => 'PermitController@create']);
+  Route::get('employee/{employeeId}/permit/{permitId}', ['as' => 'permit-show', 'uses' => 'PermitController@show']);
+  Route::get('employee/{employeeId}/permits', ['as' => 'permit-employees', 'uses' => 'PermitController@permitForEmployee']);
+  Route::get('employee/{employeeId}/permit/{permitId}/cancel', ['as' => 'permit-cancel', 'uses' => 'PermitController@cancel']);
+  Route::delete('employee/{employeeId}/permit/{permitId}/delete', ['as' => 'permit-delete', 'uses' => 'PermitController@delete']);
+
+   // schedule
+  Route::post('employee/{employeeId}/schedule', ['as' => 'schedule-addEmployee', 'uses' => 'ScheduleController@addScheduleEmployee']);
+  Route::get('employee/{employeeId}/schedules', ['as' => 'schedules-employee', 'uses' => 'ScheduleController@schedulesEmployee']);
+  Route::get('employee/{employeeId}/schedule/{scheduleId}', ['as' => 'schedule-showEmployee', 'uses' => 'ScheduleController@showScheduleEmployee']);
+  Route::get('employee/{employeeId}/schedule/{scheduleId}/remove', ['as' => 'schedule-removeEmployee', 'uses' => 'ScheduleController@removeScheduleEmployee']);
+  Route::post('action/{actionId}/schedule', ['as' => 'schedule-action', 'uses' => 'ScheduleController@addScheduleAction']);
+  Route::get('action/{actionId}/schedule/{scheduleId}/remove', ['as' => 'schedule-removeAction', 'uses' => 'ScheduleController@removeScheduleAction']);
+  Route::get('action/{actionId}/schedules', ['as' => 'schedules-action', 'uses' => 'ScheduleController@schedulesAction']);
+  
+  // action
+  Route::post('action', ['as' => 'action-create', 'uses' => 'ActionController@create']);
+  Route::get('actions', ['as' => 'actions', 'uses' => 'ActionController@actions']);
+  Route::get('actions/today', ['as' => 'actions-today', 'uses' => 'ActionController@actionsToday']);
+  Route::get('action/{actionId}', ['as' => 'action-show', 'uses' => 'ActionController@show']);
+  Route::get('action/{actionId}/state', ['as' => 'action-state', 'uses' => 'ActionController@state']);
+  Route::put('action/{actionId}/edit', ['as' => 'action-edit', 'uses' => 'ActionController@edit']);
+  Route::delete('action/{actionId}/delete', ['as' => 'action-delete', 'uses' => 'ActionController@delete']);
+ 
+
+  //Occasion
+  Route::post('occasion', ['as' => 'occasion-create', 'uses' => 'OccasionController@create']);
+  Route::get('occasions', ['as' => 'occasion-date', 'uses' => 'OccasionController@getForDate']);
+  Route::get('occasion/{id}', ['as' => 'occasion-show', 'uses' => 'OccasionController@show']);
+  Route::put('occasion/{occasionId}/edit', ['as' => 'occasion-edit', 'uses' => 'OccasionController@edit']);
+  Route::delete('occasion/{id}/delete', ['as' => 'occasion-delete', 'uses' => 'OccasionController@delete']);
+ 
+  //Product
+  Route::post('product', ['as' => 'product-create', 'uses' => 'ProductController@create']);
+  Route::get('products', ['as' => 'product-all', 'uses' => 'ProductController@products']);
+  Route::get('product/{productId}', ['as' => 'product-show', 'uses' => 'ProductController@show']);
+  Route::put('product/{productId}/edit', ['as' => 'product-edit', 'uses' => 'ProductController@edit']);
+  Route::delete('product/{productId}/delete', ['as' => 'product-delete', 'uses' => 'ProductController@delete']);
+
+  
+ /* // search smart
   Route::get('search/elders', ['as' => 'search-elders', 'uses' => 'SearchController@searchElder']);
+  // configuration
+  Route::put('configuration/edit', ['as' => 'config', 'uses' => 'ConfigurationController@config']);
+  // auth
+  Route::get('user/authenticate', 'AuthController@getUserAutenticate');*/
 });
 
 
 Route::get('/', function () {
 	return View::make('picture');
 });
+
+
+
+
 
 
 

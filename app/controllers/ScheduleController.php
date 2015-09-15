@@ -23,8 +23,8 @@ class ScheduleController extends BaseController {
 	  $this->scheduleTask = $scheduleTask;
 	}
 	 
-	public function addScheduleEmployee($id) {
-		$employee = $this->employeeRepo->find($id);
+	public function addScheduleEmployee($employeeId) {
+		$employee = $this->employeeRepo->find($employeeId);
 	  $data = Input::all();
 	  $isEmployee = true;
 		$timeBreak = $employee->break_out;
@@ -32,9 +32,59 @@ class ScheduleController extends BaseController {
 
 	  return $response;
   }
+
+  public function schedulesEmployee($employeeId) {
+  	$employee = $this->employeeRepo->find($employeeId);
+  	$schedules = $employee->schedules();
+
+  	if ($schedules->count() == 0) {
+  		$response = [
+  			'status' => 'error',
+  			'message' => 'Empleado no tiene horarios asignados'
+  		];
+  	} else {
+  		$schedules = $schedules->get();
+
+  		$response = [
+  			'status' => 'success',
+  			'data' => $schedules
+  		];
+  	}
+
+  	return Response::json($response);
+
+  }
+
+  public function showScheduleEmployee($employeeId, $scheduleId) {
+	  $scheduleInEmployee = $this->scheduleRepo->scheduleInEmployee($scheduleId, $employeeId);
+
+    $this->notFoundPivot($scheduleInEmployee);
+
+		$schedule = $this->scheduleRepo->find($scheduleId);
+
+		$response = [
+			'status' => 'success',
+			'data' => $schedule
+		];
+		
+		return Response::json($response);
+	}
+
+  public function removeScheduleEmployee($employeeId, $scheduleId) {
+		$employee = $this->employeeRepo->find($employeeId);
+
+		$employee->schedules()->detach($scheduleId);
+
+		$response = [
+			'status' => 'success',
+			'message' => 'Horario ha sido eliminado de empleado'
+		];
+
+		return Response::json($response);
+	}
 	 
-	public function addScheduleAction($id) {
-		$action = $this->actionRepo->find($id);
+	public function addScheduleAction($actionId) {
+		$action = $this->actionRepo->find($actionId);
 	  $data = Input::all();
 	  $isEmployee = false;
 	  $timeBreak = false;
@@ -42,29 +92,43 @@ class ScheduleController extends BaseController {
 
 	  return $response;
 	}
+
+  public function schedulesAction($actionId) {
+    $action = $this->actionRepo->find($actionId);
+    $schedules = $action->schedules();
+
+    if ($schedules->count() == 0) {
+      $response = [
+        'status' => 'error',
+        'message' => 'Actividad no tiene horarios asignados'
+      ];
+    } else {
+      $schedules = $schedules->get();
+      $response = [
+        'status' => 'success',
+        'data' => $schedules
+      ];
+    }
+
+    return Response::json($response);
+  }
+
+  public function removeScheduleAction($actionId, $scheduleId) {
+    $action = $this->actionRepo->find($actionId);
+    
+    $action->schedules()->detach($scheduleId);
+
+    $response = [
+      'status' => 'success',
+      'message' => 'Horario ha sido eliminado de actividad'
+    ];
+
+    return Response::json($response);
+  }
 	  
-	public function getScheduleEmp($scheduleId, $employeeId) {
-	  $scheduleInEmployee = $this->scheduleRepo->scheduleInEmployee($scheduleId, $employeeId);
+	
 
-    $this->notFoundPivot($scheduleInEmployee);
-
-		$schedule = $this->scheduleRepo->find($scheduleId);
-		
-		return Response::json(['status' => 'success',
-			                     'schedule' => $schedule]);
-	}
-
-	public function removeScheduleEmp($scheduleId, $employeeId) {
-		$employee = $this->employeeRepo->find($employeeId);
-		$data = Input::all();
-		$isEmployee = true;
-		$timeBreak = $employee->break_out;
-		$response = $this->scheduleTask->addSchedule($employee, $data, $isEmployee, $timeBreak);
-
-		$employee->schedules()->detach($scheduleId);
-
-		return $response;
-	}
+	
 
 }
 

@@ -46,7 +46,11 @@ class AssistanceTask extends BaseTask {
     }
   }
 
-  public function checkAssistance($data, $scheduleIn, $scheduleOut, $employeeId, $turn) {
+  public function checkAssistance($data, $employee, $attendance) {
+    $scheduleIn = $attendance->start_time;
+    $scheduleOut = $attendance->departure_time;
+    $turn = $attendance->turn;
+
     if ($turn != 'night') {
       $hourIn = $data['hour_in'];
       $hourOut = $data['hour_out'];
@@ -58,7 +62,7 @@ class AssistanceTask extends BaseTask {
       }
 
       $this->checkHourIn($hourIn, $scheduleOut);
-      $this->checkHourOut($hourOut, $hourIn, $employeeId);
+      $this->checkHourOut($hourOut, $hourIn, $employee);
     }
    
   }
@@ -82,15 +86,33 @@ class AssistanceTask extends BaseTask {
     }
   }
 
-  public function checkHourOut($hourOut, $hourIn, $employeeId) {
+  public function checkHourOut($hourOut, $hourIn, $employee) {
     $date = current_date();
-    $checkOut = $this->attendanceRepo->checkHourOut($hourIn, $hourOut, $date, $employeeId);
+    $checkOut = $employee
+                  ->attendances()
+                    ->where('start_time','>', $hourIn)
+                    ->where('start_time', '<=', $hourOut)
+                    ->where('date_day', $date);
 
     if ($checkOut->count() > 0) {
       $message = 'Hora de salida interfiere con hora de entrada de otro horario';
 
       $this->hasException($message);
     }
+  }
+
+  public function getAssistanceForEmploye($employee) {
+    $attendances = $employee->attendances();
+
+    if ($attendances->count() == 0) {
+      $message = 'Empleado no posee asistencias';
+
+      $this->hasException($message);
+    }
+
+    $attendances = $attendances->get();
+
+    return $attendances;
   }
 
   public function getHour() {

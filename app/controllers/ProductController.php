@@ -16,7 +16,22 @@ class ProductController extends BaseController {
     $this->productTask = $productTask;
   }
 
-  public function all() {
+  public function create() {
+    $product = $this->productRepo->getModel();
+    $data = Input::all();
+    $manager = new ProductManager($product, $data);
+
+    $manager->create();
+
+    $response = [
+      'status' => 'success',
+      'message' => 'Producto registrado'
+    ];
+
+    return Response::json($response);
+  }
+
+  public function products() {
     $products = $this->productRepo->getProducts();
 
     $this->productTask->confirmProducts($products);
@@ -29,23 +44,8 @@ class ProductController extends BaseController {
     return Response::json($response);
   }
 
-  public function register() {
-    $product = $this->productRepo->getModel();
-    $data = Input::all();
-    $manager = new ProductManager($product, $data);
-
-    $manager->save();
-
-    $response = [
-      'status' => 'success',
-      'message' => 'Producto registrado'
-    ];
-
-    return Response::json($response);
-  }
-
-  public function show($id) {
-    $product = $this->productRepo->find($id);
+  public function show($productId) {
+    $product = $this->productRepo->find($productId);
 
     $this->notFound($product);
 
@@ -57,23 +57,24 @@ class ProductController extends BaseController {
     return Response::json($response);
   }
 
-  public function edit($id) {
-    $product = $this->productRepo->find($id);
+  public function edit($productId) {
+    $product = $this->productRepo->find($productId);
     $data = Input::all();
     $manager = new ProductEditManager($product, $data);
 
-    $manager->save();
+    $manager->edit();
 
     $response = [
       'status' => 'success',
-      'message' => 'Datos actualizados'
+      'message' => 'Datos actualizados',
+      'data' => $product
     ];
 
     return Response::json($response);
   }
 
-  public function delete($id) {
-    $product = $this->productRepo->find($id);
+  public function delete($productId) {
+    $product = $this->productRepo->find($productId);
 
     $product->delete();
 

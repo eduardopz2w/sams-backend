@@ -4,22 +4,18 @@ namespace Sams\Task;
 
 use Sams\Repository\AttendanceRepository;
 use Sams\Repository\ScheduleRepository;
-use Sams\Repository\PermitRepository;
 
 class AttendanceTask extends BaseTask {
 
 	protected $attendanceRepo;
 	protected $scheduleRepo;
-	protected $permitRepo;
 	protected $permitTask;
 
 	public function __construct(AttendanceRepository $attendanceRepo, 
-		                          ScheduleRepository $scheduleRepo,
-		                          PermitRepository $permitRepo, 
+		                          ScheduleRepository $scheduleRepo, 
 		                          PermitTask $permitTask) {
 		$this->attendanceRepo = $attendanceRepo;
 	  $this->scheduleRepo   = $scheduleRepo;
-	  $this->permitRepo     = $permitRepo;
 	  $this->permitTask     = $permitTask;
 	}
 	 
@@ -51,9 +47,9 @@ class AttendanceTask extends BaseTask {
 				$assingSchedule = $employee->pivot->created_at;		
 				$employeeInDate = $this->entityInDate($assingSchedule, $date);
 
-				if ($employee->activiti && $employeeInDate) {
+				// if ($employee->activiti && $employeeInDate) {
 					$this->checkSchedule($employee, $schedule, $date);
-				}
+				// }
 			}
 	  }
 	}
@@ -81,7 +77,6 @@ class AttendanceTask extends BaseTask {
 	}
 
 	public function checkSchedule($employee, $schedule, $date) {
-		$employeeId = $employee->id;
 	  $hourIn = $schedule->entry_time;
     $hourOut = $schedule->departure_time;
     $turn = $this->permitTask->confirmTurn($hourIn, $hourOut);
@@ -91,26 +86,27 @@ class AttendanceTask extends BaseTask {
     $afternoonIn = '14:00';
 
 		if ($turn == 'double' && $employee->break_out) {
-			$this->register($morning, $employeeId, $hourIn, $morningOut, $date);
-		  $this->register($afternoon,$employeeId, $afternoonIn, $hourOut, $date);
+			$this->register($morning, $employee, $hourIn, $morningOut, $date);
+		  $this->register($afternoon,$employee, $afternoonIn, $hourOut, $date);
 		} else {
-			$this->register($turn, $employeeId, $hourIn, $hourOut, $date);
+			$this->register($turn, $employee, $hourIn, $hourOut, $date);
 		}
 
 	}
 
-	public function register($turn, $employeeId, $hourIn, $hourOut, $date) {
+	public function register($turn, $employee, $hourIn, $hourOut, $date) {
 		$attendance = $this->attendanceRepo->getModel();
-	  $permit = $this->hasPermit($employeeId, $turn, $date);
+	  $permit = $this->hasPermit($employee, $date);
+    $data = [
+      'turn' => $turn,
+      'state' => 'I',
+      'start_time' => $hourIn,
+      'departure_time' => $hourOut,
+      'date_day' => $date
+    ];
 
-		$attendance->fill([
-			'employee_id' => $employeeId,
-		  'turn' => $turn,
-		  'state' => 'I',
-		  'start_time' => $hourIn,
-		  'departure_time' => $hourOut,
-		  'date_day' => $date
-		]);
+		$attendance->fill($data);
+    $employee->attendances()->save($attendance);
 			 
 		if ($permit) {
 			$permit->attendances()->save($attendance);
@@ -119,27 +115,37 @@ class AttendanceTask extends BaseTask {
 		$attendance->save();
 	}
 	  
-	public function hasPermit($employeeId, $turn, $date) {
-		$permit = $this->permitRepo->getPermitRegular($date, $employeeId, $turn);
+	public function hasPermit($employee, $date) {
+    $permit = $employee
+                ->permits()
+                  ->where('date_start', $date)
+                  ->where('state', 'espera')
+                  ->where('type', 'normal');
 
-		if ($permit->count() > 0) {
-			$response = $permit->first();
-		} else {
-		  $response = $this->hasPermitExtend($employeeId, $date);
-		}
+    if ($permit->count() > 0) {
+      $permit = $permit->first();
+      $permit->state = 'confirmado';
 
-		return $response;
-	}
+      $permit->save();
 
-	public function hasPermitExtend($employeeId, $date) {
-		$permitExtend = $this->permitRepo->permitExtendActive($employeeId, $date);
-		$response = false;
+      return $permit;
+    } else {
+      $permit = $employee
+                  ->permits()
+                   ->where('state', 'espera')
+                   ->where('date_start', '<=', $date)
+                   ->where('date_end', '>=', $date);
 
-		if ($permitExtend->count() > 0) {
-			$response = $permitExtend->first();
-		}
+      if ($permit->count() > 0) {
+        $permit = $permit->first();
 
-		return $response;
+        $this->permitTask->permitExtendState($permit);
+
+        return $permit;
+      }
+    }
+		
+    return false;
 	}
 
 	public function getAttendance($date, $sooner) {

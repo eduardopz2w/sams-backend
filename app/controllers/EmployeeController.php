@@ -15,6 +15,16 @@ class EmployeeController extends BaseController {
     $this->employeeTask = $employeeTask;
   }
 
+  public function employees($state) {
+    $employees = $this->employeeTask->getEmployees($state);
+    $response = [
+      'status' => 'success',
+      'data' => $employees
+    ];
+
+    return Response::json($response);
+  }
+
   public function create() {
     $employee = $this->employeeRepo->getModel();
     $data = Input::all();
@@ -23,7 +33,10 @@ class EmployeeController extends BaseController {
     $manager->create();
 
     if (isset($data['photo'])) {
-      $this->employeeTask->addImg($employee, $data['photo'], $data['mimeRequest']); 
+      $photo = $data['photo'];
+      $mime = $data['mime_request'];
+
+      $this->employeeTask->addImg($employee, $photo, $mime); 
     }
 
     $response = [
@@ -54,7 +67,10 @@ class EmployeeController extends BaseController {
     $manager->edit();
 
     if (isset($data['photo'])) {
-      $this->employeeTask->addImg($employee, $data['photo'], $data['mimeRequest']);
+      $photo = $data['photo'];
+      $mime = $data['mime_request'];
+
+      $this->employeeTask->addImg($employee, $photo, $mime); 
     }
 
     $response = [
@@ -65,18 +81,31 @@ class EmployeeController extends BaseController {
     return Response::json($response);
   }
 
-  public function getAttendances($id) {
-    $employee = $this->employeeRepo->find($id);
-    $attendances = $employee->attendances;
+  public function delete($employeeId) {
+    $employee = $this->employeeRepo->find($employeeId);
 
-    $this->employeeTask->confirmAttendances($attendances);
+    $employee->delete();
 
     $response = [
       'status' => 'success',
-      'data' => $attendances
+      'message' => 'Empleado eliminado'
     ];
 
     return Response::json($response);
   }
+
+  // public function getAttendances($id) {
+  //   $employee = $this->employeeRepo->find($id);
+  //   $attendances = $employee->attendances;
+
+  //   $this->employeeTask->confirmAttendances($attendances);
+
+  //   $response = [
+  //     'status' => 'success',
+  //     'data' => $attendances
+  //   ];
+
+  //   return Response::json($response);
+  // }
 
 }

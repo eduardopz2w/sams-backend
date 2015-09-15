@@ -3,7 +3,7 @@
 namespace Sams\Entity;
 
 class Occurrence extends \Eloquent {
-	protected $fillable = ['elder_id', 'location', 'case_situation'];
+	protected $fillable = ['case_situation', 'image_url', 'mime', 'date'];
 
 	public function elder()
 

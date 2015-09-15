@@ -10,8 +10,8 @@ class Attendance extends \Eloquent {
     return $this->belongsTo('Sams\Entity\Employee');
   }
 
-	public function notifying() {
-    return $this->morphTo();
+	public function permit() {
+    return $this->belongsTo('Sams\Entity\Permit');
   }
 
 }

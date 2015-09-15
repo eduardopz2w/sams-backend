@@ -27,7 +27,7 @@ class CitationRepository extends BaseRepository {
              		      ->where('hour', '<', $hourExpected)
              		      ->where('state', 'loading');
              		 })
-                  	 ->orderBy('hour', 'DESC');
+                 ->orderBy('hour', 'DESC');
   }
 
 

@@ -6,7 +6,7 @@ class ActionManager extends BaseManager {
 
 	public function getRules() {
 		$rules = [
-			'name' => 'required|regex:/^[\pL\s]+$/u|unique:actions,title',
+			'name' => 'required|regex:/^[\pL\s]+$/u|unique:actions,name',
 		];
 
 		return $rules;

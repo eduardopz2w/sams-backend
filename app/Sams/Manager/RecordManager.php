@@ -19,10 +19,9 @@ class RecordManager extends BaseManager {
   
 	public function prepareData($data) {
     $data['state'] = 1;
+    $data['image_url'] = 'http://localhost/image/geriatric/default/profile_default_man.png';
+    $data['mime'] = 'jpg';
     
-    array_pull($data, 'photo');
-    array_pull($data, 'mime');
-  
     return $data;
   }
 

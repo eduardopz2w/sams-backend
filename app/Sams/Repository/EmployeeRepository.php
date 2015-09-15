@@ -6,24 +6,16 @@ use Sams\Entity\Employee;
 
 class EmployeeRepository extends BaseRepository {
 
-	public function getModel()
-
-	{
+	public function getModel() {
 	  return new Employee;
 	}
 
-
-	public function employeeByIdentify($identify)
-
-	{
-	  return Employee::where('identity_card', $identify);
+	public function getEmployeesForState($state) {
+		return Employee::where('activiti', $state);
 	}
-
-	public function employeeInSchedule($id, $hourIn, $hourOut, $days)
-
-	{
+	
+	public function employeeInSchedule($id, $hourIn, $hourOut, $days) {
 	  return Employee::with(
-
 		  ['schedules' => function($q) use ($hourIn, $hourOut, $days) {
 					
 			  $q->where('entry_time', '<=', $hourOut)
@@ -43,29 +35,20 @@ class EmployeeRepository extends BaseRepository {
 
 				}])->where('id', $id)->get();
 	}
-
-  public function employeeInScheduleDay($id, $days)
-
-	{
+	
+  public function employeeInScheduleDay($id, $days) {
 	  return Employee::with(
-
 		  ['schedules' => function ($q) use ($days) {
-
 			  $q->where('days', 'LIKE', '%'.$days.'%');
 
-			}])->where('id', $id)->get();
-	}
+			}])
+	    ->where('id', $id)->get();
+  }
 
-	public function createEmployee()
-
-	{
-	  $employee = new Employee();
-	  
-	  $employee->image_url = 'http://localhost/image/geriatric/default/profile_default_man.png';
-	  $employee->mime = 'jpg';	
-	  
-	  return $employee;
-	}
+  /*public function employeeByIdentify($identify) {
+	  return Employee::where('identity_card', $identify);
+	}*/
+	
 
 
 }

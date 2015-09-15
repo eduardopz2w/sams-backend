@@ -16,14 +16,13 @@ class CreateAttendancesTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('employee_id')->unsigned();
+			$table->integer('permit_id')->unsigned()->nullable();
 			$table->char('state');
 			$table->string('turn');
 			$table->time('start_time');
 			$table->time('departure_time');
 			$table->time('hour_in')->nullable();
 			$table->time('hour_out')->nullable();
-			$table->integer('notifying_id')->nullable();
-			$table->string('notifying_type')->nullable();
 			$table->date('date_day');
 
 			$table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');

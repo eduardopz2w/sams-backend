@@ -35,6 +35,17 @@ class OccasionTask extends BaseTask {
     }
   }
 
+  public function confirmOccasionForDate($occasions) {
+    if ($occasions->count() == 0) {
+      $message = 'No hay eventos para esta fecha';
+
+      $this->hasException($message);
+    }
+
+    $occasions = $occasions->get();
+
+    return $occasions;
+  }
 
   public function validateDate($date) {
     $date = ['date' => $date];
@@ -46,18 +57,6 @@ class OccasionTask extends BaseTask {
 
       $this->hasException($message);
     }
-  }
-
-  public function confirmOccasionForDate($occasions) {
-    if ($occasions->count() == 0) {
-      $message = 'No hay eventos para esta fecha';
-
-      $this->hasException($message);
-    }
-
-    $occasions = $occasions->get();
-
-    return $occasions;
   }
 
 

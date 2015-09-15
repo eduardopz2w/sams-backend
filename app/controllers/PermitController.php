@@ -80,6 +80,52 @@ class PermitController extends BaseController {
     return Response::json($response);
   }
 
+  public function cancel($employeeId, $permitId) {
+    $permit = $this->permitRepo->find($permitId);
+    $type = $permit->type;
+
+    if ($type == 'extend') {
+      $date = current_date();
+      $permit->date_cancel = $date;
+    }
+
+    $permit->state = 'Cancelado';
+
+    $permit->save();
+
+    $response = [
+      'status' => 'success',
+      'message' => 'Permiso Cancelado'
+    ];
+
+    return Response::json($response);
+
+  }
+
+  public function delete($employeeId, $permitId) {
+    $permit = $this->permitRepo->find($permitId);
+    $attendances = $permit->attendances();
+
+    if ($attendances->count() > 0) {
+      $attendances = $attendances->get();
+
+      foreach ($attendances as $attendance) {
+        $attendance->permit_id = null;
+
+        $attendance->save();
+      }
+    }
+
+    $permit->delete();
+
+    $response = [
+      'status' => 'success',
+      'message' => 'Permiso eliminado'
+    ];
+
+    return Response::json($response);
+  }
+
      
 
          

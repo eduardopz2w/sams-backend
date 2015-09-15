@@ -43,7 +43,7 @@ class AuthController extends BaseController {
       $hourAfter = add_hour($hourExpected, $minutes);
 			$user = $this->userRepo->getUserLogin();
 			$citation  = $this->citationRepo->getCitationsCurrent($date, $hourExpected, $hourAfter);
-			$instances = $this->instanceRepo->getInstanceVisited();
+			// $instances = $this->instanceRepo->getInstanceVisited();
 			// $outputs   = $this->outputRepo->getOutputsTimeLimit();
 
 			return Response::json(['status' => 'success',
@@ -51,8 +51,7 @@ class AuthController extends BaseController {
 				                                  'last_name' => $user->last_name,
 				                                  'email'     => $user->email,
 				                                  'group'     => $user->getGroups()->first(),
-				                                  'visited'   => $instances->count(),
-				                                  'citation'  => $citation->count()],
+				                                  'citation'  => $citation->count()]
 				                                  ]);
 	}
 

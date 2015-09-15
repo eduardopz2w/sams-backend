@@ -69,7 +69,12 @@ class ElderController extends BaseController {
 	public function elders($state) {
 		$elders = $this->elderTask->getElders($state);
 
-	  return Response::json($elders);
+		$response = [
+			'status' => 'success',
+			'data' => $elders
+		];
+
+	  return Response::json($response);
 	}
 	  
 

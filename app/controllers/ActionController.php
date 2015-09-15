@@ -8,21 +8,20 @@ use Sams\Task\ActionTask;
 class ActionController extends BaseController {
 
 	protected $actionRepo;
-	protected $scheduleRepo;
 	protected $actionTask;
 
 	public function __construct(ActionTask $actionTask,
 	                            ActionRepository $actionRepo) {
-		$this->actionRepo   = $actionRepo;
-	 	$this->actionTask   = $actionTask;
+		$this->actionRepo = $actionRepo;
+	 	$this->actionTask = $actionTask;
 	}
 
-	public function register() {
+	public function create() {
 	 	$action = $this->actionRepo->getModel();
 		$data = Input::all();
 	 	$manager = new ActionManager($action, $data);
 
-	 	$manager->save();
+	 	$manager->create();
 
 	 	$response = [
 	 	 	'status' => 'success',
@@ -34,6 +33,78 @@ class ActionController extends BaseController {
 	}
 
 	public function actions() {
+		$actions = $this->actionTask->getActions();
+		$response = [
+			'status' => 'success',
+			'data' => $actions
+		];
+
+		return Response::json($response);
+	}
+
+	public function actionsToday() {
+		$actions = $this->actionTask->getForDay();
+		$response = [
+			'status' => 'success',
+			'data' => $actions
+		];
+
+		return Response::json($response);
+	}
+ 
+	public function show($actionId) {
+		$action = $this->actionRepo->find($actionId);
+
+		$this->notFound($action);
+
+		$response = [
+			'status' => 'success',
+		  'data' => $action
+	  ];
+
+		return Response::json($response);
+	}
+
+	public function edit($actionId) {
+		$action = $this->actionRepo->find($actionId);
+		$data = Input::all();
+		$manager = new ActionEditManager($action, $data);
+
+		$manager->edit();
+
+		$response = [
+			'status' => 'success',
+			'message' => 'Datos actualizados',
+			'data' => $action
+		];
+
+		return Response::json($response);
+	}
+
+	public function state($actionId) {
+		$action = $this->actionRepo->find($actionId);
+		$response = $this->actionTask->actionState($action);
+
+		return Response::json($response);
+	}
+
+
+	public function delete($actionId) {
+		$action = $this->actionRepo->find($actionId);
+
+		$action->delete();
+
+	  $response = [
+	  	'status' => 'success',
+	  	'message' => 'Actividad eliminada'
+	  ];
+
+	  return Response::json($response);
+	}
+
+
+
+	/*public function actions() {
 		$actions = $this->actionRepo->getActions();
 		$message = 'No hay actividades registradas';
 
@@ -127,7 +198,7 @@ class ActionController extends BaseController {
 	  ];
 
 	  return Response::json($response);
-	}
+	}*/
 
 
 }

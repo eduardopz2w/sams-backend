@@ -16,11 +16,4 @@ class RecordEditManager extends BaseManager {
 
     return $rules;
   }
-
-  public function prepareData($data) {
-    array_pull($data, 'photo');
-    array_pull($data, 'mime');
-  
-    return $data;
-  }
 }

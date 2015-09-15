@@ -1,56 +1,112 @@
 <?php
 
-//404
 use Sams\Manager\OccurrenceManager;
-use Sams\Manager\ImageOccurrenceManager;
+use Sams\Manager\OccurrenceEditManager;
 use Sams\Repository\ElderRepository;
 use Sams\Repository\OccurrenceRepository;
-use Sams\Task\ElderTask;
+use Sams\Task\OccurrenceTask;
 
 class OccurrenceController extends BaseController {
 
-	protected $elderRepository;
-	protected $occurrenceRepository;
-	protected $elderTask;
+	protected $elderRepo;
+	protected $occurrenceRepo;
+	protected $occurrenceTask;
 
-	public function __construct(ElderRepository $elderRepository, ElderTask $elderTask,
-		                          OccurrenceRepository $occurrenceRepository)
+	public function __construct(ElderRepository $elderRepo,
+		                          OccurrenceRepository $occurrenceRepo,
+		                          OccurrenceTask $occurrenceTask) {
+		$this->elderRepo = $elderRepo;
+		$this->occurrenceRepo = $occurrenceRepo;
+		$this->occurrenceTask = $occurrenceTask;
+	}
+			
+	public function create($elderId) {
+		$elder = $this->elderRepo->find($elderId);
+		$occurrence = $this->occurrenceRepo->getModel();
+		$data = Input::all();
+		$manager = new OccurrenceManager($occurrence, $data);
+		$occurrence = $manager->saveRelation();
 
-	{
-			$this->elderRepository      = $elderRepository;
-			$this->elderTask            = $elderTask;
-			$this->occurrenceRepository = $occurrenceRepository;
+		$elder->occurrences()->save($occurrence);
+
+		if (isset($data['photo'])) {
+			$photo = $data['photo'];
+			$mime = $data['mime_request'];
+
+      $this->occurrenceTask->addImg($occurrence, $photo, $mime);
+    }
+
+    $response = [
+    	'status' => 'success',
+    	'message' => 'Incidencia guardada'
+    ];
+
+    return Response::json($response);
 	}
 
-	public function createOccurrence($id)
+	public function occurrencesForElder($elderId) {
+		$elder = $this->elderRepo->find($elderId);
+		$occurrences = $this->occurrenceTask->getOccurrences($elder);
+		$response = [
+			'status' => 'success',
+			'data' => $occurrences
+		];
 
-	{
-			// $elder = $this->elderRepository->find($id);
-
-			// $this->elderTask->elderActiviti($elder);
-
-		  $elder = $this->elderTask->findElderById($id);
-
-			$occurrence = $this->occurrenceRepository->getModel();
-			$data       = Input::except('photo');
-			$photo      = Input::get('location');
-			$manager    = new OccurrenceManager($occurrence, array_add($data, 'elder_id', $elder->id));
-
-			$manager->save();
-
-			if (!empty($photo))
-
-			{
-					$entity  = $manager->getOccurrence();
-					$manager = new ImageOccurrenceManager($entity, $photo);
-
-					$manager->uploadCode();
-
-			}
-
-			return Response::json(['status'  => 'success',
-				                     'message' => 'Incidencia guardada']);
-
+		return Response::json($response);
 	}
+
+	public function show($elderId, $occurrenceId) {
+		$elder = $this->elderRepo->find($elderId);
+		$occurrence = $elder
+										->occurrences()
+											->where('id', $occurrenceId)
+											->first();
+
+		$this->notFound($occurrence);
+
+		$response = [
+			'status' => 'success',
+			'data' => $occurrence
+		];
+
+		return Response::json($response);
+	}
+
+	public function edit($elderId, $occurrenceId) {
+		$occurrence = $this->occurrenceRepo->find($occurrenceId);
+		$data = Input::except('_method');
+		$manager = new OccurrenceEditManager($occurrence, $data);
+
+		$manager->edit();
+
+		if (isset($data['photo'])) {
+			$photo = $data['photo'];
+			$mime = $data['mime_request'];
+
+      $this->occurrenceTask->addImg($occurrence, $photo, $mime);
+    }
+
+    $response = [
+    	'status' => 'success',
+    	'message' => 'Incidencia modificada',
+    	'data' => $occurrence
+    ];
+
+    return Response::json($response);
+	}
+
+	public function delete($elderId, $occurrenceId) {
+		$occurrence = $this->occurrenceRepo->find($occurrenceId);
+
+		$occurrence->delete();
+
+		$response = [
+			'status' => 'success',
+			'message' => 'Incidencia eliminada'
+		];
+
+		return Response::json($response);
+	}
+
 
 }

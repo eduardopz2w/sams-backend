@@ -12,7 +12,7 @@ class AttendanceRepository extends BaseRepository {
 	}
 	
 	public function attendanceForDay($date) {
-		return Attendance::where('created_at', 'LIKE', '%'.$date.'%');
+		return Attendance::where('date_day', $date);
 	}
 
 	public function attendanceToday($date, $hour) {
@@ -27,7 +27,8 @@ class AttendanceRepository extends BaseRepository {
 		  		             )
 											 ->where('attendances.date_day', $date)
                        ->where('state', 'I')
-                       ->where('departure_time', '<=', $hour);
+                       ->where('departure_time', '<=', $hour)
+                       ->whereNull('permit_id');
 
 	}
 
@@ -45,7 +46,7 @@ class AttendanceRepository extends BaseRepository {
 		  		             	'attendances.id'
 		  		            )
 										  ->where('attendances.date_day', $date)
-										  ->whereNull('notifying_id');
+										  ->whereNull('permit_id');
 	}
 
 	public function attendanceWaiting ($date) {
@@ -62,11 +63,5 @@ class AttendanceRepository extends BaseRepository {
 										  ->where('state', 'E');
 	}
 
-	public function checkHourOut($hourIn, $hourOut, $date, $employeeId) {
-		return Attendance::where('employee_id', $employeeId)
-		                 ->where('start_time','>', $hourIn)
-		                 ->where('start_time', '<=', $hourOut)
-		                 ->where('created_at', 'LIKE', '%'.$date.'%');
-	}
 
 }

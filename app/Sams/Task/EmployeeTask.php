@@ -7,10 +7,24 @@ use Sams\Repository\EmployeeRepository;
 
 class EmployeeTask extends BaseTask {
 
-	protected $elderRepo;
+	protected $employeeRepo;
 
 	public function __construct(EmployeeRepository $employeeRepo) {
 	  $this->employeeRepo = $employeeRepo;
+	}
+
+	public function getEmployees($state) {
+		$employees = $this->employeeRepo->getEmployeesForState($state);
+
+		if ($employees->count() == 0) {
+			$message = 'No hay empleado para esta categoria';
+
+			$this->hasException($message);
+		}
+
+		$employees = $employees->get();
+
+		return $employees;
 	}
 
   public function addImg($record, $img, $mime) {
@@ -37,16 +51,6 @@ class EmployeeTask extends BaseTask {
 		];
 
 		return $employee;
-	}
-
-	public function confirmAttendances($attendances) {
-		$count = count($attendances);
-
-		if ($count == 0) {
-			$message = 'Empleado no tiene lista de asistencias';
-
-			$this->hasException($message);
-		}
 	}
 
 	// public function findEmployeeById($id)

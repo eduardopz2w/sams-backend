@@ -21,7 +21,7 @@ class PermitManager extends BaseManager {
       'reason' => 'required|regex:/^[\pL\s]+$/u',
       'turn' => 'required_if:type,normal|in:morning,afternoon,night,complete',
       'type' => 'required|in:extend,normal',
-      'date_star' => 'required|date|after:'.$day,
+      'date_start' => 'required|date|after:'.$day,
       'date_end' => 'required_if:type,extend|date'
     ];
 
@@ -29,7 +29,7 @@ class PermitManager extends BaseManager {
   }
 
   public function prepareData($data) {
-    $data['state'] = 1;
+    $data['state'] = 'espera';
 
     return $data;
   }
