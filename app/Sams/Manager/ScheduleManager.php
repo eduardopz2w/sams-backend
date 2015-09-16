@@ -17,7 +17,7 @@ class ScheduleManager extends BaseManager {
 	public function getRules()
 
 	{
-	  $rules = ['entry_time'     => 'required|date_format:H:i',
+	  $rules = ['entry_time'  => 'required|date_format:H:i',
 			        'departure_time' => 'required|date_format:H:i'];
 			          
 		return $rules;

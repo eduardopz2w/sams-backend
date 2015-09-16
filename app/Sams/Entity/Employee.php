@@ -7,6 +7,10 @@ class Employee extends \Eloquent {
 	                       'phone', 'address', 'gender', 'degree_instruction', 'civil_status',
 	                       'office', 'image_url', 'mime', 'activiti', 'break_out'];
 
+	public function user() {
+		return $this->hasOne('Sams\Entity\User');
+	}
+
 	public function schedules() {
 		return $this->belongsToMany('Sams\Entity\Schedule')->withTimestamps();
 	}

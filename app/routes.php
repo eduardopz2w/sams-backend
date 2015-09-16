@@ -1,17 +1,18 @@
 <?php
 
 // configuration
-Route::get('configuration/{message?}', 'ConfigurationController@getConfiguration');
+Route::get('config', 'ConfigController@config');
 
 //auth
-Route::post('login', ['as'  => 'login', 'uses'  => 'AuthController@login']);
-Route::get('logout' , ['as' => 'logout', 'uses' => 'AuthController@logout']);
+// Route::post('login', ['as'  => 'login', 'uses'  => 'AuthController@login']);
+// Route::get('logout' , ['as' => 'logout', 'uses' => 'AuthController@logout']);
 
+Route::post('user/login', ['as' => 'login', 'uses' => 'UserController@login']);
+Route::get('user/logout', ['as' => 'logout', 'uses' => 'UserController@logout']);
 
-Route::group(['before' => 'auth-sentry'], function ()
+Route::group(['before' => 'auth-check'], function ()
 {
-
-    // elder;
+  // elder;
   Route::get('elder/{id}', ['as' => 'elder-show', 'uses' => 'ElderController@show']);
   Route::put('elder/{id}/edit', ['as' => 'elder-edit', 'uses' => 'ElderController@edit']);
   Route::delete('elder/{id}/delete', ['as' => 'elder-delete', 'uses' => 'ElderController@delete']);
@@ -67,6 +68,12 @@ Route::group(['before' => 'auth-sentry'], function ()
   Route::put('employee/{id}/edit', ['as' => 'employee-edit','uses' => 'EmployeeController@edit']);
   Route::delete('employee/{id}/delete', ['as' => 'employee-delete', 'uses' => 'EmployeeController@delete']);
 
+  // user
+  Route::post('employee/{employeeId}/user', ['as' => 'user-create', 'uses' => 'UserController@create']);
+  Route::get('employee/{employeeId}/user/show', ['as' => 'user-show', 'uses' => 'UserController@show']);
+  Route::put('employee/{employeeId}/user/{userId}/edit', ['as' => 'user-edit', 'uses' => 'UserController@edit']);
+  Route::delete('employee/{employeeId}/user/{userId}/delete', ['as' => 'uses-delete', 'uses' => 'UserController@delete']);
+  Route::get('users', ['as' => 'users', 'uses' => 'UserController@users']);
   // attendance 
   Route::get('attendances', ['as' => 'attendance', 'uses' => 'AttendanceController@attendances']);
   Route::get('attendances/waiting', ['as' => 'attendance-waiting', 'uses' => 'AttendanceController@attendancesWaiting']);
@@ -115,13 +122,13 @@ Route::group(['before' => 'auth-sentry'], function ()
   Route::put('product/{productId}/edit', ['as' => 'product-edit', 'uses' => 'ProductController@edit']);
   Route::delete('product/{productId}/delete', ['as' => 'product-delete', 'uses' => 'ProductController@delete']);
 
-  
- /* // search smart
-  Route::get('search/elders', ['as' => 'search-elders', 'uses' => 'SearchController@searchElder']);
   // configuration
-  Route::put('configuration/edit', ['as' => 'config', 'uses' => 'ConfigurationController@config']);
-  // auth
-  Route::get('user/authenticate', 'AuthController@getUserAutenticate');*/
+  Route::put('config/edit', ['as' => 'config', 'uses' => 'ConfigController@edit']);
+
+  // // search smart
+  // Route::get('search/elders', ['as' => 'search-elders', 'uses' => 'SearchController@searchElder']);
+  // // auth
+  // Route::get('user/authenticate', 'AuthController@getUserAutenticate');
 });
 
 

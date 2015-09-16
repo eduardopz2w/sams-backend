@@ -38,7 +38,7 @@ abstract class BaseManager {
   public function edit() {
     $this->isValid();
     $this->entity->fill($this->prepareData($this->data));
-    $this->entity->save();
+    $this->entity->update();
   }
 
   public function saveRelation() {

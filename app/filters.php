@@ -34,18 +34,15 @@ App::after(function($request, $response)
 */
 
 
-Route::filter('auth-sentry', function ()
-{
-		if (!Sentry::check())
+Route::filter('auth-check', function () {
+	if (!Auth::check()) {
+		return Response::make('Unauthorized', 401);
+	}
 
-		{
-				return Response::make('Unauthorized', 401);
-		}
 });
 
 
-
-
+		
 /*
 |--------------------------------------------------------------------------
 | Guest Filter
