@@ -1,6 +1,7 @@
 <?php
 
 use Sams\Manager\OutputManager;
+use Sams\Manager\OutputEditManager;
 use Sams\Repository\ElderRepository;
 use Sams\Repository\OutputRepository;
 use Sams\Task\OutputTask;
@@ -26,7 +27,14 @@ class OutputController extends BaseController {
 		$this->outputTask->hasOutput($elder);
 
 		$output = $this->outputRepo->getModel();
-		$data = Input::all();
+		$type = Input::get('type');
+
+		if ($type == 'pernot') {
+			$data = Input::all();
+		} else {
+			$data = Input::only('info', 'type');
+		}
+
 		$manager = new OutputManager($output, $data);
 
 		$manager->isValid();
@@ -58,11 +66,35 @@ class OutputController extends BaseController {
 		return Response::json($response);
 	}
 
+	public function edit($elderId, $outputId) {
+		$output = $this->outputRepo->find($outputId);
+
+		$state = $output->state;
+		$type = $output->type;
+
+		if ($state || $type == 'normal') {
+			$data = Input::only('info');
+		} else {
+			$data = Input::all();
+		}
+
+		$manager = new OutputEditManager($output, $data);
+
+		$manager->edit();
+
+		$response = [
+			'status' => 'success',
+			'data' => $output,
+			'message' => 'Salida ha sido actualizada'
+		];
+
+		return Response::json($response);
+	}
+
 	public function confirmed($elderId, $outputId) {
 		$output = $this->outputRepo->find($outputId);
-		$info = Input::get('info');
 
-		$this->outputTask->confirmed($output, $info);
+		$this->outputTask->confirmed($output);
 
 		$response = [
 			'status' => 'success',
@@ -98,6 +130,16 @@ class OutputController extends BaseController {
 
 	public function getOutputType($type) {
 		$outputs = $this->outputTask->getOutputType($type);
+		$response = [
+			'status' => 'success',
+			'data' => $outputs
+		];
+
+		return Response::json($response);
+	}
+
+	public function getOutputWaiting() {
+		$outputs = $this->outputTask->getOutputWaiting();
 		$response = [
 			'status' => 'success',
 			'data' => $outputs

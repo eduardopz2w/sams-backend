@@ -115,14 +115,15 @@ return array(
 	*/
 
 	'attributes' => array(
-		'username'      => 'usuario',
-		'password'      => 'contraseña',
+		'username' => 'usuario',
+		'password' => 'contraseña',
 		'identity_card' => 'cedula',
-		'full_name'     => 'nombre',
-		'address'       => 'dirección',
-		'visit_date'    => 'fecha visita',
-		'description'   => 'descripcion',
-		'date_birth'    => 'fecha de nacimiento',
-		'gender'        => 'genero'
+		'full_name' => 'nombre',
+		'address' => 'dirección',
+		'visit_date'=> 'fecha visita',
+		'description' => 'descripcion',
+		'date_birth' => 'fecha de nacimiento',
+		'gender' => 'genero',
+		'unit' => 'unidad'
 	),
 );

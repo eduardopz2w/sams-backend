@@ -90,7 +90,7 @@ class InstanceController extends BaseController {
 		return Response::json($response);
 	}
 
-	public function instanceWaiting($elderId) {
+	public function instanceWaitingElder($elderId) {
 		$elder = $this->elderRepo->find($elderId);
 		$instance = $elder
 									->instances()
@@ -108,8 +108,20 @@ class InstanceController extends BaseController {
 		return $response;
 	}
 
-	public function getInstancesWaiting() {
+	public function instancesWaiting() {
 		$instances = $this->instanceTask->getInstancesWaiting();
+		$response = [
+			'status' => 'success',
+			'data' => $instances
+		];
+
+		return Response::json($response);
+	}
+
+	public function instancesForDate() {
+		$date = Input::get('date');
+		$instances = $this->instanceTask->getInstancesDate($date);
+
 		$response = [
 			'status' => 'success',
 			'data' => $instances

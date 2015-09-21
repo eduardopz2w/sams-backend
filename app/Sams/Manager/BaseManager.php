@@ -28,11 +28,10 @@ abstract class BaseManager {
     $this->isValid();
 
     $data = $this->prepareData($this->data);
-
-    $this->entity->create($data);
-    $this->entity->fill($data);
-
-    return $this->entity;
+    $model = $this->entity->create($data);
+    $newData = $model->toArray();
+ 
+    $this->entity->fill($newData);
   }
 
   public function edit() {

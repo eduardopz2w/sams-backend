@@ -20,4 +20,21 @@ class OccasionManager extends BaseManager {
     return $rules;
   }
 
+  public function prepareData($data) {
+    $times = array_only($data, ['entry_time', 'departure_time', 'date_end']);
+    $nameTimes = array_keys($times);
+    $valueTimes = array_values($times);
+
+    for ($i = 0; $i < count($valueTimes); $i ++) {
+      $value = $valueTimes[$i];
+
+      if (empty($value)) {
+        $key = $nameTimes[$i];
+        $data[$key] = NULL;
+      }
+    }
+
+    return $data;
+  }
+
 }

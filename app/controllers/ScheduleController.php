@@ -120,7 +120,7 @@ class ScheduleController extends BaseController {
 
     $response = [
       'status' => 'success',
-      'message' => 'Horario ha sido eliminado de actividad'
+      'message' => 'Horario ha sido removido'
     ];
 
     return Response::json($response);

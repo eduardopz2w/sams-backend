@@ -72,7 +72,7 @@ class AssistanceTask extends BaseTask {
     $hourMin = rest_minutes($scheduleIn, $minutes);
 
     if ($hourIn < $hourMin) {
-      $message = 'Asistencia podra ser ingresada '.$minutes.' minutos antes que empieze el horario';
+      $message = '"Aun falta para que empieze el horario"';
 
       $this->hasException($message);
     }

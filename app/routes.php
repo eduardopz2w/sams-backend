@@ -21,12 +21,13 @@ Route::group(['before' => 'auth-check'], function ()
   // notificacion
 	Route::post('elder/instance', ['as' => 'instance-create', 'uses' => 'InstanceController@create']);
   Route::get('elder/{elderId}/instance/{instanceId}', ['as' => 'instance-show', 'uses' => 'InstanceController@show']);
-  Route::get('elder/{elderId}/instance/waiting', ['as' => 'instance-waiting', 'uses' => 'InstanceController@instanceWaiting']);
+  Route::get('elder/{elderId}/instance/waiting', ['as' => 'instance-waiting', 'uses' => 'InstanceController@instanceWaitingElder']);
   Route::get('elder/{elderId}/instance/{instanceId}/confirmed', ['as' => 'instance-confirmed', 'uses' => 'InstanceController@confirmed']);
   Route::put('elder/{elderId}/instance/{instanceId}/edit', ['as' => 'instance-edit', 'uses' => 'InstanceController@edit']);
   Route::delete('elder/{elderId}/instance/{instanceId}/delete', ['as' => 'instance-delete', 'uses' => 'InstanceController@delete']);
   Route::get('elder/{elderId}/instances', ['as' => 'instances-elder', 'uses' => 'InstanceController@instancesElder']);
-	Route::get('instances/waiting', ['as' => 'instances-waiting', 'uses' => 'InstanceController@getInstancesWaiting']);
+  Route::get('instances', ['as' => 'instances-date', 'uses' => 'InstanceController@instancesForDate']);
+	Route::get('instances/waiting', ['as' => 'instances-waiting', 'uses' => 'InstanceController@instancesWaiting']);
 
   // record
   Route::post('elder/{elderId}/record', ['as' => 'record-create', 'uses' => 'RecordController@create']);
@@ -58,9 +59,10 @@ Route::group(['before' => 'auth-check'], function ()
   Route::get('elder/{elderId}/outputs', ['as' => 'outputs-elder', 'uses' => 'OutputController@outputsForElder']);
   Route::get('elder/{elderId}/output/{outputId}', ['as' => 'output-show', 'uses' => 'OutputController@show']);
   Route::get('elder/{elderId}/output/{outputId}/confirmed', ['as' => 'output-confirmed', 'uses' => 'OutputController@confirmed']);
+  Route::put('elder/{elderId}/output/{outputId}/edit', ['as' => 'output-edit', 'uses' => 'OutputController@edit']);
   Route::delete('elder/{elderId}/output/{outputId}/delete', ['as' => 'output-delete', 'uses' => 'OutputController@delete']);
+  Route::get('outputs/waiting', ['as' => 'outputs-waiting', 'uses' => 'OutputController@getOutputWaiting']);
   Route::get('outputs/{type}', ['as' => 'outputs-type', 'uses' => 'OutputController@getOutputType']);
-
 	// employee
   Route::get('employees/{state}', ['as' => 'employees', 'uses' => 'EmployeeController@employees']);
 	Route::post('employee', ['as' => 'employee-create', 'uses' => 'EmployeeController@create']);
@@ -73,6 +75,7 @@ Route::group(['before' => 'auth-check'], function ()
   Route::get('employee/{employeeId}/user/show', ['as' => 'user-show', 'uses' => 'UserController@show']);
   Route::put('employee/{employeeId}/user/{userId}/edit', ['as' => 'user-edit', 'uses' => 'UserController@edit']);
   Route::delete('employee/{employeeId}/user/{userId}/delete', ['as' => 'uses-delete', 'uses' => 'UserController@delete']);
+  Route::get('user/logged', ['as' => 'user-logger', 'uses' => 'UserController@logged']);
   Route::get('users', ['as' => 'users', 'uses' => 'UserController@users']);
   // attendance 
   Route::get('attendances', ['as' => 'attendance', 'uses' => 'AttendanceController@attendances']);
@@ -81,7 +84,6 @@ Route::group(['before' => 'auth-check'], function ()
   Route::get('employee/{employeeId}/attendance/{attendanceId}/confirmed', ['as' => 'attendance-confirmed', 'uses' => 'AttendanceController@confirmed']);
   Route::put('employee/{employeeId}/attendance/{attendanceId}/edit', ['as' => 'attendance-edit', 'uses' => 'AttendanceController@edit']);
   
-
   // permit
   Route::post('employee/{employeeId}/permit', ['as' => 'permit-create', 'uses' => 'PermitController@create']);
   Route::get('employee/{employeeId}/permit/{permitId}', ['as' => 'permit-show', 'uses' => 'PermitController@show']);

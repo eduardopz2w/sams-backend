@@ -14,21 +14,38 @@ class OutputRepository extends BaseRepository {
 		return Output::join('elders', 'outputs.elder_id', '=', 'elders.id')
 		              ->select('elders.full_name',
 		              		'elders.identity_card',
-		              		'outputs.info',
+		              		'outputs.id',
+		              		'outputs.elder_id',
+		              		'outputs.date_start',
+		              		'outputs.date_end'
+		              	)
+		             	->where('type', 'pernot')
+		             	->where('date_start', '<=', $date)
+		              ->where('state', 0);
+		              
+	}
+
+	public function getOutputPernotWaiting($date) {
+		return Output::join('elders', 'outputs.elder_id', '=', 'elders.id')
+		              ->select('elders.full_name',
+		              		'elders.identity_card',
+		              		'outputs.id',
+		              		'outputs.elder_id',
 		              		'outputs.date_start',
 		              		'outputs.date_end'
 		              	)
 		             	->where('type', 'pernot')
 		             	->where('date_end', '<=', $date)
 		              ->where('state', 0);
-		              
 	}
 
 	public function getOutputNormal() {
 		return Output::join('elders', 'outputs.elder_id', '=', 'elders.id')
 		              ->select('elders.full_name',
 		              	 'elders.identity_card',
-		              	 'outputs.info'
+		              	 'outputs.id',
+		              	 'outputs.elder_id',
+		              	 'outputs.created_at'
 		               )
 		              ->where('type', 'normal')
 		              ->where('state', 0);

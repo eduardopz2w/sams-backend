@@ -38,9 +38,8 @@ class OutputTask extends BaseTask {
 		}
 	}
 
-	public function confirmed($output, $info) {
+	public function confirmed($output) {
 		$output->state = 1;
-		$output->info = $info;
 
 		$output->save();
 	}
@@ -69,6 +68,21 @@ class OutputTask extends BaseTask {
 
 		if ($outputs->count() == 0) {
 			$message = 'Adulto mayor no posee registros de salidas';
+
+			$this->hasException($message);
+		}
+
+		$outputs = $outputs->get();
+
+		return $outputs;
+	}
+
+	public function getOutputWaiting() {
+		$date = current_date();
+		$outputs = $this->outputRepo->getOutputPernotWaiting($date);
+
+		if ($outputs->count() == 0) {
+			$message = 'No se espera la de llegada de adultos mayores';
 
 			$this->hasException($message);
 		}

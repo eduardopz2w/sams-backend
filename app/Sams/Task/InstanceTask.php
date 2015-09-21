@@ -60,7 +60,7 @@ class InstanceTask extends BaseTask {
 										->where('state', 'waiting');
 
 		if ($instance->count() > 0) {
-			$message = 'Adulto mayor posee notificacion de registro por confirmar';
+			$message = 'Adulto mayor posee notificacion de entrada por confirmar';
 
 			$this->hasException($message);
 		}
@@ -83,9 +83,9 @@ class InstanceTask extends BaseTask {
 
 	public function confirmInstance($instance, $state) {
 		if ($state == 'confirmed') {
-			$message = 'Notificacion confirmada';
+			$message = 'Notificacion de entrada confirmada';
 		} else {
-			$message = 'Notificacion rechazada';
+			$message = 'Notificacionde entrada rechazada';
 		}
 
 		$instance->state = $state;
@@ -104,7 +104,7 @@ class InstanceTask extends BaseTask {
 		$instances = $this->instanceRepo->getInstanceVisited($date);
 
 		if ($instances->count() == 0) {
-			$message = 'No hay notificaciones de entradada por confirmar';
+			$message = 'No hay visitas sociales por confirmar';
 
 			$this->hasException($message);
 		}
@@ -126,6 +126,39 @@ class InstanceTask extends BaseTask {
 		$instances = $instances->get();
 
 		return $instances;
+	}
+
+	public function getInstancesDate($date) {
+		$this->validateDate($date);
+
+		$instances = $this->instanceRepo->getForDate($date);
+
+		if ($instances->count() == 0) {
+			$message = 'No hay visitas registradas para esta fecha';
+
+			$this->hasException($message);
+		}
+
+		$instances = $instances->get();
+
+		return $instances;
+	}
+
+	public function validateDate($date) {
+		$date = ['date' => $date];
+    $rules = ['date' => 'required|date'];
+    $messages = [
+      'date.required' => 'Ingrese fecha',
+      'date.date' => 'Ingrese formato de fecha valido'
+    ];
+
+    $validator = \Validator::make($date, $rules, $messages);
+
+    if ($validator->fails()) {
+      $message = $validator->messages();
+
+      $this->hasException($message);
+    }
 	}
 
 

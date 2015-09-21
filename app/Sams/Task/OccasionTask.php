@@ -3,7 +3,7 @@
 namespace Sams\Task;
 
 class OccasionTask extends BaseTask {
-  
+
   public function confirmOccasion($data) {
     $dateIn = $data['date_start'];
     $dateOut = $data['date_end'];
@@ -21,7 +21,7 @@ class OccasionTask extends BaseTask {
 
   public function confirmDate($dateIn, $dateOut) {
     if ($dateIn >= $dateOut) {
-      $message = 'Fecha de inicio deber ser menor a fecha de fin';
+      $message = '"Fecha de inicio deber ser menor a fecha de fin"';
 
       $this->hasException($message);
     }
@@ -29,7 +29,7 @@ class OccasionTask extends BaseTask {
 
   public function confirmHour($timeIn, $timeOut) {
     if ($timeIn >= $timeOut) {
-      $message = 'Hora de inicio debe ser menor a hora de fin';
+      $message = '"Hora de inicio debe ser menor a hora de fin"';
 
       $this->hasException($message);
     }
@@ -50,7 +50,12 @@ class OccasionTask extends BaseTask {
   public function validateDate($date) {
     $date = ['date' => $date];
     $rules = ['date' => 'required|date'];
-    $validator = \Validator::make($date, $rules);
+    $messages = [
+      'date.required' => 'Ingrese fecha',
+      'date.date' => 'Ingrese formato de fecha valido'
+    ];
+
+    $validator = \Validator::make($date, $rules, $messages);
 
     if ($validator->fails()) {
       $message = $validator->messages();
