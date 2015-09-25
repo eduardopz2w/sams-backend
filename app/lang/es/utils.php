@@ -40,7 +40,8 @@ return [
 
 	'civil_status' => [
 	  'single' => 'Soltero',
-	  'married' => 'Casado'
+	  'married' => 'Casado',
+	  null => null
 	],
 
 	

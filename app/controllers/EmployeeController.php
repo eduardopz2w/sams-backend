@@ -15,8 +15,8 @@ class EmployeeController extends BaseController {
     $this->employeeTask = $employeeTask;
   }
 
-  public function employees($state) {
-    $employees = $this->employeeTask->getEmployees($state);
+  public function employees() {
+    $employees = $this->employeeTask->getEmployees();
     $response = [
       'status' => 'success',
       'data' => $employees

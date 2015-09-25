@@ -14,7 +14,6 @@ class CitationController extends BaseController {
 	protected $referenceRepo;
 	protected $citationTask;
 
-
 	public function __construct(ElderRepository $elderRepo, 
 		                          CitationRepository $citationRepo, 
 		                          ReferenceRepository $referenceRepo,
@@ -55,12 +54,25 @@ class CitationController extends BaseController {
 			'data' => $citations
 		];
 
-		return Response::json($citations);
+		return Response::json($response);
+	}
+
+	public function citationsForElderWaiting($elderId) {
+		$elder = $this->elderRepo->find($elderId);
+		$citations = $this->citationTask->getElderCitationsWaiting($elder);
+		$response = [
+		 'status' => 'success',
+		 'data' => $citations
+		];
+
+		return Response::json($response);
 	}
 
 	public function show($elderId, $citationId) {
 		$elder = $this->elderRepo->find($elderId);
-		$citation = $elder->citations()->where('id', $citationId)->first();
+		$citation = $elder->citations()
+											 ->where('id', $citationId)
+											  ->first();
 
 		$this->notFound($citation);
 

@@ -10,8 +10,8 @@ class EmployeeRepository extends BaseRepository {
 	  return new Employee;
 	}
 
-	public function getEmployeesForState($state) {
-		return Employee::where('activiti', $state);
+	public function getEmployees() {
+		return Employee::all();
 	}
 	
 	public function employeeInSchedule($id, $hourIn, $hourOut, $days) {

@@ -70,10 +70,28 @@ class CitationTask extends BaseTask {
 	}
 
 	public function getElderCitations($elder) {
-		$citations = $elder->citations();
+		$citations = $elder
+									->citations()
+									 ->orderBy('date_day', 'DESC');
 
 		if ($citations->count() == 0) {
 			$message = 'Adulto mayor no tiene citas asignadas';
+
+			$this->hasException($message);
+		}
+
+		$citations = $citations->get();
+
+		return $citations;
+	}
+
+	public function getElderCitationsWaiting($elder) {
+		$citations = $elder 
+							    ->citations()
+							     ->where('state', 'loading');
+
+		if ($citations->count() == 0) {
+			$message = 'Adulto mayor no posee citas pendientes';
 
 			$this->hasException($message);
 		}
@@ -88,18 +106,18 @@ class CitationTask extends BaseTask {
 		$citationDate = $citation->date_day;
 
 		if ($date < $citationDate) {
-			$message = 'No pueden confirmar cita antes de la fecha asignada';
+			$message = '"Aun no ha pasado fecha de la cita"';
 
 			$this->hasException($message);
 		}
 
-		if ($state) {
-			$message = 'Cita confirmada';
-			$citation->state = 'confirmed';
+		if ($state == 'confirmed') {
+			$message = 'Cita realizada confirmado';
 		} else {
-			$message = 'Cita cancelada';
-			$citation->state = 'reject';
+			$message = 'Cita no realizada';
 		}
+
+		$citation->state = $state;
 
 		$citation->save();
 

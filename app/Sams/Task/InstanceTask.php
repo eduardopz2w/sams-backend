@@ -11,7 +11,7 @@ class InstanceTask extends BaseTask {
 
   public function __construct(ElderRepository $elderRepo, 
   	                          InstanceRepository $instanceRepo) {
-  	$this->elderRepo    = $elderRepo;
+  	$this->elderRepo = $elderRepo;
 	  $this->instanceRepo = $instanceRepo;
   }
 	 

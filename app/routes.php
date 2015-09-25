@@ -12,7 +12,7 @@ Route::get('user/logout', ['as' => 'logout', 'uses' => 'UserController@logout'])
 
 Route::group(['before' => 'auth-check'], function ()
 {
-  // elder;
+  // elder
   Route::get('elder/{id}', ['as' => 'elder-show', 'uses' => 'ElderController@show']);
   Route::put('elder/{id}/edit', ['as' => 'elder-edit', 'uses' => 'ElderController@edit']);
   Route::delete('elder/{id}/delete', ['as' => 'elder-delete', 'uses' => 'ElderController@delete']);
@@ -20,8 +20,8 @@ Route::group(['before' => 'auth-check'], function ()
 
   // notificacion
 	Route::post('elder/instance', ['as' => 'instance-create', 'uses' => 'InstanceController@create']);
-  Route::get('elder/{elderId}/instance/{instanceId}', ['as' => 'instance-show', 'uses' => 'InstanceController@show']);
   Route::get('elder/{elderId}/instance/waiting', ['as' => 'instance-waiting', 'uses' => 'InstanceController@instanceWaitingElder']);
+  Route::get('elder/{elderId}/instance/{instanceId}', ['as' => 'instance-show', 'uses' => 'InstanceController@show']);
   Route::get('elder/{elderId}/instance/{instanceId}/confirmed', ['as' => 'instance-confirmed', 'uses' => 'InstanceController@confirmed']);
   Route::put('elder/{elderId}/instance/{instanceId}/edit', ['as' => 'instance-edit', 'uses' => 'InstanceController@edit']);
   Route::delete('elder/{elderId}/instance/{instanceId}/delete', ['as' => 'instance-delete', 'uses' => 'InstanceController@delete']);
@@ -40,9 +40,10 @@ Route::group(['before' => 'auth-check'], function ()
    // citation 
   Route::post('elder/{elderId}/citation', ['as' => 'citation-create', 'uses' => 'CitationController@create']);
   Route::get('elder/{elderId}/citations', ['as' => 'citation-all', 'uses' => 'CitationController@citationsForElder']);
+  Route::get('elder/{elderId}/citations/waiting', ['as' => 'citation-waiting', 'uses' => 'CitationController@citationsForElderWaiting']);
   Route::get('elder/{eldeId}/citation/{citationId}', ['as' => 'citation-show', 'uses' => 'CitationController@show']);
   Route::put('elder/{elderId}/citation/{citationId}/edit', ['as' => 'citation-edit', 'uses' => 'CitationController@edit']);
-  Route::get('elder/{elderId}/citation/{citationId}/confirmed', ['as' => 'citation->confirmed', 'uses' => 'CitationController@confirmed']);
+  Route::get('elder/{elderId}/citation/{citationId}/check', ['as' => 'citation->confirmed', 'uses' => 'CitationController@confirmed']);
   Route::delete('elder/{elderId}/citation/{citationId}/delete', ['as' => 'citation-delete', 'uses' => 'CitationController@delete']);
   Route::get('citations/current', ['as' => 'citation-current', 'uses' => 'CitationController@citationsCurrent']);
 
@@ -64,7 +65,7 @@ Route::group(['before' => 'auth-check'], function ()
   Route::get('outputs/waiting', ['as' => 'outputs-waiting', 'uses' => 'OutputController@getOutputWaiting']);
   Route::get('outputs/{type}', ['as' => 'outputs-type', 'uses' => 'OutputController@getOutputType']);
 	// employee
-  Route::get('employees/{state}', ['as' => 'employees', 'uses' => 'EmployeeController@employees']);
+  Route::get('employees', ['as' => 'employees', 'uses' => 'EmployeeController@employees']);
 	Route::post('employee', ['as' => 'employee-create', 'uses' => 'EmployeeController@create']);
   Route::get('employee/{id}', ['as' => 'employee->show', 'uses' => 'EmployeeController@show']);
   Route::put('employee/{id}/edit', ['as' => 'employee-edit','uses' => 'EmployeeController@edit']);

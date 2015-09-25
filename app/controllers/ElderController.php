@@ -33,6 +33,7 @@ class ElderController extends BaseController {
 	  $response = [
 	  	'status' => 'success',
 	    'message' => 'Datos actualizados',
+	    'data' => $elder,
 	    'record' => $record
 	  ];
 
@@ -47,7 +48,7 @@ class ElderController extends BaseController {
 	  $elder = $this->elderTask->format($elder);
 	  $response = [
 	  	'status' => 'success',
-	  	'elder' => $elder,
+	  	'data' => $elder,
 	  ];
 
 	  return Response::json($response);

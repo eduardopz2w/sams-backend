@@ -80,7 +80,7 @@ class RecordController extends BaseController {
 
     $response = [
       'status' => 'success',
-      'data' => 'Historia medica actualizada'
+      'message' => 'Historia clinica actualizada'
     ];
     
     return Response::json($response);

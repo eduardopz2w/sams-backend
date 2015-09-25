@@ -9,8 +9,6 @@ class ElderTask extends BaseTask {
 
 	protected $elderRepo;
 	protected $recordRepo;
-	protected $citationRepo;
-	protected $instanceRepo;
 
 	public function __construct(ElderRepository $elderRepo,
                               RecordRepository $recordRepo) {
@@ -39,6 +37,7 @@ class ElderTask extends BaseTask {
                     ->count();
     $citation = $elder
                   ->citations()
+                    ->where('state', 'loading')
                     ->count();
     $elder = [
       'identity_card' => $elder->identity_card,
@@ -47,7 +46,7 @@ class ElderTask extends BaseTask {
       'gender' => $elder->gender,
       'retired' => $elder->retired,
       'pensioner' => $elder->pensioner,
-      'civil_status' => \Lang::get('utils.civil_status.'. $elder->civil_status),
+      'civil_status' =>  $elder->civil_status,
       'date_birth' => $elder->date_birth,
       'activiti' => $elder->activiti,
       'image_url'=> $elder->image_url,

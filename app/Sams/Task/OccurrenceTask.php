@@ -7,7 +7,7 @@ use Sams\Manager\ImageOccurrenceManager;
 class OccurrenceTask extends BaseTask {
   
   public function addImg($occurrence, $img, $mime) {
-    $imgRecord = new ImageRecordManager($occurrence, $img, $mime);
+    $imgRecord = new ImageOccurrenceManager($occurrence, $img, $mime);
 
     $imgRecord->uploadImg();
   }

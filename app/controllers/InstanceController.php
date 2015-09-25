@@ -52,6 +52,7 @@ class InstanceController extends BaseController {
 
 		$this->notFound($instance);
 
+		$instance = $this->instanceTask->format($elder, $instance);
 		$response = [
 			'status' => 'success',
 			'data' => $instance
@@ -73,10 +74,11 @@ class InstanceController extends BaseController {
 
 		$elder->save();
 
+		$instance = $this->instanceTask->format($elder, $instance);
 		$response = [
 			'status' => 'success',
-			'message' => 'Notificacion de entrada confirmada',
-			'data' => $elder
+			'message' => 'Notificacion de entrada actualizada',
+			'data' => $instance
 		];
 
 		return Response::json($response);

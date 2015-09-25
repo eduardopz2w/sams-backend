@@ -13,16 +13,14 @@ class EmployeeTask extends BaseTask {
 	  $this->employeeRepo = $employeeRepo;
 	}
 
-	public function getEmployees($state) {
-		$employees = $this->employeeRepo->getEmployeesForState($state);
+	public function getEmployees() {
+		$employees = $this->employeeRepo->getEmployees();
 
 		if ($employees->count() == 0) {
-			$message = 'No hay empleado para esta categoria';
+			$message = 'No hay empleados registrados';
 
 			$this->hasException($message);
 		}
-
-		$employees = $employees->get();
 
 		return $employees;
 	}
