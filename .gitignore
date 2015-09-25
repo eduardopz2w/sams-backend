@@ -1,5 +1,8 @@
 /bootstrap/compiled.php
 /vendor
+public/image/geriatric/employees/**/*
+public/image/geriatric/occurrences/**/*
+public/image/geriatric/records/**/*
 composer.phar
 composer.lock
 .env.*.php
