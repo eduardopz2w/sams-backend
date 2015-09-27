@@ -81,8 +81,12 @@ class InstanceTask extends BaseTask {
 	  return $instance;
 	}
 
-	public function confirmInstance($instance, $state) {
+	public function confirmInstance($elder, $instance, $state) {
 		if ($state == 'confirmed') {
+			$elder->activiti = 1;
+
+			$elder->save();
+			
 			$message = 'Notificacion de entrada confirmada';
 		} else {
 			$message = 'Notificacionde entrada rechazada';

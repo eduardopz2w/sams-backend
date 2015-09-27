@@ -23,6 +23,7 @@ class AttendanceRepository extends BaseRepository {
 		  		            	'employees.last_name',
 		  		            	'attendances.start_time',
 		  		             	'attendances.date_day',
+		  		             	'attendances.employee_id',
 		  		             	'attendances.id'
 		  		             )
 											 ->where('attendances.date_day', $date)
@@ -43,6 +44,7 @@ class AttendanceRepository extends BaseRepository {
 		  		              'attendances.hour_in',
 		  		              'attendances.hour_out',
 		  		             	'attendances.state',
+		  		             	'attendances.employee_id',
 		  		             	'attendances.id'
 		  		            )
 										  ->where('attendances.date_day', $date)
@@ -57,6 +59,7 @@ class AttendanceRepository extends BaseRepository {
 		  		            	 'employees.last_name',
 		  		             	 'attendances.departure_time',
 		  		               'attendances.date_day',
+		  		               'attendances.employee_id',
 		  		               'attendances.id'
 		  		              )
 										  ->where('attendances.date_day', $date)

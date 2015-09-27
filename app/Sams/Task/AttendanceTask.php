@@ -47,9 +47,9 @@ class AttendanceTask extends BaseTask {
 				$assingSchedule = $employee->pivot->created_at;		
 				$employeeInDate = $this->entityInDate($assingSchedule, $date);
 
-				// if ($employee->activiti && $employeeInDate) {
+				if ($employee->activiti && $employeeInDate) {
 					$this->checkSchedule($employee, $schedule, $date);
-				// }
+				}
 			}
 	  }
 	}

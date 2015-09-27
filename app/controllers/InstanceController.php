@@ -85,9 +85,15 @@ class InstanceController extends BaseController {
 	}
 
 	public function confirmed($elderId, $instanceId) {
-		$instance = $this->instanceRepo->find($instanceId);
+		$elder = $this->elderRepo->find($elderId);
+		$instance = $elder
+		              ->instances()
+		               ->where('id', $instanceId)
+		               ->first();
+
 	  $state = Input::get('state');
-		$response = $this->instanceTask->confirmInstance($instance, $state);
+
+		$response = $this->instanceTask->confirmInstance($elder, $instance, $state);
 
 		return Response::json($response);
 	}

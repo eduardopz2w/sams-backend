@@ -125,6 +125,9 @@ Route::group(['before' => 'auth-check'], function ()
   Route::put('product/{productId}/edit', ['as' => 'product-edit', 'uses' => 'ProductController@edit']);
   Route::delete('product/{productId}/delete', ['as' => 'product-delete', 'uses' => 'ProductController@delete']);
 
+  // Audit
+  Route::get('audits', ['as' => 'getAudit', 'uses' => 'AuditController@getAudit']);
+
   // configuration
   Route::put('config/edit', ['as' => 'config', 'uses' => 'ConfigController@edit']);
 

@@ -31,7 +31,7 @@ abstract class ImageManager {
  	  $this->entity->image_url = $this->getUrl($path);
 
  	  $this->entity->save();
-	}
+ 	}
 
 	public function dirExists() {
  		$dir = $this->getDirName();

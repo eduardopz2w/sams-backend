@@ -32,9 +32,12 @@ class EmployeeController extends BaseController {
     
     $manager->create();
 
+
     if (isset($data['photo'])) {
       $photo = $data['photo'];
       $mime = $data['mime_request'];
+
+      $employee = $this->employeeRepo->find($employee->id);
 
       $this->employeeTask->addImg($employee, $photo, $mime); 
     }
@@ -56,7 +59,7 @@ class EmployeeController extends BaseController {
     $employee = $this->employeeTask->format($employee);
 
     return Response::json(['status' => 'success',
-                           'employee' => $employee]);
+                           'data' => $employee]);
   }
 
   public function edit($id) {

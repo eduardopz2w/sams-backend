@@ -25,8 +25,8 @@ class EmployeeTask extends BaseTask {
 		return $employees;
 	}
 
-  public function addImg($record, $img, $mime) {
-	  $imgRecord = new ImageEmployeeManager($record, $img, $mime);
+  public function addImg($employee, $img, $mime) {
+	  $imgRecord = new ImageEmployeeManager($employee, $img, $mime);
 
 	  $imgRecord->uploadImg();
   }
