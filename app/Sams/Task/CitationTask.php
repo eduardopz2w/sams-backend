@@ -53,10 +53,8 @@ class CitationTask extends BaseTask {
 	public function getCurrentCitations() {
 		$date = current_date();
 		$hour = current_hour();
-		$minutes = '60';
-		$hourExpected = add_hour($hour, $minutes);
-    $hourAfter = add_hour($hourExpected, $minutes);
-    $citations = $this->citationRepo->getCitationsCurrent($date, $hourExpected, $hourAfter);
+
+    $citations = $this->citationRepo->getCitationsCurrent($date);
     
     if ($citations->count() == 0) {
     	$message = 'No hay citas pendientes en este momento';

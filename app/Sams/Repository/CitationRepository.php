@@ -9,7 +9,7 @@ class CitationRepository extends BaseRepository {
     return new Citation;
   }
 	
-  public function getCitationsCurrent($date, $hourExpected, $hourAfter) {
+  public function getCitationsCurrent($date) {
     return Citation::join('elders', 'citations.elder_id', '=', 'elders.id')
              	->select('citations.hour',
              	         'citations.reason',
@@ -20,15 +20,12 @@ class CitationRepository extends BaseRepository {
                        
                           )
              		 ->where('date_day', $date)
-             		 ->where('hour', '>=', $hourExpected)
-             		 ->where('hour', '<', $hourAfter)
              		 ->where('state', 'loading')
-             		 ->orWhere(function ($query) use ($date, $hourExpected) {
+             		 ->orWhere(function ($query) use ($date) {
              		    $query->where('date_day', $date)
-             		      ->where('hour', '<', $hourExpected)
              		      ->where('state', 'loading');
              		 })
-                 ->orderBy('hour', 'DESC');
+                 ->orderBy('hour', 'ASC');
   }
 
 
