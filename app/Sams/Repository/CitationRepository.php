@@ -11,12 +11,13 @@ class CitationRepository extends BaseRepository {
 	
   public function getCitationsCurrent($date, $hourExpected, $hourAfter) {
     return Citation::join('elders', 'citations.elder_id', '=', 'elders.id')
-             	->select('citations.address',
-             	         'citations.date_day',
-             	         'citations.hour',
+             	->select('citations.hour',
              	         'citations.reason',
+                       'citations.id',
+                       'citations.elder_id',
              	         'elders.full_name',
              	         'elders.identity_card'
+                       
                           )
              		 ->where('date_day', $date)
              		 ->where('hour', '>=', $hourExpected)

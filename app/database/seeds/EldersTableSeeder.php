@@ -17,17 +17,17 @@ class EldersTableSeeder extends Seeder {
 					'identity_card' => $faker->phoneNumber,
 					'full_name'     => $faker->name,
 					'address'       => $faker->address,
-					'activiti'      => 0
+					'activiti'      => 1
 			 ]);
 
-			Instance::create([
-				  'elder_id'    => $elder->id,
-				  'referred'    => 'presidency_inass',
-				  'address'     => $faker->address,
-				  'visit_date'  => '2015-09-11',
-				  'description' => $faker->word,
-				  'state'       => 'waiting'
-				]);
+			// Instance::create([
+			// 	  'elder_id'    => $elder->id,
+			// 	  'referred'    => 'presidency_inass',
+			// 	  'address'     => $faker->address,
+			// 	  'visit_date'  => '2015-09-11',
+			// 	  'description' => $faker->word,
+			// 	  'state'       => 'waiting'
+			// 	]);
 		}
 	}
 

@@ -15,8 +15,7 @@ class CitationsTableSeeder extends Seeder {
 			Citation::create([
         'elder_id' => $index,
         'state'    => 'loading',
-        'address'  => $faker->address,
-        'date_day' => '2015-08-20',
+        'date_day' => '2015-09-28',
         'hour'     => $faker->time,
         'reason'   => $faker->word
 			]);
