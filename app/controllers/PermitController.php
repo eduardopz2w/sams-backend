@@ -36,7 +36,8 @@ class PermitController extends BaseController {
     
     $response = [
       'status' => 'success',
-      'message' => 'Permiso registrado'
+      'message' => 'Permiso registrado',
+      'data' => $permit
     ];
 
     return Response::json($response);
@@ -95,7 +96,8 @@ class PermitController extends BaseController {
 
     $response = [
       'status' => 'success',
-      'message' => 'Permiso Cancelado'
+      'message' => 'Permiso Cancelado',
+      'data' => $permit
     ];
 
     return Response::json($response);

@@ -13,7 +13,7 @@ class CitationsTableSeeder extends Seeder {
 		foreach(range(1, 29) as $index)
 		{
 			Citation::create([
-        'elder_id' => 1,
+        'elder_id' => $index,
         'state'    => 'loading',
         'address'  => $faker->address,
         'date_day' => '2015-08-20',

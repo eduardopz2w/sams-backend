@@ -73,7 +73,7 @@ class OutputController extends BaseController {
 		$type = $output->type;
 
 		if ($state || $type == 'normal') {
-			$data = Input::only('info');
+			$data = Input::only('info', 'type');
 		} else {
 			$data = Input::all();
 		}

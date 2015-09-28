@@ -53,8 +53,7 @@ Route::group(['before' => 'auth-check'], function ()
   Route::get('elder/{elderId}/occurrence/{occurrenceId}', ['as' => 'occurrence-show', 'uses' => 'OccurrenceController@show']);
   Route::put('elder/{elderId}/occurrence/{occurrenceId}/edit', ['as' => 'occurrence-edit', 'uses' => 'OccurrenceController@edit']);
   Route::delete('elder/{elderId}/occurrence/{occurrenceId}/delete', ['as' => 'occurrence-delete', 'uses' => 'OccurrenceController@delete']);
- 
-
+  
  // output
   Route::post('elder/{elderId}/output', ['as' => 'output-create', 'uses' => 'OutputController@create']);
   Route::get('elder/{elderId}/outputs', ['as' => 'outputs-elder', 'uses' => 'OutputController@outputsForElder']);
