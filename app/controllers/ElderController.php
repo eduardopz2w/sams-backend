@@ -77,6 +77,13 @@ class ElderController extends BaseController {
 
 	  return Response::json($response);
 	}
+
+	public function search() {
+		$query = Input::get('q');
+    $elders = $this->elderRepo->findEldersByName($query);
+    
+    return Response::json($elders);
+	}
 	  
 
 

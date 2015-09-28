@@ -16,26 +16,17 @@ class ConfigController extends BaseController {
   }
 
   public function edit() {
-    $user = Auth::user();
+    $config = get_configuration();
+    $data = Input::except('_method');
+    $manager = new ConfigurationManager($config, $data);
 
-    if (!$user->hasRole('SuperAdmin')) {
-      $response = [
-        'status' => 'error',
-        'message' => 'No posee permisos para modificar las configuraciones'
-      ];
-    } else {
-      $config = get_configuration();
-      $data = Input::except('_method');
-      $manager = new ConfigurationManager($config, $data);
+    $manager->edit();
 
-      $manager->edit();
-
-      $response = [
-        'status' => 'success',
-        'data' => $config,
-        'message' => 'Datos actualizados'
-      ];
-    }
+    $response = [
+      'status' => 'success',
+      'data' => $config,
+      'message' => 'Datos actualizados'
+    ];
   
     return Response::json($response);
   }

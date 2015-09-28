@@ -6,6 +6,7 @@ Route::get('config', 'ConfigController@config');
 //auth
 // Route::post('login', ['as'  => 'login', 'uses'  => 'AuthController@login']);
 // Route::get('logout' , ['as' => 'logout', 'uses' => 'AuthController@logout']);
+ // Route::get('search/elders', ['as' => 'search-elders', 'uses' => 'SearchController@searchElder']);
 
 Route::post('user/login', ['as' => 'login', 'uses' => 'UserController@login']);
 Route::get('user/logout', ['as' => 'logout', 'uses' => 'UserController@logout']);
@@ -16,7 +17,9 @@ Route::group(['before' => 'auth-check'], function ()
   Route::get('elder/{id}', ['as' => 'elder-show', 'uses' => 'ElderController@show']);
   Route::put('elder/{id}/edit', ['as' => 'elder-edit', 'uses' => 'ElderController@edit']);
   Route::delete('elder/{id}/delete', ['as' => 'elder-delete', 'uses' => 'ElderController@delete']);
+  Route::get('elders/search', ['as' => 'elder-search', 'uses' => 'ElderController@search']);
   Route::get('elders/{state}', ['as' => 'elders', 'uses' => 'ElderController@elders']);
+
 
   // notificacion
 	Route::post('elder/instance', ['as' => 'instance-create', 'uses' => 'InstanceController@create']);
