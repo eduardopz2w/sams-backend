@@ -39,37 +39,5 @@ class ScheduleRepository extends BaseRepository {
 		      	->where('days', 'Like', '%'.$day.'%');
 	}
 
-	// public function scheduleInAction($idH, $idA)
-
-	// {
-	// 		return \DB::table('action_schedule')
-	// 		          ->where('schedule_id', $idH)
-	// 		          ->where('action_id', $idA);
-	// }
-
-	// public function timesToday($day)
-
-	// {
-	// 		return Schedule::where('days', 'LIKE', '%'.$day.'%');
-	// }
-
-	// public function intervalSchedule($star, $end)
-
-	// {
-	// 		return Schedule::where('entry_time', '<=', $end)
-	// 		                ->where('departure_time','>=', $end)
-	// 		                ->orWhere(function($q) use ($star, $end)  {
-	// 		                		$q->where('entry_time', '>=', $star)
-	// 		                		  ->where('departure_time', '<=', $end);
-	// 		                })
-	// 		                ->orWhere(function($q) use ($star, $end) {
-	// 		                		$q->where('entry_time', '<', $star)
-	// 		                		  ->where('departure_time', '>=', $star)
-	// 		                		  ->where('departure_time', '<=', $end);
-	// 		                });
-			               
-	// }
-
-
 
 }

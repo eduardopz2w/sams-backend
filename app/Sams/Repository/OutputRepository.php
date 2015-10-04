@@ -10,7 +10,7 @@ class OutputRepository extends BaseRepository {
 	  return new Output;
 	}
 
-	public function getOutputPernot($date) {
+	public function getOutputPernot() {
 		return Output::join('elders', 'outputs.elder_id', '=', 'elders.id')
 		              ->select('elders.full_name',
 		              		'elders.identity_card',
@@ -20,7 +20,6 @@ class OutputRepository extends BaseRepository {
 		              		'outputs.date_end'
 		              	)
 		             	->where('type', 'pernot')
-		             	->where('date_start', '<=', $date)
 		              ->where('state', 0);
 		              
 	}

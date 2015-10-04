@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider {
 
   public function boot() {
 
-    /*User::created(function ($event) {
+   /* User::created(function ($event) {
       $user = Auth::user();
       $message = 'El usuario '.$user->email. ' ha registrado al usuario id:'.$event->id;
       

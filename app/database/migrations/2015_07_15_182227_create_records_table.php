@@ -30,7 +30,7 @@ class CreateRecordsTable extends Migration {
 			$table->integer('disability_physical');//indice incapacidad fisica
       $table->integer('disability_psychic');//indice incapacidad psiquica
       $table->boolean('feeding_assisted');
-			$table->enum('size_diaper', ['S', 'M', 'L'])->nullable();
+			$table->enum('size_diaper', ['S', 'M', 'L', 'No aplica'])->nullable();
       $table->enum('baston', ['1 point', '2 point', '3 point'])->nullable();
       $table->string('muleta')->nullable();
       $table->boolean('wheelchair');

@@ -6,6 +6,7 @@ class InstanceManager extends BaseManager {
 
 	public function getRules() {
 		$date = current_date();
+		$date = rest_date(1, $date);
 	  $rules = [
 	    'identity_card' => 'required|numeric',
 	  	'referred' => 'required|in:presidency_inass,social_welfare,health,cssr,other',

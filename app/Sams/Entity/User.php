@@ -42,6 +42,7 @@ class User extends \Eloquent implements UserInterface, RemindableInterface {
 	protected $hidden = array('password', 'remember_token');
 
 	public function loadRole() {
+
 		if ($this->hasRole('Admin')) {
 			$this->role = 'Admin';
 		} elseif ($this->hasRole('SuperAdmin')) {

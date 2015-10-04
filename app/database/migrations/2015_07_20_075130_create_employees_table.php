@@ -18,8 +18,7 @@ class CreateEmployeesTable extends Migration {
 			$table->string('identity_card');
 			$table->string('mime');
 			$table->string('image_url');
-			$table->string('first_name');
-			$table->string('last_name');
+			$table->string('full_name');
 			$table->date('date_birth');
 			$table->string('phone')->nullable();
 			$table->string('address');

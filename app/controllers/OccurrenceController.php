@@ -38,7 +38,8 @@ class OccurrenceController extends BaseController {
 
     $response = [
     	'status' => 'success',
-    	'message' => 'Incidencia guardada'
+    	'message' => 'Incidencia guardada',
+    	'data' => $occurrence
     ];
 
     return Response::json($response);

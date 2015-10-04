@@ -47,8 +47,8 @@ class OutputTask extends BaseTask {
 	public function getOutputType($type) {
 		if ($type == 'pernot') {
 			$date = current_date();
-			$message = 'No hay salidas del tipo pernota por confirmar';
-			$outputs = $this->outputRepo->getOutputPernot($date);
+			$message = 'No hay adultos con salida del tipo pernocta';
+			$outputs = $this->outputRepo->getOutputPernot();
 		} else {
 			$message = 'No hay salidas por confirmar';
 			$outputs = $this->outputRepo->getOutputNormal();

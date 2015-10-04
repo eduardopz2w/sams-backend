@@ -46,7 +46,8 @@ class OutputController extends BaseController {
 
 		$response = [
 		 'status' => 'success',
-		 'message' => 'Salida guardada'
+		 'message' => 'Salida guardada',
+		 'data' => $output
 		];
 
 		return Response::json($response);

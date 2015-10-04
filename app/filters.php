@@ -41,6 +41,16 @@ Route::filter('auth-check', function () {
 
 });
 
+Route::filter('isAdmin', function () {
+	$user = Auth::user();
+	$user->loadRole();
+
+	if ($user->role == 'User') {
+		return Response::make('Redirect', 307);
+	}
+   
+});
+
 
 		
 /*

@@ -22,7 +22,7 @@ class InstanceRepository extends BaseRepository{
 		               	)
 		               ->where('visit_date', '<=', $date)
 			             ->where('state' ,'waiting')
-			             ->orderBy('visit_date', 'DESC');
+			             ->orderBy('visit_date', 'ASC');
 	}
 
 	public function getForDate($date) {

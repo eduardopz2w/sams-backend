@@ -34,8 +34,7 @@ class EmployeeTask extends BaseTask {
 	public function format($employee) {
 		$employee = [
 			'identity_card' => $employee->identity_card,
-		  'first_name' => $employee->first_name,
-		  'last_name' => $employee->last_name,
+		  'full_name' => $employee->full_name,
 		  'date_birth' => $employee->date_birth,
 		  'phone' => $employee->phone,
 		  'address' => $employee->address,
@@ -50,42 +49,4 @@ class EmployeeTask extends BaseTask {
 
 		return $employee;
 	}
-
-	// public function findEmployeeById($id)
-
-	// {
-	//   $employee = $this->employeeRepo->find($id);
-	//   $this->employeeActiviti($employee);
-			
-	//   return $employee;
-	// }
-
-	// public function findEmployeeByCredentials($identityCard)
-
-	// {
-	//   $employee = $this->employeeRepo->employeeByIdentify($identityCard);
-			
-	//   if ($employee->count() == 0)
-
-	// 	{
-	// 	  $message = 'Empleado no encontrado, verifique e intente de nuevo';
-	// 	  $this->hasException($message);
-	// 	}
-
-	// 	$employee = $employee->first();
-	// 	$this->employeeActiviti($employee);
-
-	// 	return $employee;
-	// }
-
-	// public function employeeActiviti($employee)
-
-	// {
-	//   if (!$employee->activiti)
-
-	// 	{
-	// 	  $message = 'Empleado no activo';
-	// 	  $this->hasException($message);
-	// 	}
-	// }
 }

@@ -89,7 +89,7 @@ class AttendanceController extends BaseController {
 		$employee = $this->employeeRepo->find($employeeId);
 		$attendances = $this->assistanceTask->getAssistanceForEmploye($employee);
 		$response = [
-			'stutus' => 'success',
+			'status' => 'success',
 			'data' => $attendances
 		];
 

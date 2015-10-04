@@ -82,6 +82,16 @@ class InstanceTask extends BaseTask {
 	}
 
 	public function confirmInstance($elder, $instance, $state) {
+		$date = current_date();
+		$visitDate = $instance->visit_date;
+    
+    if ($date < $visitDate) {
+    	$message = 'Todavia no ha pasado fecha de visita social';
+
+    	$this->hasException($message);
+    }
+
+
 		if ($state == 'confirmed') {
 			$elder->activiti = 1;
 

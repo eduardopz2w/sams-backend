@@ -41,7 +41,8 @@ class RecordController extends BaseController {
 
     $response = [
       'status' => 'success', 
-      'message' => 'Historia medica registrada'
+      'message' => 'Historia medica registrada',
+      'data' => $record
     ];
 
     return Response::json($response);

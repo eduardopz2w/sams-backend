@@ -68,14 +68,19 @@ class AssistanceTask extends BaseTask {
   }
 
   public function confirmHourIn($hourIn, $scheduleIn) {
-    $minutes = '15';
-    $hourMin = rest_minutes($scheduleIn, $minutes);
+    $scheduleMin = '01:00:00';
 
-    if ($hourIn < $hourMin) {
-      $message = '"Aun falta para que empieze el horario"';
+    if ($scheduleIn >= $scheduleMin) {
+      $minutes = '15';
+      $hourMin = rest_minutes($scheduleIn, $minutes);
 
-      $this->hasException($message);
+      if ($hourIn < $hourMin) {
+        $message = '"Aun falta para que empieze el horario"';
+
+        $this->hasException($message);
+      }
     }
+    
   }
 
   public function checkHourIn($hourIn, $scheduleOut) {
@@ -102,7 +107,9 @@ class AssistanceTask extends BaseTask {
   }
 
   public function getAssistanceForEmploye($employee) {
-    $attendances = $employee->attendances();
+    $attendances = $employee
+                     ->attendances()
+                      ->where('state', '<>', 'E');
 
     if ($attendances->count() == 0) {
       $message = 'Empleado no posee asistencias';

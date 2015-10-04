@@ -9,21 +9,4 @@ class Citation extends \Eloquent {
 		return $this->belongsTo('Sams\Entity\Elder');
 	}
 
-
-
-
-	// public function getHourUsualAttribute()
-
-	// {
-	// 		$hour = $this->hour;
-	// 		$hour = hour_usual($hour);
-			
-	// 		return $hour;
-	// }
-
-	// public function getStateEntryAttribute()
-
-	// {
-	// 		return \Lang::get('utils.state_citation.'.$this->state);
-	// }
 }

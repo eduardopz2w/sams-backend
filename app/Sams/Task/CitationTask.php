@@ -34,16 +34,19 @@ class CitationTask extends BaseTask {
 				          	->where('date_day', $date)
 										->where('hour','>', $hourBefore)
 			  						->where('hour', '<', $hour)
+			  						->where('state', 'loading')
 		   							->orWhere(function ($query) use ($date, $hour, $hourAfter) {
 		    	 							$query
 		    	 								->where('date_day', $date)
 			      							->where('hour', '>', $hour)
-			      							->where('hour', '<=', $hourAfter);
+			      							->where('hour', '<=', $hourAfter)
+			      							->where('state', 'loading');
 		    						});
 
 		if ($citation->count() > 0) {
 			$citation = $citation->first();
-			$message = 'Adulto mayor posee cita para las '.$citation->hour. ' de ese dia, citas deben tener una hora de diferencia';
+			$hour = hour_usual($citation->hour);
+			$message = 'Adulto mayor posee cita para las '.$hour. ' de ese dia, citas deben tener una hora de diferencia';
 
 			$this->hasException($message);
 		}

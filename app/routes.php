@@ -2,24 +2,55 @@
 
 // configuration
 Route::get('config', 'ConfigController@config');
-
-//auth
-// Route::post('login', ['as'  => 'login', 'uses'  => 'AuthController@login']);
-// Route::get('logout' , ['as' => 'logout', 'uses' => 'AuthController@logout']);
- // Route::get('search/elders', ['as' => 'search-elders', 'uses' => 'SearchController@searchElder']);
+Route::resource('backups', 'BackupsController');
 
 Route::post('user/login', ['as' => 'login', 'uses' => 'UserController@login']);
 Route::get('user/logout', ['as' => 'logout', 'uses' => 'UserController@logout']);
 
 Route::group(['before' => 'auth-check'], function ()
 {
+  Route::group(['before' => 'isAdmin'], function () {
+    // Audit
+    Route::get('audits', ['as' => 'getAudit', 'uses' => 'AuditController@getAudit']);
+   // employee
+    Route::get('employees', ['as' => 'employees', 'uses' => 'EmployeeController@employees']);
+    Route::post('employee', ['as' => 'employee-create', 'uses' => 'EmployeeController@create']);
+    Route::get('employee/{id}', ['as' => 'employee->show', 'uses' => 'EmployeeController@show']);
+    Route::put('employee/{id}/edit', ['as' => 'employee-edit','uses' => 'EmployeeController@edit']);
+    Route::delete('employee/{id}/delete', ['as' => 'employee-delete', 'uses' => 'EmployeeController@delete']);
+    Route::put('employee/{employeeId}/attendance/{attendanceId}/edit', ['as' => 'attendance-edit', 'uses' => 'AttendanceController@edit']);
+    // schedule
+    Route::post('employee/{employeeId}/schedule', ['as' => 'schedule-addEmployee', 'uses' => 'ScheduleController@addScheduleEmployee']);
+    Route::get('employee/{employeeId}/schedules', ['as' => 'schedules-employee', 'uses' => 'ScheduleController@schedulesEmployee']);
+    Route::get('employee/{employeeId}/schedule/{scheduleId}', ['as' => 'schedule-showEmployee', 'uses' => 'ScheduleController@showScheduleEmployee']);
+    Route::get('employee/{employeeId}/schedule/{scheduleId}/remove', ['as' => 'schedule-removeEmployee', 'uses' => 'ScheduleController@removeScheduleEmployee']);
+
+     // permit
+    Route::post('employee/{employeeId}/permit', ['as' => 'permit-create', 'uses' => 'PermitController@create']);
+    Route::get('employee/{employeeId}/permit/{permitId}', ['as' => 'permit-show', 'uses' => 'PermitController@show']);
+    Route::get('employee/{employeeId}/permits', ['as' => 'permit-employees', 'uses' => 'PermitController@permitForEmployee']);
+    Route::get('employee/{employeeId}/permit/{permitId}/cancel', ['as' => 'permit-cancel', 'uses' => 'PermitController@cancel']);
+    Route::delete('employee/{employeeId}/permit/{permitId}/delete', ['as' => 'permit-delete', 'uses' => 'PermitController@delete']);
+    
+    // configuration
+    Route::put('config/edit', ['as' => 'config', 'uses' => 'ConfigController@edit']);
+
+    // user
+    Route::post('employee/{employeeId}/user', ['as' => 'user-create', 'uses' => 'UserController@create']);
+    Route::get('employee/{employeeId}/user/show', ['as' => 'user-show', 'uses' => 'UserController@show']);
+    Route::put('employee/{employeeId}/user/{userId}/edit', ['as' => 'user-edit', 'uses' => 'UserController@edit']);
+    Route::delete('employee/{employeeId}/user/{userId}/delete', ['as' => 'uses-delete', 'uses' => 'UserController@delete']);
+
+    // elder
+    Route::get('elder/{id}/confirmed', ['as' => 'elder-confirmed', 'uses' => 'ElderController@confirm']);
+  });
+
   // elder
   Route::get('elder/{id}', ['as' => 'elder-show', 'uses' => 'ElderController@show']);
   Route::put('elder/{id}/edit', ['as' => 'elder-edit', 'uses' => 'ElderController@edit']);
   Route::delete('elder/{id}/delete', ['as' => 'elder-delete', 'uses' => 'ElderController@delete']);
   Route::get('elders/search', ['as' => 'elder-search', 'uses' => 'ElderController@search']);
   Route::get('elders/{state}', ['as' => 'elders', 'uses' => 'ElderController@elders']);
-
 
   // notificacion
 	Route::post('elder/instance', ['as' => 'instance-create', 'uses' => 'InstanceController@create']);
@@ -66,39 +97,16 @@ Route::group(['before' => 'auth-check'], function ()
   Route::delete('elder/{elderId}/output/{outputId}/delete', ['as' => 'output-delete', 'uses' => 'OutputController@delete']);
   Route::get('outputs/waiting', ['as' => 'outputs-waiting', 'uses' => 'OutputController@getOutputWaiting']);
   Route::get('outputs/{type}', ['as' => 'outputs-type', 'uses' => 'OutputController@getOutputType']);
-	// employee
-  Route::get('employees', ['as' => 'employees', 'uses' => 'EmployeeController@employees']);
-	Route::post('employee', ['as' => 'employee-create', 'uses' => 'EmployeeController@create']);
-  Route::get('employee/{id}', ['as' => 'employee->show', 'uses' => 'EmployeeController@show']);
-  Route::put('employee/{id}/edit', ['as' => 'employee-edit','uses' => 'EmployeeController@edit']);
-  Route::delete('employee/{id}/delete', ['as' => 'employee-delete', 'uses' => 'EmployeeController@delete']);
 
-  // user
-  Route::post('employee/{employeeId}/user', ['as' => 'user-create', 'uses' => 'UserController@create']);
-  Route::get('employee/{employeeId}/user/show', ['as' => 'user-show', 'uses' => 'UserController@show']);
-  Route::put('employee/{employeeId}/user/{userId}/edit', ['as' => 'user-edit', 'uses' => 'UserController@edit']);
-  Route::delete('employee/{employeeId}/user/{userId}/delete', ['as' => 'uses-delete', 'uses' => 'UserController@delete']);
-  Route::get('user/logged', ['as' => 'user-logger', 'uses' => 'UserController@logged']);
-  Route::get('users', ['as' => 'users', 'uses' => 'UserController@users']);
+
   // attendance 
   Route::get('attendances', ['as' => 'attendance', 'uses' => 'AttendanceController@attendances']);
   Route::get('attendances/waiting', ['as' => 'attendance-waiting', 'uses' => 'AttendanceController@attendancesWaiting']);
   Route::get('employee/{employeeId}/attendances', ['as' => 'attendances-employee', 'uses' => 'AttendanceController@assistanceForEmployee']);
   Route::get('employee/{employeeId}/attendance/{attendanceId}/confirmed', ['as' => 'attendance-confirmed', 'uses' => 'AttendanceController@confirmed']);
-  Route::put('employee/{employeeId}/attendance/{attendanceId}/edit', ['as' => 'attendance-edit', 'uses' => 'AttendanceController@edit']);
   
-  // permit
-  Route::post('employee/{employeeId}/permit', ['as' => 'permit-create', 'uses' => 'PermitController@create']);
-  Route::get('employee/{employeeId}/permit/{permitId}', ['as' => 'permit-show', 'uses' => 'PermitController@show']);
-  Route::get('employee/{employeeId}/permits', ['as' => 'permit-employees', 'uses' => 'PermitController@permitForEmployee']);
-  Route::get('employee/{employeeId}/permit/{permitId}/cancel', ['as' => 'permit-cancel', 'uses' => 'PermitController@cancel']);
-  Route::delete('employee/{employeeId}/permit/{permitId}/delete', ['as' => 'permit-delete', 'uses' => 'PermitController@delete']);
-
-   // schedule
-  Route::post('employee/{employeeId}/schedule', ['as' => 'schedule-addEmployee', 'uses' => 'ScheduleController@addScheduleEmployee']);
-  Route::get('employee/{employeeId}/schedules', ['as' => 'schedules-employee', 'uses' => 'ScheduleController@schedulesEmployee']);
-  Route::get('employee/{employeeId}/schedule/{scheduleId}', ['as' => 'schedule-showEmployee', 'uses' => 'ScheduleController@showScheduleEmployee']);
-  Route::get('employee/{employeeId}/schedule/{scheduleId}/remove', ['as' => 'schedule-removeEmployee', 'uses' => 'ScheduleController@removeScheduleEmployee']);
+  
+  // schedule
   Route::post('action/{actionId}/schedule', ['as' => 'schedule-action', 'uses' => 'ScheduleController@addScheduleAction']);
   Route::get('action/{actionId}/schedule/{scheduleId}/remove', ['as' => 'schedule-removeAction', 'uses' => 'ScheduleController@removeScheduleAction']);
   Route::get('action/{actionId}/schedules', ['as' => 'schedules-action', 'uses' => 'ScheduleController@schedulesAction']);
@@ -127,21 +135,9 @@ Route::group(['before' => 'auth-check'], function ()
   Route::put('product/{productId}/edit', ['as' => 'product-edit', 'uses' => 'ProductController@edit']);
   Route::delete('product/{productId}/delete', ['as' => 'product-delete', 'uses' => 'ProductController@delete']);
 
-  // Audit
-  Route::get('audits', ['as' => 'getAudit', 'uses' => 'AuditController@getAudit']);
 
-  // configuration
-  Route::put('config/edit', ['as' => 'config', 'uses' => 'ConfigController@edit']);
-
-  // // search smart
-  // Route::get('search/elders', ['as' => 'search-elders', 'uses' => 'SearchController@searchElder']);
-  // // auth
-  // Route::get('user/authenticate', 'AuthController@getUserAutenticate');
-});
-
-
-Route::get('/', function () {
-	return View::make('picture');
+  Route::get('user/logged', ['as' => 'user-logger', 'uses' => 'UserController@logged']);
+  Route::get('users', ['as' => 'users', 'uses' => 'UserController@users']);
 });
 
 
@@ -154,188 +150,5 @@ Route::get('/', function () {
 
 
 
-// Route::get('test', function () {
-//   $hourIn = '1:00';
-//   $hourOut = '1:59';
 
-//   if ($hourIn > $hourOut) {
-//     dd('hour in');
-//   } else{
-//     dd('hour out');
-//   }
-// });
 
-// Route::get('test', function () {
-//   $filename = uniqid('MyApp', true) . '.pdf';
-//   dd($filename);
-// });
-
-// Route::get('test', function () {
-// 	dd(public_path());
-// 	// dd(app_path());
-// });
-
-
-// Route::get('test', function () {
-//    $date = '2015-07-26';
-
-// 	 $day = date("l",strtotime($date));
-
-// 	 dd($day);
-
-// });
-
-
-
-
-/*Route::post('test', function () {
-
-	$time      = Input::get('time');
-	$h         = Input::get('timeH');
-  
-  $test = strtotime($time);
-  $star = date('H:i', strtotime('-30 minutes' ,$test));
-  dd($star);
-
-
-	if ($h > $time)
-
-	{
-		 dd('mayor');
-	}
-
-	else
-
-	{
-			dd('no');
-	}
-
-	dd(date( $segmens[0].":".$segmens[1], strtotime('-1 hour')));
-	// $timeTotal = explode(':', $time);
-  
-  // $test = date($time, strtotime('-10 minute'));
-  // dd($test);
-   dd($time);
-  $test = strtotime('-10 minute' , $time);
-  dd($test);
-
-});
-*/
-
-// Route::post('test', function () {
-// 	$hrsOne = Input::get('time');
-// 	$hrsTwo = Input::get('timeH');
-
-// 	$timeOne = explode(':', $hrsOne);
-//   $timeTwo = explode(':', $hrsTwo);
-
-//   $elapsedOne = ($timeOne[0] * 60) + $timeOne[1];
-//   $elapsedTwo = ($timeTwo[0] * 60) + $timeTwo[1];
-
-//   $totalElapsed = $elapsedOne - $elapsedTwo;
-
-//   if ($totalElapsed <= 59) 
-//   {
-//   	dd('minutos '.$totalElapsed);
-//   } 
-
-//   else
-
-//   {
-//   		$hoursElapse = round($totalElapsed / 60);
-
-//   		if ($hoursElapse <= 9) $hoursElapse = '0'.$hoursElapse;
-
-//   		$minElpase = $totalElapsed % 60;
-
-//   		if($minElpase <= 9) $minElpase = '0'.$minElpase;
-
-//   		dd($hoursElapse.':'.$minElpase)
- 
-
-//   }
-
-
-// });
-
-// Route::post('test', function () {
-
-// 	$arr    = Input::all();
-// 	$always = array_only($arr, ['control_menu', 'max_hours', 'max_permits']);
-
-// 	foreach ($always as $key) 
-// 	{
-// 			if (empty($key))
-
-// 			{
-// 				 dd('vacio');
-// 			}
-
-// 			else
-
-// 			{
-// 					dd('lleno');
-// 			}
-// 	}
-
-
-// });
-
-
-
-// Route::post('test', function () {
-
-// 	$data = Input::all();
-
-// 	$days       = array_keys($data);
-// 	$values     = array_values($data);
-// 	$quantity   = count($days);
-// 	$first      = false;
-// 	$selectDays;
-   
-// 	for($i = 0; $i < $quantity; $i++)
-
-// 	{
-// 		    	if (!empty($values[$i]))
-
-// 				{   
-// 					  if (!$first)
-
-// 					  {
-// 					  		$selectDays = $days[$i];
-// 					  		$first = true;
-// 					  }
-
-// 					  else
-
-// 					  {
-// 					  		$selectDays .= ' '.$days[$i];
-// 					  }
-
-// 				}
-// 	}
-
-// 	dd($selectDays);
-
-
-// });
-
-
-// Route::get('test', function () {
-//    $date = '2015-07-17';
-
-// 	 $day = date("l",strtotime($date));
-
-// 	 dd($day);
-
-// });
-
-
-
-// Route::get('t', function () {
-// 	$test = 'hi.l';
-
-// 	$conver = preg_replace('.', 'ggg', $test);
-
-// 	dd($conver);
-// });

@@ -17,7 +17,5 @@ class ActionManager extends BaseManager {
 
 		return $data;
 	}
-		 
-
 
 }

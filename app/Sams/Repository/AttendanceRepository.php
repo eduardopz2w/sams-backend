@@ -19,8 +19,7 @@ class AttendanceRepository extends BaseRepository {
 		return Attendance::join('employees', 'attendances.employee_id', '=', 'employees.id')
 										 ->select(
 		  		            	'employees.identity_card',
-		  		            	'employees.first_name',
-		  		            	'employees.last_name',
+		  		            	'employees.full_name',
 		  		            	'attendances.start_time',
 		  		             	'attendances.date_day',
 		  		             	'attendances.employee_id',
@@ -28,7 +27,7 @@ class AttendanceRepository extends BaseRepository {
 		  		             )
 											 ->where('attendances.date_day', $date)
                        ->where('state', 'I')
-                       ->where('departure_time', '<=', $hour)
+                       ->where('start_time', '<=', $hour)
                        ->whereNull('permit_id');
 
 	}
@@ -37,8 +36,7 @@ class AttendanceRepository extends BaseRepository {
 		return Attendance::join('employees', 'attendances.employee_id', '=', 'employees.id')
 										 ->select(
 										 		'employees.identity_card',
-		  		            	'employees.first_name',
-		  		            	'employees.last_name',
+		  		            	'employees.full_name',
 		  		            	'attendances.start_time',
 		  		            	'attendances.departure_time',
 		  		              'attendances.hour_in',
@@ -55,8 +53,7 @@ class AttendanceRepository extends BaseRepository {
 	  return Attendance::join('employees', 'attendances.employee_id', '=', 'employees.id')
 										  ->select(
 		  		             	 'employees.identity_card',
-		  		            	 'employees.first_name',
-		  		            	 'employees.last_name',
+		  		            	 'employees.full_name',
 		  		             	 'attendances.departure_time',
 		  		               'attendances.date_day',
 		  		               'attendances.employee_id',

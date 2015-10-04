@@ -37,7 +37,7 @@ class InstanceController extends BaseController {
 	  $response = [
 	  	'status' => 'success',
 	  	'message' => 'Notificacion de entrada almacenada',
-	  	'data' => $elder
+	  	'data' => $instance
 	  ];
 	 
 	  return Response::json($response);

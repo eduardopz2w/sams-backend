@@ -103,9 +103,10 @@ class UserController extends BaseController {
       $user->save();
     }
 
+
     if ($role == 1 && !$user->hasRole('Admin')) {
       $user->roles()->attach(1);
-    } elseif ($role == 'User') {
+    } elseif ($role == 2) {
       $user->roles()->detach(1);
     }
 

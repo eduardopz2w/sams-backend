@@ -40,7 +40,8 @@ class CitationController extends BaseController {
 	
 		$response = [
 			'status' => 'success',
-			'message' => 'Cita ha sido guardada'
+			'message' => 'Cita ha sido guardada',
+			'data' => $citation
 		];
 
 		return Response::json($response);
@@ -101,8 +102,10 @@ class CitationController extends BaseController {
 
 		$response = [
 			'status' => 'success',
-			'message' => 'Cita ha sido modificada'
+			'message' => 'Cita ha sido actualizada',
+			'data' => $citation
 		];
+
 
 		return Response::json($response);
 	}

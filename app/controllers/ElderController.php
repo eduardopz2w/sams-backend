@@ -84,6 +84,29 @@ class ElderController extends BaseController {
     
     return Response::json($elders);
 	}
+
+	public function confirm($elderId) {
+		$elder = $this->elderRepo->find($elderId);
+		$activiti = $elder->activiti;
+
+		if ($activiti) {
+		  $message = 'Adulto mayor confirmado como no residente';
+			$elder->activiti = 0;
+		} else {
+			$message = 'Adulto mayor confirmado como residente';
+			$elder->activiti = 1;
+		}
+
+		$elder->save();
+
+		$response = [
+			'status' => 'success',
+			'message' => $message,
+			'data' => $elder
+		];
+
+		return Response::json($response);
+	}
 	  
 
 

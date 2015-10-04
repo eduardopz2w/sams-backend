@@ -8,8 +8,7 @@ class EmployeeEditManager extends BaseManager {
     $rules = [
       'identity_card' => 'required|numeric|unique:employees,identity_card,'.$this->entity->id,
       'address' => 'required',
-      'first_name' => 'required|regex:/^[\pL\s]+$/u',
-      'last_name' => 'required|regex:/^[\pL\s]+$/u',
+      'full_name' => 'required|regex:/^[\pL\s]+$/u',
       'date_birth' => 'required|date',
       'phone'  => 'numeric',
       'gender' => 'required',

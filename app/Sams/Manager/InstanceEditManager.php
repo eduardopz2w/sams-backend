@@ -10,6 +10,7 @@ class InstanceEditManager extends BaseManager {
 
     if ($state == 'waiting') {
       $date = current_date();
+      $date = rest_date(1, $date);
       $rules = [
         'identity_card' => 'required|numeric|unique:elders,identity_card,'.$this->entity->elder_id,
         'referred' => 'required|in:presidency_inass,social_welfare,health,cssr,other',

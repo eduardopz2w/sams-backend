@@ -69,11 +69,13 @@ class AttendanceTask extends BaseTask {
 		$segment = explode(' ', $assingSchedule);
 	  $assingDate = $segment[0];
 
-	  if ($assingDate < $date) {
+	  if ($assingDate <= $date) {
+  
 		  return true;
-		}
+		} else {
+      return false;
+    }
 
-		return false;
 	}
 
 	public function checkSchedule($employee, $schedule, $date) {

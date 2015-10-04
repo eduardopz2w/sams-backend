@@ -155,6 +155,8 @@ function hour_usual($hour) {
 	if ($hour >= $afternoon) {
 		$hour = rest_minutes($hour, $minutes);
 		$hour = $hour.' pm';
+	} else {
+		$hour = $hour. 'am';
 	}
 
 	return $hour;
