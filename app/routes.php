@@ -91,6 +91,7 @@ Route::group(['before' => 'auth-check'], function ()
  // output
   Route::post('elder/{elderId}/output', ['as' => 'output-create', 'uses' => 'OutputController@create']);
   Route::get('elder/{elderId}/outputs', ['as' => 'outputs-elder', 'uses' => 'OutputController@outputsForElder']);
+  Route::get('elder/{elderId}/output/pending', ['as' => 'output-pending', 'uses' => 'OutputController@outputPending']);
   Route::get('elder/{elderId}/output/{outputId}', ['as' => 'output-show', 'uses' => 'OutputController@show']);
   Route::get('elder/{elderId}/output/{outputId}/confirmed', ['as' => 'output-confirmed', 'uses' => 'OutputController@confirmed']);
   Route::put('elder/{elderId}/output/{outputId}/edit', ['as' => 'output-edit', 'uses' => 'OutputController@edit']);

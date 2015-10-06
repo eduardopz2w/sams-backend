@@ -3,18 +3,6 @@
 namespace Sams\Manager;
 
 class PermitManager extends BaseManager {
-  
-	public function validPermit() {
-    $this->isValid();
-    $this->entity->fill($this->prepareData($this->data));
-
-    return $this->entity;
-  }
-
-  public function save() {
-    $this->entity->save();
-  }
-
   public function getRules() {
     $day = current_date();
     $rules = [

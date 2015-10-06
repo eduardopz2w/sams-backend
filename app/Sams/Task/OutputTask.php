@@ -31,7 +31,7 @@ class OutputTask extends BaseTask {
 			$dateOut = $data['date_end'];
 
 			if ($dateIn >= $dateOut) {
-				$message = 'Fecha de salida debe ser menor a fecha de llegada';
+				$message = 'Fecha de salida debe ser menor que fecha de llegada';
 
 				$this->hasException($message);
 			}
@@ -48,7 +48,7 @@ class OutputTask extends BaseTask {
 		if ($type == 'pernot') {
 			$date = current_date();
 			$message = 'No hay adultos con salida del tipo pernocta';
-			$outputs = $this->outputRepo->getOutputPernot();
+			$outputs = $this->outputRepo->getOutputPernot($date);
 		} else {
 			$message = 'No hay salidas por confirmar';
 			$outputs = $this->outputRepo->getOutputNormal();

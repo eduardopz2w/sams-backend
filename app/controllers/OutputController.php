@@ -83,10 +83,14 @@ class OutputController extends BaseController {
 
 		$manager->edit();
 
+		if (!$state) {
+			$this->outputTask->confirmedDate($data);
+		}
+
 		$response = [
 			'status' => 'success',
+			'message' => 'Salida ha sido actualizada',
 			'data' => $output,
-			'message' => 'Salida ha sido actualizada'
 		];
 
 		return Response::json($response);
@@ -144,6 +148,23 @@ class OutputController extends BaseController {
 		$response = [
 			'status' => 'success',
 			'data' => $outputs
+		];
+
+		return Response::json($response);
+	}
+
+	public function outputPending($elderId) {
+		$elder = $this->elderRepo->find($elderId);
+		$output = $elder
+		           ->outputs()
+		            ->where('state', 0)
+		            ->first();
+
+		$this->notFound($output);
+
+		$response = [
+			'status' => 'success',
+			'data' => $output
 		];
 
 		return Response::json($response);
