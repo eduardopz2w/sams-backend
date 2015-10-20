@@ -73,15 +73,29 @@ class UserController extends BaseController {
   }
 
   public function logged() {
+    $response = false;
     $user = Auth::user();
 
     $user->loadRole();
 
-    $user = $this->userTask->format($user);
-    $response = [
-      'status' => 'success',
-      'data' => $user
-    ];
+    if (!$user->hasRole('SuperAdmin')) {
+      $employee = $user->employee;
+
+      if (!$employee->activiti) {
+        $response = [
+          'status' => 'error',
+          'message' => 'Empleado no activo, no podra ingresar al sistema'
+        ];
+      }
+    }
+
+    if (!$response) {
+      $user = $this->userTask->format($user);
+      $response = [
+       'status' => 'success',
+       'data' => $user
+      ];
+    }
 
     return Response::json($response);
   }

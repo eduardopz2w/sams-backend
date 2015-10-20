@@ -20,6 +20,28 @@ class EmployeeManager extends BaseManager {
     return $rules;
   }
 
+  public function getMessages() {
+    $messages = [
+      'identity_card.required' => 'Ingrese cedula',
+      'identity_card.numeric' => 'Cedula debe ser un numero',
+      'identity_card.unique' => 'Ya hay empleado registrado con esta cedula',
+      'address.required' => 'Ingrese direccion',
+      'full_name.required' => 'Ingrese nombre',
+      'full_name.regex' => 'Ingrese formato de nombre valido',
+      'date_birth.required' => 'Ingrese fecha de nacimiento',
+      'date_birth.date' => 'Ingrese formato valido para fecha de nacimiento',
+      'phone.numeric' => 'Telefono debe ser un numero',
+      'gender.required'  => 'Ingrese genero',
+      'degree_instruction.required' => 'Ingrese grado de instruccion',
+      'degree_instruction.in' => 'Grado de instruccion ingresado es inválido',
+      'civil_status.required' => 'Ingrese estado civil',
+      'civil_status.in' => 'Estado civil ingresado es inválido',
+      'office.required' => 'Ingrese cargo'
+    ];
+
+    return $messages;
+  }
+
 	public function prepareData($data) {
     if (!isset($data['break_out'])) {
       $data['break_out'] = 0;

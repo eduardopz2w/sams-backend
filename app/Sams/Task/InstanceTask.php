@@ -22,8 +22,8 @@ class InstanceTask extends BaseTask {
 	  $elders = $this->elderRepo->elders($state);
 	  $count = $elders->count();
 
-	  if ($maxElder == $count) {
-	    $message = 'El maximo de adultos residentes es de'.$maxElder;
+	  if ($count >= $maxElder) {
+	    $message = 'El maximo de adultos residentes es de '.$maxElder;
 
 	    $this->hasException($message);
 	  }

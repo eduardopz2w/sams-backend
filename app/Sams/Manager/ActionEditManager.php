@@ -12,4 +12,14 @@ class ActionEditManager extends BaseManager {
     return $rules;
   }
 
+  public function getMessages() {
+    $messages = [
+      'name.required' => 'Nombre de actividad es requerido',
+      'name.regex' => 'Ingrese formato de nombre valido',
+      'name.unique' => 'Ya existe actividad registrada con ese nombre'
+    ];
+
+    return $messages;
+  }
+
 }

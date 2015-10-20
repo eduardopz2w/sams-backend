@@ -20,21 +20,19 @@ class AttendanceTask extends BaseTask {
 	}
 	 
 	public function confirmDate($date) {
-		$regex = '/\d{4}\-\d{2}-\d{2}/';
+	  $date = ['date' => $date];
+    $rules = ['date' => 'required|date'];
+    $messages = [
+      'date.required' => 'Ingrese fecha',
+      'date.date' => 'Ingrese formato de fecha valido'
+    ];
+    $validator = \Validator::make($date, $rules, $messages);
 
-		if (!preg_match($regex, $date)) {
-			$message = 'Formato de fecha es inválido';
+    if ($validator->fails()) {
+      $message = $validator->messages();
 
-    	$this->hasException($message);
+      $this->hasException($message);
     }
-
-  	$currentDate = current_date();
-
-  	if ($date > $currentDate) {
-  		$message = 'Fecha no ha pasado';
-
-  		$this->hasException($message);
-  	}
 	}
 	 
 	public function createAttendance($date) {

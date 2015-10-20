@@ -14,4 +14,17 @@ class ProductManager extends BaseManager {
     return $rules;
   }
 
+  public function getMessages() {
+    $messages = [
+      'description.required' => 'Ingrese descripcion del producto',
+      'descricion.unique' => 'Ya hay otro producto con esta descripcion',
+      'unit.required' => 'Ingrese unidad',
+      'unit.in' => 'Unidad ingresada es inválido',
+      'stock.required' => 'Ingrese cantidad en existencia',
+      'stock.numeric' => 'Cantidad en existencia debe ser un numero'
+    ];
+
+    return $messages;
+  }
+
 }

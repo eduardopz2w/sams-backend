@@ -16,7 +16,8 @@ abstract class BaseManager {
 
   public function isValid() {
     $rules = $this->getRules();
-    $validator = \Validator::make($this->data, $rules);
+    $messages = $this->getMessages();
+    $validator = \Validator::make($this->data, $rules, $messages);
 
     if ($validator->fails()) {
       throw new ValidationException("Error Processing Request", $validator->messages());    

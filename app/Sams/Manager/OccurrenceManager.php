@@ -13,6 +13,16 @@ class OccurrenceManager extends BaseManager {
     return $rules;
   }
 
+   public function getMessages() {
+    $messages = [
+      'case_situation.required' => 'Ingrese situacion del caso',
+      'date.required'  => 'Ingrese fecha',
+      'date.date' => 'Ingrese formato valido para fecha'
+    ];
+
+    return $messages;
+  }
+
   public function prepareData($data) {
     $data['image_url'] = 'http://localhost/image/geriatric/default/profile_default_man.png';
     $data['mime'] = 'jpg';

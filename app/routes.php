@@ -12,6 +12,7 @@ Route::group(['before' => 'auth-check'], function ()
   Route::group(['before' => 'isAdmin'], function () {
     // Audit
     Route::get('audits', ['as' => 'getAudit', 'uses' => 'AuditController@getAudit']);
+
    // employee
     Route::get('employees', ['as' => 'employees', 'uses' => 'EmployeeController@employees']);
     Route::post('employee', ['as' => 'employee-create', 'uses' => 'EmployeeController@create']);
@@ -19,6 +20,7 @@ Route::group(['before' => 'auth-check'], function ()
     Route::put('employee/{id}/edit', ['as' => 'employee-edit','uses' => 'EmployeeController@edit']);
     Route::delete('employee/{id}/delete', ['as' => 'employee-delete', 'uses' => 'EmployeeController@delete']);
     Route::put('employee/{employeeId}/attendance/{attendanceId}/edit', ['as' => 'attendance-edit', 'uses' => 'AttendanceController@edit']);
+    
     // schedule
     Route::post('employee/{employeeId}/schedule', ['as' => 'schedule-addEmployee', 'uses' => 'ScheduleController@addScheduleEmployee']);
     Route::get('employee/{employeeId}/schedules', ['as' => 'schedules-employee', 'uses' => 'ScheduleController@schedulesEmployee']);
@@ -99,13 +101,11 @@ Route::group(['before' => 'auth-check'], function ()
   Route::get('outputs/waiting', ['as' => 'outputs-waiting', 'uses' => 'OutputController@getOutputWaiting']);
   Route::get('outputs/{type}', ['as' => 'outputs-type', 'uses' => 'OutputController@getOutputType']);
 
-
   // attendance 
   Route::get('attendances', ['as' => 'attendance', 'uses' => 'AttendanceController@attendances']);
   Route::get('attendances/waiting', ['as' => 'attendance-waiting', 'uses' => 'AttendanceController@attendancesWaiting']);
   Route::get('employee/{employeeId}/attendances', ['as' => 'attendances-employee', 'uses' => 'AttendanceController@assistanceForEmployee']);
   Route::get('employee/{employeeId}/attendance/{attendanceId}/confirmed', ['as' => 'attendance-confirmed', 'uses' => 'AttendanceController@confirmed']);
-  
   
   // schedule
   Route::post('action/{actionId}/schedule', ['as' => 'schedule-action', 'uses' => 'ScheduleController@addScheduleAction']);
@@ -121,7 +121,6 @@ Route::group(['before' => 'auth-check'], function ()
   Route::put('action/{actionId}/edit', ['as' => 'action-edit', 'uses' => 'ActionController@edit']);
   Route::delete('action/{actionId}/delete', ['as' => 'action-delete', 'uses' => 'ActionController@delete']);
  
-
   //Occasion
   Route::post('occasion', ['as' => 'occasion-create', 'uses' => 'OccasionController@create']);
   Route::get('occasions', ['as' => 'occasion-date', 'uses' => 'OccasionController@getForDate']);
@@ -136,7 +135,7 @@ Route::group(['before' => 'auth-check'], function ()
   Route::put('product/{productId}/edit', ['as' => 'product-edit', 'uses' => 'ProductController@edit']);
   Route::delete('product/{productId}/delete', ['as' => 'product-delete', 'uses' => 'ProductController@delete']);
 
-
+  // User
   Route::get('user/logged', ['as' => 'user-logger', 'uses' => 'UserController@logged']);
   Route::get('users', ['as' => 'users', 'uses' => 'UserController@users']);
 });

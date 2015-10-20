@@ -13,6 +13,17 @@ class AttendanceManager extends BaseManager {
     return $rules;
   }
 
+  public function getMessages() {
+    $messages = [
+      'hour_in.required' => 'Ingrese hora de entrada',
+      'hour_in.date_format' => 'Ingrese formato valido para hora de entrada',
+      'hour_out.required' => 'Ingrese hora de salida',
+      'hour_out.date_format' => 'Ingrese formato valido para hora de salida'
+    ];
+
+    return $messages;
+  }
+
   public function prepareData($data) {
     $state = $this->entity->state;
 

@@ -16,14 +16,24 @@ class OutputManager extends BaseManager {
 					
 		return $rules;
 	}
-	
+
+  public function getMessages() {
+    $messages = [
+      'type.required' => 'Ingrese tipo de salida',
+      'type.in' => 'Tipo de salida ingresada es inválido',
+      'date_start.required_if' => 'Ingrese fecha de salida',
+      'date_start.after' => 'Fecha de salida ingresada ya paso',
+      'date_end.required_if' => 'Ingrese fecha de retorno',
+      'info.required_if' => 'Informacion es requerida'
+    ];
+
+    return $messages;
+  }
+
 	public function prepareData($data) {
 		$data['state'] = 0;
 
 		return $data;
 	}
-		  
-			
-	
-
+		
 }

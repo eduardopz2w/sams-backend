@@ -87,22 +87,37 @@ class ElderController extends BaseController {
 
 	public function confirm($elderId) {
 		$elder = $this->elderRepo->find($elderId);
-		$activiti = $elder->activiti;
+		
+		if (!$elder->activiti) {
+			$config = get_configuration();
+	    $maxElder = $config->max_impeachment;
+	    $state = 'active';
+	    $elders = $this->elderRepo->elders($state);
+	    $count = $elders->count();
 
-		if ($activiti) {
-		  $message = 'Adulto mayor confirmado como no residente';
-			$elder->activiti = 0;
+      if ($count >= $maxElder) {
+	      $message = 'El maximo de adultos residentes es de '.$maxElder;
+	      $response = [
+	       'status' => 'error',
+	       'message' => $message
+	      ];
+
+	      return Response::json($response);
+	    } else {
+	    	$message = 'Adulto mayor confirmado como residente';
+			  $elder->activiti = 1;
+	    }
 		} else {
-			$message = 'Adulto mayor confirmado como residente';
-			$elder->activiti = 1;
+			$message = 'Adulto mayor confirmado como no residente';
+			$elder->activiti = 0;
 		}
 
 		$elder->save();
 
 		$response = [
-			'status' => 'success',
-			'message' => $message,
-			'data' => $elder
+		  'status' => 'success',
+		  'message' => $message,
+		  'data' => $elder
 		];
 
 		return Response::json($response);

@@ -16,6 +16,24 @@ class ElderManager extends BaseManager {
     
     return $rules;
   }
+
+  public function getMessages() {
+    $messages = [
+      'identity_card.required' => 'Ingrese cedula',
+      'identity_card.numeric' => 'Cedula debe ser un numero',
+      'identity_card.unique' => 'Ya hay otro adulto mayor con esta cedula',
+      'full_name.required'  => 'Ingrese nombre',
+      'full_name.regex' => 'Ingrese formato de nombre valido',
+      'address.required' => 'Ingrese direccion',
+      'gender.required' => 'Ingrese genero',
+      'civil_status.required' => 'Ingrese estado civil',
+      'civil_status.in' => 'Estado civil que ha ingresado  es inválido',
+      'date_birth.required' => 'Ingrese fecha de nacimiento',
+      'date_birth.date' => 'Ingrese formato valido para fecha de nacimiento'
+    ];
+
+    return $messages;
+  }
   
   public function prepareData($data) {
     if (!isset($data['retired'])) {

@@ -3,7 +3,6 @@
 use Sams\Manager\CitationManager;
 use Sams\Repository\CitationRepository;
 use Sams\Repository\ElderRepository;
-use Sams\Repository\ReferenceRepository;
 use Sams\Task\CitationTask;
 use Sams\Task\ElderTask;
 
@@ -11,17 +10,14 @@ class CitationController extends BaseController {
 
 	protected $elderRepo;
 	protected $citationRepo;
-	protected $referenceRepo;
 	protected $citationTask;
 
 	public function __construct(ElderRepository $elderRepo, 
 		                          CitationRepository $citationRepo, 
-		                          ReferenceRepository $referenceRepo,
 		                          CitationTask $citationTask) {
-		$this->elderRepo     = $elderRepo;
-	 	$this->citationRepo  = $citationRepo;
-	 	$this->referenceRepo = $referenceRepo;
-		$this->citationTask  = $citationTask;
+		$this->elderRepo = $elderRepo;
+	 	$this->citationRepo = $citationRepo;
+		$this->citationTask = $citationTask;
 	}
 
 	public function create($elderId) {

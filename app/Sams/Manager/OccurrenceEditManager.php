@@ -12,4 +12,14 @@ class OccurrenceEditManager extends BaseManager {
     return $rules;
   }
 
+  public function getMessages() {
+    $messages = [
+      'case_situation.required' => 'Ingrese situacion del caso',
+      'date.required'  => 'Ingrese fecha',
+      'date.date' => 'Ingrese formato valido para fecha'
+    ];
+
+    return $messages;
+  }
+
 }

@@ -20,6 +20,21 @@ class OccasionManager extends BaseManager {
     return $rules;
   }
 
+  public function getMessages() {
+    $messages = [
+      'name.required' => 'Ingrese nombre',
+      'name.regex' => 'Ingrese formato de nombre valido',
+      'date_start.required' => 'Ingrese fecha de inicio',
+      'date_start.date' => 'Ingrese formato de valido para fecha de inicio',
+      'date_start.after' => 'Fecha de inicio ingresada ya paso',
+      'date_end' => 'Ingrese formato valido para fecha de finalizacion',
+      'entry_time.date_format' => 'Ingrese formato valido para hora de entrada',
+      'departure_time.date_format' => 'Ingrese formato valido para hora de salida'
+    ];
+
+    return $messages;
+  }
+
   public function prepareData($data) {
     $times = array_only($data, ['entry_time', 'departure_time', 'date_end']);
     $nameTimes = array_keys($times);
