@@ -25,11 +25,11 @@ class OutputEditManager extends BaseManager {
 
   public function getMessages() {
     $messages = [
-      'type.required' => 'Ingrese tipo de salida',
-      'type.in' => 'Tipo de salida ingresada es inválido',
-      'date_start.required_if' => 'Ingrese fecha de salida',
-      'date_end.required_if' => 'Ingrese fecha de retorno',
-      'info.required' => 'Informacion es requerida'
+     'type.required' => 'Ingrese tipo de salida',
+     'type.in' => 'Tipo de salida ingresada es inválido',
+     'date_start.required_if' => 'Ingrese fecha de salida',
+     'date_end.required_if' => 'Ingrese fecha de retorno',
+     'info.required' => 'Informacion es requerida'
     ];
 
     return $messages;

@@ -81,11 +81,11 @@ class OutputController extends BaseController {
 
 		$manager = new OutputEditManager($output, $data);
 
-		$manager->edit();
-
 		if (!$state) {
 			$this->outputTask->confirmedDate($data);
 		}
+
+		$manager->edit();
 
 		$response = [
 			'status' => 'success',
