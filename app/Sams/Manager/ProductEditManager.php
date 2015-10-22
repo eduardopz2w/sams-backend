@@ -21,7 +21,7 @@ class ProductEditManager extends BaseManager {
       'unit.required' => 'Ingrese unidad',
       'unit.in' => 'Unidad ingresada es inválido',
       'stock.required' => 'Ingrese cantidad en existencia',
-      'stock.numeric' = 'Cantidad en existencia debe ser un numero'
+      'stock.numeric' => 'Cantidad en existencia debe ser un numero'
     ];
 
     return $messages;
