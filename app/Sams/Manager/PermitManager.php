@@ -24,7 +24,7 @@ class PermitManager extends BaseManager {
       'type.in' => 'Tipo de permiso es inválido',
       'date_start.required' => 'Ingrese fecha de inicio',
       'date_start.date' => 'Ingrese formato valido para fecha de inicio',
-      'date_start.after' => 'Fecha ya pasado',
+      'date_start.after' => 'Ingrese una fecha futura',
       'date_end.required_if' => 'Ingrese fecha de finalizacion',
       'date_end.date' => 'Ingrese formato valido para fecha de finalizacion'
     ];
