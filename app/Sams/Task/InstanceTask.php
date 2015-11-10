@@ -69,7 +69,7 @@ class InstanceTask extends BaseTask {
 	public function format($elder, $instance) {
 		$instance = [
 		  'id' => $instance->id,
-			'referred' => \Lang::get('utils.referred_instance.'.$instance->referred),
+			'referred' => $instance->referred,
 	  	'address' => $instance->address,
 	  	'visit_date'=> $instance->visit_date,
 	  	'description' => $instance->description,
