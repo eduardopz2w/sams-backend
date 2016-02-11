@@ -9,20 +9,19 @@ abstract class ImageManager {
 	protected $mime;
 
 	public function __construct($entity, $img, $mimeSet) {
-		$this->entity  = $entity;
-	  $this->img     = $img;
+	  $this->entity = $entity;
+	  $this->img = $img;
 	  $this->mimeSet = $mimeSet;
+	  $this->urlLocalhost = 'http://localhost';
 	}
 	
 	public function uploadImg() {
-		$this->dirExists();
+	  $this->dirExists();
 
-		$img  = $this->img;
  	  $dir  = $this->getDirName();
  	  $file = $this->getNameFile();
  	  $path = $dir.$file;
- 	  $mimeSet = $this->mimeSet;
- 	  $img = str_replace('data:image/'.$mimeSet.';base64,', '', $img);
+ 	  $img = str_replace('data:image/'.$this->mimeSet.';base64,', '', $this->img);
  	  $img = str_replace(' ',  '+', $img);
  	  $data = base64_decode($img);
 
@@ -35,37 +34,36 @@ abstract class ImageManager {
 
 	public function dirExists() {
  		$dir = $this->getDirName();
- 		if (!file_exists($dir)) {
-	  	mkdir($dir);
- 		} else {
- 				$urlDefault = 'http://localhost/image/geriatric/default/profile_default_man.png';
-  	 		$imageUrl = $this->entity->image_url;
 
-  	 		if ($imageUrl != $urlDefault) {
-	   			$path = $this->replaceHttp($this->entity->image_url);
+ 		if (!file_exists($dir)) {
+	  	  mkdir($dir);
+ 		} else {
+ 			$imgUrlDefault = $this->urlLocalhost.'/image/geriatric/default/profile_default_man.png';
+
+  	 		if ($this->entity->image_url != $imgUrlDefault) {
+	   			$path = $this->pathFile($this->entity->image_url);
 
 	   			$this->imgDrop($path);
-	 	 		}
- 			}
+	 	 	}
+ 		}
 	}
 
 	public function imgDrop($path) {
  		if (file_exists($path)) {
  			unlink($path);
  		}
-  }
+    }
 
-	public function replaceHttp($dir) {
-		$dirPublic = public_path();
- 	  $path = str_replace('http://localhost', $dirPublic, $dir);
+	public function pathFile($imgUrl) {
+	  	$dirPublic = public_path();
+ 	    $path = str_replace($this->urlLocalhost, $dirPublic, $imgUrl);
 
- 	  return $path;
+ 	    return $path;
 	}
 
 	public function getUrl($path) {
 		$dirPublic = public_path();
-		$url = str_replace($dirPublic, 'http://localhost', $path);
-		$url = str_replace('\\', '/', $url);
+		$url = str_replace($dirPublic, $this->urlLocalhost, $path);
 
 		return $url;
 	}
