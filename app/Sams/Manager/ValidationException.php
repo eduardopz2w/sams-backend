@@ -13,8 +13,8 @@ class ValidationException extends \Exception {
 			$this->errors = $errors;
 
 			parent::__construct($message);
-	}
-
+	}// coment
+ 
 	public function getErrors()
 
 	{
