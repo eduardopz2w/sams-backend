@@ -25,285 +25,257 @@ class AppServiceProvider extends ServiceProvider {
   public function boot() {
 
     User::created(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha registrado al usuario id:'.$event->id;
+      $notification = ' ha registrado al usuario id:'.$event->id;
       
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
       
     });
 
     User::updated(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha actualizado al usuario id:'.$event->id;
+      $notification = ' ha actualizado al usuario id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     User::deleted(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha eliminado al usuario id:'.$event->id;
+      $notification = ' ha eliminado al usuario id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
       
     });
 
     Employee::created(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha registrado al empleado id:'.$event->id;
+      $notification = ' ha registrado al empleado id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Employee::updated(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario'.$user->email. 'ha actualizado al empleado id:'.$event->id;
+      $notification = ' ha actualizado al empleado id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Employee::deleted(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha eliminado al empleado id:'.$event->id;
+      $notification = ' ha eliminado al empleado id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Elder::created(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha registrado al adulto mayor id:'.$event->id;
+      $notification = ' ha registrado al adulto mayor id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Elder::updated(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha actualizado al adulto mayor id:'.$event->id;
+      $notification = ' ha actualizado al adulto mayor id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Elder::deleted(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha eliminado al adulto mayor id:'.$event->id;
+      $notification = ' ha eliminado al adulto mayor id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Instance::created(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha registrado notificacion de entrada id:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification = ' ha registrado notificacion de entrada id:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Instance::updated(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha actualizado notificacion de entrada id:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification = ' ha actualizado notificacion de entrada id:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Instance::deleted(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha eliminado notificacion de entrada id:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification =  ' ha eliminado notificacion de entrada id:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Citation::created(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha registrado cita id:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification = ' ha registrado cita id:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Citation::updated(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha actualizado cita id:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification =  ' ha actualizado cita id:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Citation::deleted(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha eliminado cita id:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification = ' ha eliminado cita id:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Record::created(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha registrado historia clinica:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification = ' ha registrado historia clinica:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Record::updated(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha actualizado historia clinica:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification = ' ha actualizado historia clinica:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Record::deleted(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha eliminado historia clinica:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification = ' ha eliminado historia clinica:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Occurrence::created(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha registrado incidencia:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification = ' ha registrado incidencia:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Occurrence::updated(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha actualizado incidencia:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification = ' ha actualizado incidencia:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Occurrence::deleted(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha eliminado incidencia:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification = ' ha eliminado incidencia:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Output::created(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha registrado salida:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification = ' ha registrado salida:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Output::updated(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha actualizado salida:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification =  ' ha actualizado salida:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Output::deleted(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha eliminado salida:'.$event->id.' del adulto mayor id:'.$event->elder_id;
+      $notification = ' ha eliminado salida:'.$event->id.' del adulto mayor id:'.$event->elder_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Attendance::updated(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha actualizado asistencia:'.$event->id.' del empleado id:'.$event->employee_id;
+      $notification = ' ha actualizado asistencia:'.$event->id.' del empleado id:'.$event->employee_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Permit::created(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha registrado permiso id:'.$event->id.' del empleado id:'.$event->employee_id;
+      $notification = ' ha registrado permiso id:'.$event->id.' del empleado id:'.$event->employee_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Permit::updated(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha actualizado permiso id:'.$event->id.' del empleado id:'.$event->employee_id;
+      $notification = ' ha actualizado permiso id:'.$event->id.' del empleado id:'.$event->employee_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Permit::deleted(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha eliminado permiso id:'.$event->id.'del empleado id:'.$event->employee_id;
+      $notification = ' ha eliminado permiso id:'.$event->id.'del empleado id:'.$event->employee_id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
     });
 
     Action::created(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha registrado actividad id:'.$event->id;
+      $notification = ' ha registrado actividad id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Action::updated(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha actualizado actividad id:'.$event->id;
+      $notification = ' ha actualizado actividad id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Action::deleted(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha eliminado actividad id:'.$event->id;
+      $notification = ' ha eliminado actividad id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Occasion::created(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha registrado el evento id:'.$event->id;
+      $notification = ' ha registrado el evento id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Occasion::updated(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha actualizado el evento id:'.$event->id;
+      $notification = ' ha actualizado el evento id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Occasion::deleted(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha eliminado el evento id:'.$event->id;
+      $notification = ' ha eliminado el evento id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Product::created(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha registrado el producto id:'.$event->id;
+      $notification =  ' ha registrado el producto id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Product::updated(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha actualizado producto id:'.$event->id;
+      $notification = ' ha actualizado producto id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
     Product::deleted(function ($event) {
-      $user = Auth::user();
-      $message = 'El usuario '.$user->email. ' ha eliminado producto id:'.$event->id;
+      $notification = ' ha eliminado producto id:'.$event->id;
 
-      Audit::create(['message' => $message]);
+      $this->createAudit($notification);
 
     });
 
 
+  }
+
+  public function createAudit($notification) {
+    if (Auth::check()) {
+      $user = Auth::user();
+      $message = 'El usuario '.$user->email.$notification;
+
+      Audit::create(['message' => $message]);
+    }
   }
 
 

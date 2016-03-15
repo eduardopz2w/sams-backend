@@ -12,11 +12,11 @@ class ValidationException extends \Exception {
 
 		parent::__construct($message);
 	}
-			
- 
+
 	public function getErrors() {
 		return $this->errors;
 	}
+
 			
 	
 }
