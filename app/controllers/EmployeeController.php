@@ -97,18 +97,4 @@ class EmployeeController extends BaseController {
     return Response::json($response);
   }
 
-  // public function getAttendances($id) {
-  //   $employee = $this->employeeRepo->find($id);
-  //   $attendances = $employee->attendances;
-
-  //   $this->employeeTask->confirmAttendances($attendances);
-
-  //   $response = [
-  //     'status' => 'success',
-  //     'data' => $attendances
-  //   ];
-
-  //   return Response::json($response);
-  // }
-
 }
