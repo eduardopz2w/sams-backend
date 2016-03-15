@@ -45,10 +45,5 @@ class EmployeeRepository extends BaseRepository {
 	    ->where('id', $id)->get();
   }
 
-  /*public function employeeByIdentify($identify) {
-	  return Employee::where('identity_card', $identify);
-	}*/
-	
-
 
 }
